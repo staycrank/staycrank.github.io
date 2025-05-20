@@ -203,6 +203,28 @@ main {
   background-color: #0c85d0;
 }
 
+.button.x-button {
+  background-color: #000000;
+  color: var(--text-light);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 24px;
+  font-weight: 500;
+  padding: 10px 20px;
+  text-decoration: none;
+}
+
+.button.x-button:hover {
+  background-color: #333333;
+  text-decoration: none;
+}
+
+.button.x-button svg {
+  width: 16px;
+  height: 16px;
+}
+
 /* Progress Bar Styles */
 .progress-wrapper {
   position: relative;

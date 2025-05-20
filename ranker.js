@@ -39,6 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let history = []
   let currentRankings = []
   const albumCoversCache = {} // Cache for album covers
+  let logoImage = null
 
   // Get base URL for absolute paths
   const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf("/") + 1)
@@ -141,11 +142,15 @@ document.addEventListener("DOMContentLoaded", () => {
     // Preload album covers for canvas use
     preloadAlbumCovers()
 
-    // Debug: Log the album covers being loaded
-    console.log("Loading album covers from these paths:")
-    staycSongs.forEach((song) => {
-      console.log(`Song ${song.id}: ${getFullImagePath(song.albumCover)}`)
-    })
+    // Preload the logo image
+    preloadLogoImage()
+  }
+
+  // Preload the STAYC logo for use in canvas
+  function preloadLogoImage() {
+    logoImage = new Image()
+    logoImage.src = getFullImagePath("assets/logo.png")
+    logoImage.crossOrigin = "anonymous" // Important for CORS
   }
 
   // Get full path for an image
@@ -507,7 +512,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function generateVerticalImage() {
     // Set canvas dimensions
     const width = 800
-    const height = 150 + currentRankings.length * 70
+    const height = 150 + currentRankings.length * 70 + 30 // Added 30px for the extra text line
     rankingCanvas.width = width
     rankingCanvas.height = height
 
@@ -528,7 +533,37 @@ document.addEventListener("DOMContentLoaded", () => {
     ctx.fillStyle = "#ffffff"
     ctx.font = "bold 36px Poppins, sans-serif"
     ctx.textAlign = "center"
-    ctx.fillText("My STAYC Song Ranking", width / 2, 60)
+
+    // Draw "My" text
+    ctx.fillText("My", width / 2 - 100, 60)
+
+    // Draw the STAYC logo (inverted to white)
+    if (logoImage && logoImage.complete) {
+      // Create a temporary canvas to invert the logo colors
+      const tempCanvas = document.createElement("canvas")
+      const tempCtx = tempCanvas.getContext("2d")
+      tempCanvas.width = logoImage.width
+      tempCanvas.height = logoImage.height
+
+      // Draw the logo on the temp canvas
+      tempCtx.drawImage(logoImage, 0, 0)
+
+      // Invert the colors to make it white
+      tempCtx.globalCompositeOperation = "source-in"
+      tempCtx.fillStyle = "#ffffff"
+      tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height)
+
+      // Draw the inverted logo on the main canvas
+      const logoWidth = 80
+      const logoHeight = (logoImage.height / logoImage.width) * logoWidth
+      ctx.drawImage(tempCanvas, width / 2 - 40, 40 - logoHeight / 2, logoWidth, logoHeight)
+    } else {
+      // Fallback if logo doesn't load
+      ctx.fillText("STAYC", width / 2, 60)
+    }
+
+    // Draw "Song Ranking" text
+    ctx.fillText("Song Ranking", width / 2 + 100, 60)
 
     // Draw rankings
     let y = 120
@@ -570,12 +605,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Draw footer
     ctx.fillStyle = "#f8f9fa"
-    ctx.fillRect(0, height - 40, width, 40)
+    ctx.fillRect(0, height - 60, width, 60) // Increased height for two lines of text
 
     ctx.fillStyle = "#888888"
     ctx.font = "14px Poppins, sans-serif"
     ctx.textAlign = "center"
-    ctx.fillText("Generated with STAYC Song Ranker", width / 2, height - 15)
+    ctx.fillText("Generated with STAYC Song Ranker", width / 2, height - 35)
+
+    // Draw second line of footer text
+    ctx.fillStyle = "#ff5fa2" // Use STAYC pink color for the slogan
+    ctx.font = "16px Poppins, sans-serif"
+    ctx.textAlign = "center"
+    ctx.fillText("STAYC girls is going down!", width / 2, height - 15)
 
     // Convert canvas to image
     const imageUrl = rankingCanvas.toDataURL("image/png")
@@ -595,7 +636,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Calculate dimensions based on number of songs
     const itemWidth = 180
     const width = Math.max(800, currentRankings.length * itemWidth)
-    const height = 400
+    const height = 430 // Increased from 400 to accommodate the extra text line
     rankingCanvas.width = width
     rankingCanvas.height = height
 
@@ -616,7 +657,37 @@ document.addEventListener("DOMContentLoaded", () => {
     ctx.fillStyle = "#ffffff"
     ctx.font = "bold 36px Poppins, sans-serif"
     ctx.textAlign = "center"
-    ctx.fillText("My STAYC Song Ranking", width / 2, 60)
+
+    // Draw "My" text
+    ctx.fillText("My", width / 2 - 100, 60)
+
+    // Draw the STAYC logo (inverted to white)
+    if (logoImage && logoImage.complete) {
+      // Create a temporary canvas to invert the logo colors
+      const tempCanvas = document.createElement("canvas")
+      const tempCtx = tempCanvas.getContext("2d")
+      tempCanvas.width = logoImage.width
+      tempCanvas.height = logoImage.height
+
+      // Draw the logo on the temp canvas
+      tempCtx.drawImage(logoImage, 0, 0)
+
+      // Invert the colors to make it white
+      tempCtx.globalCompositeOperation = "source-in"
+      tempCtx.fillStyle = "#ffffff"
+      tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height)
+
+      // Draw the inverted logo on the main canvas
+      const logoWidth = 80
+      const logoHeight = (logoImage.height / logoImage.width) * logoWidth
+      ctx.drawImage(tempCanvas, width / 2 - 40, 40 - logoHeight / 2, logoWidth, logoHeight)
+    } else {
+      // Fallback if logo doesn't load
+      ctx.fillText("STAYC", width / 2, 60)
+    }
+
+    // Draw "Song Ranking" text
+    ctx.fillText("Song Ranking", width / 2 + 100, 60)
 
     // Draw rankings
     currentRankings.forEach((song, index) => {
@@ -665,12 +736,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Draw footer
     ctx.fillStyle = "#f8f9fa"
-    ctx.fillRect(0, height - 40, width, 40)
+    ctx.fillRect(0, height - 60, width, 60) // Increased height for two lines of text
 
     ctx.fillStyle = "#888888"
     ctx.font = "14px Poppins, sans-serif"
     ctx.textAlign = "center"
-    ctx.fillText("Generated with STAYC Song Ranker", width / 2, height - 15)
+    ctx.fillText("Generated with STAYC Song Ranker", width / 2, height - 35)
+
+    // Draw second line of footer text
+    ctx.fillStyle = "#ff5fa2" // Use STAYC pink color for the slogan
+    ctx.font = "16px Poppins, sans-serif"
+    ctx.textAlign = "center"
+    ctx.fillText("STAYC girls is going down!", width / 2, height - 15)
 
     // Convert canvas to image
     const imageUrl = rankingCanvas.toDataURL("image/png")
