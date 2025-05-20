@@ -39,7 +39,6 @@ document.addEventListener("DOMContentLoaded", () => {
   let history = []
   let currentRankings = []
   const albumCoversCache = {} // Cache for album covers
-  let logoImage = null
 
   // Get base URL for absolute paths
   const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf("/") + 1)
@@ -141,16 +140,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Preload album covers for canvas use
     preloadAlbumCovers()
-
-    // Preload the logo image
-    preloadLogoImage()
-  }
-
-  // Preload the STAYC logo for use in canvas
-  function preloadLogoImage() {
-    logoImage = new Image()
-    logoImage.src = getFullImagePath("assets/logo.png")
-    logoImage.crossOrigin = "anonymous" // Important for CORS
   }
 
   // Get full path for an image
@@ -533,37 +522,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ctx.fillStyle = "#ffffff"
     ctx.font = "bold 36px Poppins, sans-serif"
     ctx.textAlign = "center"
-
-    // Draw "My" text
-    ctx.fillText("My", width / 2 - 100, 60)
-
-    // Draw the STAYC logo (inverted to white)
-    if (logoImage && logoImage.complete) {
-      // Create a temporary canvas to invert the logo colors
-      const tempCanvas = document.createElement("canvas")
-      const tempCtx = tempCanvas.getContext("2d")
-      tempCanvas.width = logoImage.width
-      tempCanvas.height = logoImage.height
-
-      // Draw the logo on the temp canvas
-      tempCtx.drawImage(logoImage, 0, 0)
-
-      // Invert the colors to make it white
-      tempCtx.globalCompositeOperation = "source-in"
-      tempCtx.fillStyle = "#ffffff"
-      tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height)
-
-      // Draw the inverted logo on the main canvas
-      const logoWidth = 80
-      const logoHeight = (logoImage.height / logoImage.width) * logoWidth
-      ctx.drawImage(tempCanvas, width / 2 - 40, 40 - logoHeight / 2, logoWidth, logoHeight)
-    } else {
-      // Fallback if logo doesn't load
-      ctx.fillText("STAYC", width / 2, 60)
-    }
-
-    // Draw "Song Ranking" text
-    ctx.fillText("Song Ranking", width / 2 + 100, 60)
+    ctx.fillText("My STAYC Song Ranking", width / 2, 60)
 
     // Draw rankings
     let y = 120
@@ -657,37 +616,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ctx.fillStyle = "#ffffff"
     ctx.font = "bold 36px Poppins, sans-serif"
     ctx.textAlign = "center"
-
-    // Draw "My" text
-    ctx.fillText("My", width / 2 - 100, 60)
-
-    // Draw the STAYC logo (inverted to white)
-    if (logoImage && logoImage.complete) {
-      // Create a temporary canvas to invert the logo colors
-      const tempCanvas = document.createElement("canvas")
-      const tempCtx = tempCanvas.getContext("2d")
-      tempCanvas.width = logoImage.width
-      tempCanvas.height = logoImage.height
-
-      // Draw the logo on the temp canvas
-      tempCtx.drawImage(logoImage, 0, 0)
-
-      // Invert the colors to make it white
-      tempCtx.globalCompositeOperation = "source-in"
-      tempCtx.fillStyle = "#ffffff"
-      tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height)
-
-      // Draw the inverted logo on the main canvas
-      const logoWidth = 80
-      const logoHeight = (logoImage.height / logoImage.width) * logoWidth
-      ctx.drawImage(tempCanvas, width / 2 - 40, 40 - logoHeight / 2, logoWidth, logoHeight)
-    } else {
-      // Fallback if logo doesn't load
-      ctx.fillText("STAYC", width / 2, 60)
-    }
-
-    // Draw "Song Ranking" text
-    ctx.fillText("Song Ranking", width / 2 + 100, 60)
+    ctx.fillText("My STAYC Song Ranking", width / 2, 60)
 
     // Draw rankings
     currentRankings.forEach((song, index) => {
