@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta property="og:title" content="STAYC Song Ranker"/>
+  <meta property="og:url" content="https://yourusername.github.io/stayc-ranker"/>
+  <meta property="og:type" content="website"/>
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="STAYC Song Ranker">
+
+  <link rel="icon" href="assets/favicon.png">
+  <link rel="stylesheet" type="text/css" href="styles.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <title>STAYC Song Ranker</title>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="header-content">
+      <div class="logo-container">
+        <img src="assets/logo.png" alt="STAYC Logo" class="logo" />
+        <h1>Song Ranker</h1>
+      </div>
+      <p class="subtitle">Rank your favorite STAYC songs!</p>
+    </div>
+    <div class="header-decoration">
+      <div class="decoration-circle"></div>
+      <div class="decoration-circle"></div>
+      <div class="decoration-circle"></div>
+    </div>
+  </header>
+
+  <main>
+    <div id="controller" class="select">
+      <!-- Match comparison section -->
+      <div id="match-container">
+        <div id="progress-status">
+          <div class="progress-wrapper">
+            <progress id="progress-bar" max="100" value="0"></progress>
+            <span id="progress-text">0%</span>
+          </div>
+          <div id="rounds-counter">
+            Round <span id="current-round">0</span>
+          </div>
+        </div>
+
+        <div id="vs-container">
+          <div class="song-card left">
+            <div class="album-cover">
+              <!-- Album cover will be inserted here -->
+            </div>
+            <h3 class="song-title">Song Title</h3>
+            <p class="album-name">Album Name</p>
+          </div>
+
+          <div class="vs-badge">VS</div>
+
+          <div class="song-card right">
+            <div class="album-cover">
+              <!-- Album cover will be inserted here -->
+            </div>
+            <h3 class="song-title">Song Title</h3>
+            <p class="album-name">Album Name</p>
+          </div>
+        </div>
+
+        <div class="navigation-buttons">
+          <button id="back-button" class="button secondary">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+            BACK
+          </button>
+
+          <button id="back-to-menu-button" class="button secondary" style="display: none;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            BACK TO MENU
+          </button>
+        </div>
+      </div>
+
+      <!-- Results section -->
+      <div id="results-container" style="display: none;">
+        <h2>Your STAYC Song Ranking</h2>
+
+        <div id="ranking-list"></div>
+
+        <div class="share-section">
+          <h3>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="18" cy="5" r="3"></circle>
+              <circle cx="6" cy="12" r="3"></circle>
+              <circle cx="18" cy="19" r="3"></circle>
+              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+            </svg>
+            Share Your Ranking
+          </h3>
+
+          <div class="share-url-container">
+            <input type="text" id="share-url" readonly>
+            <button id="copy-button" class="button">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              Copy
+            </button>
+          </div>
+
+          <div class="share-image-section">
+            <h4>Share as Image</h4>
+
+            <div class="image-layout-options">
+              <div class="layout-option">
+                <input type="radio" id="vertical-layout" name="image-layout" checked>
+                <label for="vertical-layout">Vertical</label>
+              </div>
+              <div class="layout-option">
+                <input type="radio" id="horizontal-layout" name="image-layout">
+                <label for="horizontal-layout">Horizontal</label>
+              </div>
+            </div>
+
+            <div class="share-image-buttons">
+              <button id="generate-image" class="button primary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                  <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                  <polyline points="21 15 16 10 5 21"></polyline>
+                </svg>
+                Generate Image
+              </button>
+              <a id="download-image" class="button secondary" download="stayc-ranking.png" style="display: none;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Download
+              </a>
+              <a id="twitter-share" href="#" target="_blank" rel="noopener noreferrer" class="button twitter">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path>
+                </svg>
+                Tweet
+              </a>
+            </div>
+            <div id="image-preview-container" style="display: none;">
+              <h4>Preview</h4>
+              <div id="image-preview"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hidden canvas for image generation -->
+        <canvas id="ranking-canvas" style="display: none;"></canvas>
+
+        <div class="back-to-menu-container">
+          <button id="results-back-to-menu" class="button secondary">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            BACK TO MENU
+          </button>
+        </div>
+      </div>
+
+      <!-- Settings section -->
+      <div id="settings-container">
+        <div class="start-buttons">
+          <button id="start-button" class="button primary">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+            START
+          </button>
+          <button id="restart-button" class="button primary" style="display: none;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 2v6h6"></path>
+              <path d="M21 12A9 9 0 0 0 6 5.3L3 8"></path>
+              <path d="M21 22v-6h-6"></path>
+              <path d="M3 12a9 9 0 0 0 15 6.7l3-2.7"></path>
+            </svg>
+            RESTART
+          </button>
+        </div>
+
+        <div class="settings-options">
+          <div class="setting-row">
+            <label for="rank-target">Create my top</label>
+            <select id="rank-target">
+              <option value="3">3</option>
+              <option value="5">5</option>
+              <option value="10" selected>10</option>
+              <option value="15">15</option>
+              <option value="20">20</option>
+              <option value="all">All Songs</option>
+            </select>
+            <span>ranking</span>
+          </div>
+
+          <div class="setting-row songs-option">
+            <label>Include:</label>
+            <div class="radio-group">
+              <div class="radio-item">
+                <input type="radio" id="all-songs" name="song-filter" checked>
+                <label for="all-songs">All Songs</label>
+              </div>
+              <div class="radio-item">
+                <input type="radio" id="title-tracks" name="song-filter">
+                <label for="title-tracks">Title Tracks Only</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>Created with ♥ for STAYC and SWITH</p>
+    <p>
+      <a href="https://github.com/yourusername/stayc-ranker" target="_blank" rel="noopener noreferrer">GitHub</a> |
+      <a href="https://twitter.com/share?url=https://yourusername.github.io/stayc-ranker&text=Check out my STAYC song ranking!" target="_blank" rel="noopener noreferrer">Share on Twitter</a>
+    </p>
+  </footer>
+</div>
+
+<!-- Scripts -->
+<script src="songs.js"></script>
+<script src="ranker.js"></script>
+</body>
+</html>

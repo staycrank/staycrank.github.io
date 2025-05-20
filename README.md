@@ -1,1 +1,1 @@
-# staycrank.github.io
+# stayc-rank
