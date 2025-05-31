@@ -1,11 +1,12 @@
 document.addEventListener("DOMContentLoaded", () => {
   // DOM Elements
-    const startButton = document.getElementById("start-button")
+  const startButton = document.getElementById("start-button")
   const restartButton = document.getElementById("restart-button")
   const backButton = document.getElementById("back-button")
   const backToMenuButton = document.getElementById("back-to-menu-button")
   const resultsBackToMenuButton = document.getElementById("results-back-to-menu")
   const settingsContainer = document.getElementById("settings-container")
+  const songSelectionContainer = document.getElementById("song-selection-container")
   const matchContainer = document.getElementById("match-container")
   const resultsContainer = document.getElementById("results-container")
   const progressBar = document.getElementById("progress-bar")
@@ -27,8 +28,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Settings Elements
   const rankTarget = document.getElementById("rank-target")
-  const allSongsRadio = document.getElementById("all-songs")
   const titleTracksRadio = document.getElementById("title-tracks")
+  const customSelectionRadio = document.getElementById("custom-selection")
+
+  // Song Selection Elements
+  const songGrid = document.getElementById("song-grid")
+  const selectedCount = document.getElementById("selected-count")
+  const selectAllBtn = document.getElementById("select-all-btn")
+  const deselectAllBtn = document.getElementById("deselect-all-btn")
+  const confirmSelectionBtn = document.getElementById("confirm-selection-btn")
+  const backToSettingsBtn = document.getElementById("back-to-settings-btn")
 
   // State variables
   let songs = []
@@ -38,7 +47,8 @@ document.addEventListener("DOMContentLoaded", () => {
   let results = []
   let history = []
   let currentRankings = []
-  const albumCoversCache = {} // Cache for album covers
+  const selectedSongs = new Set()
+  const albumCoversCache = {}
 
   // Get base URL for absolute paths
   const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf("/") + 1)
@@ -60,75 +70,122 @@ document.addEventListener("DOMContentLoaded", () => {
   const gptJp = assets + "gptJp.jpg"
   const metamorphicAlbum = assets + "metamorphic.jpeg"
   const SAlbum = assets + "s.jpg"
+  const ourBluesAlbums = assets + "star.png"
+  const overuAlbum =  assets + "overu.jpg"
+  const tstarsAlbum = assets + "tstars.jpeg"
 
-  // Sample song data (replace with your actual data source)
+  // Sample song data
   const staycSongs = [
-    { id: 1, title: "ASAP", album: "STAYDOM", albumCover: staydomAlbum, isTitle: true },
-    { id: 2, title: "SO WHAT", album: "STAYDOM", albumCover: staydomAlbum, isTitle: false },
-    { id: 3, title: "RUN2U", album: "YOUNG-LUV.COM", albumCover: youngluvAlbum, isTitle: true },
-    { id: 4, title: "SAME SAME", album: "YOUNG-LUV.COM", albumCover: youngluvAlbum, isTitle: false },
-    { id: 5, title: "STEREOTYPE", album: "STEREOTYPE", albumCover: stereotypeAlbum, isTitle: true },
-    { id: 6, title: "I’LL BE THERE", album: "STEREOTYPE", albumCover: stereotypeAlbum, isTitle: false },
-    { id: 7, title: "BEAUTIFUL MONSTER", album: "WE NEED LOVE", albumCover: needLoveAlbum, isTitle: true },
-    { id: 8, title: "LOVE", album: "WE NEED LOVE", albumCover: needLoveAlbum, isTitle: false },
-    { id: 9, title: "Teddy Bear", album: "Teddy Bear", albumCover: teddyBearAlbum, isTitle: true },
-    { id: 10, title: "Poppy (Korean Ver.)", album: "Poppy", albumCover:  poppyAlbum, isTitle: false },
-    { id: 11, title: "Bubble", album: "TEENFRESH", albumCover: teenFreshAlbum, isTitle: true },
-    { id: 12, title: "Not Like You", album: "TEENFRESH", albumCover: teenFreshAlbum, isTitle: false },
-    { id: 13, title: "SO BAD", album: "Star To A Young Culture", albumCover: staycAlbum, isTitle: true },
-    { id: 14, title: "LIKE THIS", album: "Star To A Young Culture", albumCover: staycAlbum, isTitle: false },
-    { id: 15, title: "LOVE FOOL", album: "STAYDOM", albumCover: staydomAlbum, isTitle: false },
-    { id: 16, title: "SO BAD (TAK Remix)", album: "STAYDOM", albumCover: staydomAlbum, isTitle: false },
-    { id: 17, title: "SLOW DOWN", album: "STEREOTYPE", albumCover: stereotypeAlbum, isTitle: false },
-    { id: 18, title: "COMPLEX", album: "STEREOTYPE", albumCover: stereotypeAlbum, isTitle: false },
-    { id: 19, title: "247", album: "YOUNG-LUV.COM", albumCover: youngluvAlbum, isTitle: false },
-    { id: 20, title: "YOUNG LUV", album: "YOUNG-LUV.COM", albumCover: youngluvAlbum, isTitle: false },
-    { id: 21, title: "BUTTERFLY", album: "YOUNG-LUV.COM", albumCover: youngluvAlbum, isTitle: false },
-    { id: 22, title: "I WANT U BABY", album: "YOUNG-LUV.COM", albumCover: youngluvAlbum, isTitle: false },
-    { id: 23, title: "I LIKE IT", album: "WE NEED LOVE", albumCover: needLoveAlbum, isTitle: false },
-    { id: 24, title: "RUN2U (TAK Remix)", album: "WE NEED LOVE", albumCover: needLoveAlbum, isTitle: false },
-    { id: 25, title: "Poppy (Japanese Ver.)", album: "Poppy (Japanese Ver.)", albumCover:  poppyAlbum, isTitle: true },
-    { id: 26, title: "ASAP (Japanese Ver.)", album: "Poppy (Japanese Ver.)", albumCover:  poppyAlbum, isTitle: false },
-    { id: 27, title: "Poppy (Korean Ver.)", album: "Teddy Bear", albumCover: teddyBearAlbum, isTitle: false },
-    { id: 28, title: "Teddy Bear (Japanese Ver.)", album: "Teddy Bear(Japanese Ver.)", albumCover: teddyBearJpAlbum, isTitle: false },
-    { id: 29, title: "Stereotype (Japanese Ver.)", album: "Teddy Bear(Japanese Ver.)", albumCover: teddyBearJpAlbum, isTitle: false },
-    { id: 30, title: "Be Mine", album: "TEENFRESH", albumCover: teenFreshAlbum, isTitle: false },
-    { id: 31, title: "I Wanna Do", album: "TEENFRESH", albumCover: teenFreshAlbum, isTitle: false },
+    { id: 1, title: "SO BAD", album: "Star To A Young Culture", albumCover: staycAlbum, isTitle: true },
+    { id: 2, title: "LIKE THIS", album: "Star To A Young Culture", albumCover: staycAlbum, isTitle: false },
+    { id: 3, title: "ASAP", album: "STAYDOM", albumCover: staydomAlbum, isTitle: true },
+    { id: 4, title: "SO WHAT", album: "STAYDOM", albumCover: staydomAlbum, isTitle: false },
+    { id: 5, title: "LOVE FOOL", album: "STAYDOM", albumCover: staydomAlbum, isTitle: false },
+    { id: 6, title: "SO BAD (TAK Remix)", album: "STAYDOM", albumCover: staydomAlbum, isTitle: false },
+    { id: 7, title: "STEREOTYPE", album: "STEREOTYPE", albumCover: stereotypeAlbum, isTitle: true },
+    { id: 8, title: "I'LL BE THERE", album: "STEREOTYPE", albumCover: stereotypeAlbum, isTitle: false },
+    { id: 9, title: "SLOW DOWN", album: "STEREOTYPE", albumCover: stereotypeAlbum, isTitle: false },
+    { id: 10, title: "COMPLEX", album: "STEREOTYPE", albumCover: stereotypeAlbum, isTitle: false },
+    { id: 11, title: "RUN2U", album: "YOUNG-LUV.COM", albumCover: youngluvAlbum, isTitle: true },
+    { id: 12, title: "SAME SAME", album: "YOUNG-LUV.COM", albumCover: youngluvAlbum, isTitle: false },
+    { id: 13, title: "247", album: "YOUNG-LUV.COM", albumCover: youngluvAlbum, isTitle: false },
+    { id: 14, title: "YOUNG LUV", album: "YOUNG-LUV.COM", albumCover: youngluvAlbum, isTitle: false },
+    { id: 15, title: "BUTTERFLY", album: "YOUNG-LUV.COM", albumCover: youngluvAlbum, isTitle: false },
+    { id: 16, title: "I WANT U BABY", album: "YOUNG-LUV.COM", albumCover: youngluvAlbum, isTitle: false },
+    { id: 17, title: "STAR", album: "Our Blues", albumCover: ourBluesAlbums, isTitle: false },
+    { id: 18, title: "BEAUTIFUL MONSTER", album: "WE NEED LOVE", albumCover: needLoveAlbum, isTitle: true },
+    { id: 19, title: "I LIKE IT", album: "WE NEED LOVE", albumCover: needLoveAlbum, isTitle: false },
+    { id: 20, title: "LOVE", album: "WE NEED LOVE", albumCover: needLoveAlbum, isTitle: false },
+    { id: 21, title: "RUN2U (TAK Remix)", album: "WE NEED LOVE", albumCover: needLoveAlbum, isTitle: false },
+    { id: 22, title: "Poppy (Japanese Ver.)", album: "Poppy (Japanese Ver.)", albumCover: poppyAlbum, isTitle: true },
+    { id: 23, title: "ASAP (Japanese Ver.)", album: "Poppy (Japanese Ver.)", albumCover: poppyAlbum, isTitle: false },
+    { id: 24, title: "Teddy Bear", album: "Teddy Bear", albumCover: teddyBearAlbum, isTitle: true },
+    { id: 25, title: "Poppy (Korean Ver.)", album: "Teddy Bear", albumCover: teddyBearAlbum, isTitle: false },
+    {
+      id: 26,
+      title: "Teddy Bear (Japanese Ver.)",
+      album: "Teddy Bear(Japanese Ver.)",
+      albumCover: teddyBearJpAlbum,
+      isTitle: false,
+    },
+    {
+      id: 27,
+      title: "Stereotype (Japanese Ver.)",
+      album: "Teddy Bear(Japanese Ver.)",
+      albumCover: teddyBearJpAlbum,
+      isTitle: false,
+    },
+    { id: 28, title: "Bubble", album: "TEENFRESH", albumCover: teenFreshAlbum, isTitle: true },
+    { id: 29, title: "Not Like You", album: "TEENFRESH", albumCover: teenFreshAlbum, isTitle: false },
+    { id: 30, title: "I Wanna Do", album: "TEENFRESH", albumCover: teenFreshAlbum, isTitle: false },
+    { id: 31, title: "Be Mine", album: "TEENFRESH", albumCover: teenFreshAlbum, isTitle: false },
     { id: 32, title: "Bubble (English Ver.)", album: "TEENFRESH", albumCover: teenFreshAlbum, isTitle: false },
     { id: 33, title: "Bubble (Sped Up)(English Ver.)", album: "TEENFRESH", albumCover: teenFreshAlbum, isTitle: false },
     { id: 34, title: "LIT", album: "LIT", albumCover: lit, isTitle: true },
     { id: 35, title: "Bubble (Japanese Ver.)", album: "LIT", albumCover: lit, isTitle: false },
     { id: 36, title: "Fancy - Spotify Singles", album: "Fancy - Spotify Singles", albumCover: fancy, isTitle: false },
-    { id: 37, title: "MEOW", album: "MEOW / Cheeky Icy Thang (Japanese Ver.)", albumCover: meow, isTitle: true },
-    { id: 38, title: "Cheeky Icy Thang - Japanese Ver.", album: "MEOW / Cheeky Icy Thang (Japanese Ver.)", albumCover: meow, isTitle: false },
-    { id: 39, title: "MEOW - Remix Version", album: "MEOW / Cheeky Icy Thang (Japanese Ver.)", albumCover: meow, isTitle: false },
-    { id: 40, title: "GPT", album: "...I", albumCover: iAlbum, isTitle: true },
-    { id: 41, title: "Meant To Be", album: "...I", albumCover: iAlbum, isTitle: false },
-    { id: 42, title: "GPT - Japanese Ver.", album: "GPT (Japanese Ver.)/Tell Me Now", albumCover: gptJp, isTitle: false },
-    { id: 43, title: "Tell Me Now", album: "GPT (Japanese Ver.)/Tell Me Now", albumCover: gptJp, isTitle: false },
-    { id: 44, title: "Cheeky Icy Thang", album: "Metamorphic", albumCover: metamorphicAlbum, isTitle: true },
-    { id: 45, title: "Twenty", album: "Metamorphic", albumCover: metamorphicAlbum, isTitle: false },
-    { id: 46, title: "1 Thing", album: "Metamorphic", albumCover: metamorphicAlbum, isTitle: false },
-    { id: 47, title: "Give It 2 Me", album: "Metamorphic", albumCover: metamorphicAlbum, isTitle: false },
-    { id: 48, title: "Find (Sieun & Seeun & J)", album: "Metamorphic", albumCover: metamorphicAlbum, isTitle: false },
-    { id: 49, title: "Let Me Know", album: "Metamorphic", albumCover: metamorphicAlbum, isTitle: false },
-    { id: 50, title: "Nada", album: "Metamorphic", albumCover: metamorphicAlbum, isTitle: false },
-    { id: 51, title: "Fakin'(Sumin & Yoon)", album: "Metamorphic", albumCover: metamorphicAlbum, isTitle: false },
-    { id: 52, title: "Roses (ISA)", album: "Metamorphic", albumCover: metamorphicAlbum, isTitle: false },
-    { id: 53, title: "Beauty Bomb", album: "Metamorphic", albumCover: metamorphicAlbum, isTitle: false },
-    { id: 54, title: "Gummy Bear", album: "Metamorphic", albumCover: metamorphicAlbum, isTitle: false },
-    { id: 55, title: "Stay WITH me", album: "Metamorphic", albumCover: metamorphicAlbum, isTitle: false },
-    { id: 56, title: "Flexing On My Ex", album: "Metamorphic", albumCover: metamorphicAlbum, isTitle: false },
-    { id: 57, title: "Trouble Maker", album: "Metamorphic", albumCover: metamorphicAlbum, isTitle: false },
-    { id: 58, title: "BEBE", album: "S", albumCover: SAlbum, isTitle: true },
-    { id: 59, title: "DIAMOND", album: "S", albumCover: SAlbum, isTitle: false },
-    { id: 60, title: "PIPE DOWN", album: "S", albumCover: SAlbum, isTitle: false },
+    { id: 37, title: "Twenty", album: "Metamorphic", albumCover: metamorphicAlbum, isTitle: false },
+    { id: 38, title: "Cheeky Icy Thang", album: "Metamorphic", albumCover: metamorphicAlbum, isTitle: true },
+    { id: 39, title: "1 Thing", album: "Metamorphic", albumCover: metamorphicAlbum, isTitle: false },
+    { id: 40, title: "Give It 2 Me", album: "Metamorphic", albumCover: metamorphicAlbum, isTitle: false },
+    { id: 41, title: "Find (Sieun & Seeun & J)", album: "Metamorphic", albumCover: metamorphicAlbum, isTitle: false },
+    { id: 42, title: "Let Me Know", album: "Metamorphic", albumCover: metamorphicAlbum, isTitle: false },
+    { id: 43, title: "Nada", album: "Metamorphic", albumCover: metamorphicAlbum, isTitle: false },
+    { id: 44, title: "Fakin'(Sumin & Yoon)", album: "Metamorphic", albumCover: metamorphicAlbum, isTitle: false },
+    { id: 45, title: "Roses (ISA)", album: "Metamorphic", albumCover: metamorphicAlbum, isTitle: false },
+    { id: 46, title: "Beauty Bomb", album: "Metamorphic", albumCover: metamorphicAlbum, isTitle: false },
+    { id: 47, title: "Gummy Bear", album: "Metamorphic", albumCover: metamorphicAlbum, isTitle: false },
+    { id: 48, title: "Stay WITH me", album: "Metamorphic", albumCover: metamorphicAlbum, isTitle: false },
+    { id: 49, title: "Flexing On My Ex", album: "Metamorphic", albumCover: metamorphicAlbum, isTitle: false },
+    { id: 50, title: "Trouble Maker", album: "Metamorphic", albumCover: metamorphicAlbum, isTitle: false },
+    { id: 51, title: "MEOW", album: "MEOW / Cheeky Icy Thang (Japanese Ver.)", albumCover: meow, isTitle: true },
+    {
+      id: 52,
+      title: "Cheeky Icy Thang - Japanese Ver.",
+      album: "MEOW / Cheeky Icy Thang (Japanese Ver.)",
+      albumCover: meow,
+      isTitle: false,
+    },
+    {
+      id: 53,
+      title: "MEOW - Remix Version",
+      album: "MEOW / Cheeky Icy Thang (Japanese Ver.)",
+      albumCover: meow,
+      isTitle: false,
+    },
+    { id: 54, title: "GPT", album: "...I", albumCover: iAlbum, isTitle: true },
+    { id: 55, title: "Meant To Be", album: "...I", albumCover: iAlbum, isTitle: false },
+    {
+      id: 56,
+      title: "GPT - Japanese Ver.",
+      album: "GPT (Japanese Ver.)/Tell Me Now",
+      albumCover: gptJp,
+      isTitle: false,
+    },
+    { id: 57, title: "Tell Me Now", album: "GPT (Japanese Ver.)/Tell Me Now", albumCover: gptJp, isTitle: false },
+    { id: 58, title: "Over U, Goodbye (Seeun x J)", album: "Over U, Goodbye (Seeun x J)", albumCover: overuAlbum, isTitle: false },
+    { id: 59, title: "BEBE", album: "S", albumCover: SAlbum, isTitle: true },
+    { id: 60, title: "DIAMOND", album: "S", albumCover: SAlbum, isTitle: false },
+    { id: 61, title: "PIPE DOWN", album: "S", albumCover: SAlbum, isTitle: false },
+    { id: 62, title: "Trace of Stars (ISA)", album: "Trace of Stars (Crushology 101 OST Part.1)", albumCover: tstarsAlbum, isTitle: false },
   ]
+
+  // Album colors for fallback
+  const albumColors = {
+    STAYDOM: "#ffb5d3",
+    "YOUNG-LUV.COM": "#a59dff",
+    STEREOTYPE: "#ffde59",
+    "WE NEED LOVE": "#6c63ff",
+    "Teddy Bear": "#ff5fa2",
+    Poppy: "#ffb5d3",
+    Bubble: "#a59dff",
+    TEENFRESH: "#ffde59",
+  }
 
   // Initialize the app
   function init() {
     // Set up event listeners
-    startButton.addEventListener("click", startRanking)
+    startButton.addEventListener("click", handleStartClick)
     restartButton.addEventListener("click", restartRanking)
     backButton.addEventListener("click", goBack)
     backToMenuButton.addEventListener("click", backToMenu)
@@ -138,8 +195,197 @@ document.addEventListener("DOMContentLoaded", () => {
     // Image sharing event listeners
     generateImageButton.addEventListener("click", generateRankingImage)
 
+    // Song selection event listeners
+    selectAllBtn.addEventListener("click", selectAllSongs)
+    deselectAllBtn.addEventListener("click", deselectAllSongs)
+    confirmSelectionBtn.addEventListener("click", startRankingFromSelection)
+    backToSettingsBtn.addEventListener("click", backToSettings)
+
     // Preload album covers for canvas use
     preloadAlbumCovers()
+
+    // Initialize song grid
+    initializeSongGrid()
+  }
+
+  // Handle start button click
+  function handleStartClick() {
+    if (customSelectionRadio.checked) {
+      showSongSelection()
+    } else {
+      startRanking()
+    }
+  }
+
+  // Show song selection interface
+  function showSongSelection() {
+    settingsContainer.style.display = "none"
+    songSelectionContainer.style.display = "block"
+    updateSelectedCount()
+  }
+
+  // Back to settings from song selection
+  function backToSettings() {
+    songSelectionContainer.style.display = "none"
+    settingsContainer.style.display = "block"
+  }
+
+  // Initialize song grid
+  function initializeSongGrid() {
+    songGrid.innerHTML = ""
+
+    staycSongs.forEach((song) => {
+      const songItem = document.createElement("div")
+      songItem.className = `song-item ${song.isTitle ? "title-track" : ""}`
+      songItem.dataset.songId = song.id
+
+      songItem.innerHTML = `
+        <div class="song-item-cover">
+          <img src="${getFullImagePath(song.albumCover)}" alt="${song.album}" onerror="this.src='${getFullImagePath("assets/placeholder.jpg")}'">
+        </div>
+        <div class="song-item-title">${song.title}</div>
+        <div class="song-item-album">${song.album}</div>
+      `
+
+      songItem.addEventListener("click", () => toggleSongSelection(song.id))
+      songGrid.appendChild(songItem)
+    })
+
+
+    // Initialize time estimation as hidden
+    document.getElementById("time-estimation").style.display = "none"
+  }
+
+  // Toggle song selection
+  function toggleSongSelection(songId) {
+    const songItem = document.querySelector(`[data-song-id="${songId}"]`)
+
+    if (selectedSongs.has(songId)) {
+      selectedSongs.delete(songId)
+      songItem.classList.remove("selected")
+    } else {
+      selectedSongs.add(songId)
+      songItem.classList.add("selected")
+    }
+
+    updateSelectedCount()
+  }
+
+  // Update selected count and button state
+  function updateSelectedCount() {
+    const count = selectedSongs.size
+    selectedCount.textContent = count
+    confirmSelectionBtn.disabled = count < 2
+
+
+    // Update time estimation
+    updateTimeEstimation(count)
+  }
+
+  // Calculate and display time estimation
+  function updateTimeEstimation(songCount) {
+    const timeEstimationElement = document.getElementById("time-estimation")
+    const estimatedTimeElement = document.getElementById("estimated-time")
+    const estimatedRoundsElement = document.getElementById("estimated-rounds")
+
+    if (songCount < 2) {
+      timeEstimationElement.style.display = "none"
+      return
+    }
+
+    // Calculate number of rounds (combinations of n songs taken 2 at a time)
+    const rounds = (songCount * (songCount - 1)) / 2
+
+    // Estimate time per round (average decision time + UI transitions)
+    // Conservative estimate: 3-5 seconds per round
+    const secondsPerRound = 4
+    const totalSeconds = rounds * secondsPerRound
+
+    // Convert to human-readable format
+    let timeText = ""
+    if (totalSeconds < 60) {
+      timeText = `${totalSeconds} seconds`
+    } else if (totalSeconds < 3600) {
+      const minutes = Math.ceil(totalSeconds / 60)
+      timeText = `${minutes} minute${minutes > 1 ? "s" : ""}`
+    } else {
+      const hours = Math.floor(totalSeconds / 3600)
+      const minutes = Math.ceil((totalSeconds % 3600) / 60)
+      timeText = `${hours}h ${minutes}m`
+    }
+
+    // Update display
+    estimatedTimeElement.textContent = timeText
+    estimatedRoundsElement.textContent = rounds
+    timeEstimationElement.style.display = "flex"
+
+    // Add warning for very long rankings
+    if (rounds > 100) {
+      timeEstimationElement.style.color = "var(--accent)"
+      if (rounds > 300) {
+        timeEstimationElement.style.color = "#ff6b6b"
+      }
+    } else {
+      timeEstimationElement.style.color = "var(--secondary)"
+    }
+  }
+
+  // Select all songs
+  function selectAllSongs() {
+    selectedSongs.clear()
+    staycSongs.forEach((song) => selectedSongs.add(song.id))
+    updateSongGridSelection()
+    updateSelectedCount()
+  }
+
+  // Deselect all songs
+  function deselectAllSongs() {
+    selectedSongs.clear()
+    updateSongGridSelection()
+    updateSelectedCount()
+  }
+
+  // Select only title tracks
+  function selectTitleTracks() {
+    selectedSongs.clear()
+    staycSongs.filter((song) => song.isTitle).forEach((song) => selectedSongs.add(song.id))
+    updateSongGridSelection()
+    updateSelectedCount()
+  }
+
+  // Update song grid visual selection
+  function updateSongGridSelection() {
+    document.querySelectorAll(".song-item").forEach((item) => {
+      const songId = Number.parseInt(item.dataset.songId)
+      if (selectedSongs.has(songId)) {
+        item.classList.add("selected")
+      } else {
+        item.classList.remove("selected")
+      }
+    })
+  }
+
+  // Start ranking from custom selection
+  function startRankingFromSelection() {
+    if (selectedSongs.size < 2) {
+      alert("Please select at least 2 songs to rank!")
+      return
+    }
+
+    // Filter songs based on selection
+    songs = staycSongs.filter((song) => selectedSongs.has(song.id))
+
+    // Create matches
+    createMatches()
+
+    // Update UI
+    songSelectionContainer.style.display = "none"
+    matchContainer.style.display = "flex"
+    startButton.style.display = "none"
+    restartButton.style.display = "inline-flex"
+
+    // Show first match
+    showMatch(0)
   }
 
   // Get full path for an image
@@ -152,16 +398,14 @@ document.addEventListener("DOMContentLoaded", () => {
     staycSongs.forEach((song) => {
       if (!albumCoversCache[song.id]) {
         const img = new Image()
-        img.crossOrigin = "anonymous" // Important for CORS
+        img.crossOrigin = "anonymous"
         img.onload = () => {
           albumCoversCache[song.id] = img
         }
         img.onerror = (e) => {
           console.error(`Failed to load image for song ${song.id}: ${song.title}`, e)
-          // Create fallback colored placeholder
           createFallbackCover(song)
         }
-        // Use absolute path instead of relative
         img.src = getFullImagePath(song.albumCover)
       }
     })
@@ -174,21 +418,18 @@ document.addEventListener("DOMContentLoaded", () => {
     canvas.height = 120
     const ctx = canvas.getContext("2d")
 
-    // Use a color based on the song id
     const colors = ["#ffb5d3", "#a59dff", "#ffde59", "#6c63ff", "#ff5fa2"]
     const colorIndex = (song.id - 1) % colors.length
 
     ctx.fillStyle = colors[colorIndex]
     ctx.fillRect(0, 0, 120, 120)
 
-    // Add album initial
     ctx.fillStyle = "#ffffff"
     ctx.font = "bold 40px Arial"
     ctx.textAlign = "center"
     ctx.textBaseline = "middle"
     ctx.fillText(song.album.charAt(0), 60, 60)
 
-    // Convert to image
     const dataUrl = canvas.toDataURL()
     const fallbackImg = new Image()
     fallbackImg.src = dataUrl
@@ -501,7 +742,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function generateVerticalImage() {
     // Set canvas dimensions
     const width = 800
-    const height = 150 + currentRankings.length * 70 + 30 // Added 30px for the extra text line
+    const height = 150 + currentRankings.length * 70 + 30
     rankingCanvas.width = width
     rankingCanvas.height = height
 
@@ -564,7 +805,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Draw footer
     ctx.fillStyle = "#f8f9fa"
-    ctx.fillRect(0, height - 60, width, 60) // Increased height for two lines of text
+    ctx.fillRect(0, height - 60, width, 60)
 
     ctx.fillStyle = "#888888"
     ctx.font = "14px Poppins, sans-serif"
@@ -572,7 +813,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ctx.fillText("Generated with STAYC Song Ranker", width / 2, height - 35)
 
     // Draw second line of footer text
-    ctx.fillStyle = "#ff5fa2" // Use STAYC pink color for the slogan
+    ctx.fillStyle = "#ff5fa2"
     ctx.font = "16px Poppins, sans-serif"
     ctx.textAlign = "center"
     ctx.fillText("STAYC girls is going down!", width / 2, height - 15)
@@ -595,7 +836,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Calculate dimensions based on number of songs
     const itemWidth = 180
     const width = Math.max(800, currentRankings.length * itemWidth)
-    const height = 430 // Increased from 400 to accommodate the extra text line
+    const height = 430
     rankingCanvas.width = width
     rankingCanvas.height = height
 
@@ -665,7 +906,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Draw footer
     ctx.fillStyle = "#f8f9fa"
-    ctx.fillRect(0, height - 60, width, 60) // Increased height for two lines of text
+    ctx.fillRect(0, height - 60, width, 60)
 
     ctx.fillStyle = "#888888"
     ctx.font = "14px Poppins, sans-serif"
@@ -673,7 +914,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ctx.fillText("Generated with STAYC Song Ranker", width / 2, height - 35)
 
     // Draw second line of footer text
-    ctx.fillStyle = "#ff5fa2" // Use STAYC pink color for the slogan
+    ctx.fillStyle = "#ff5fa2"
     ctx.font = "16px Poppins, sans-serif"
     ctx.textAlign = "center"
     ctx.fillText("STAYC girls is going down!", width / 2, height - 15)
@@ -700,6 +941,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Restart the ranking process
   function restartRanking() {
     settingsContainer.style.display = "block"
+    songSelectionContainer.style.display = "none"
     matchContainer.style.display = "none"
     resultsContainer.style.display = "none"
   }
@@ -708,6 +950,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function backToMenu() {
     // Reset UI
     settingsContainer.style.display = "block"
+    songSelectionContainer.style.display = "none"
     matchContainer.style.display = "none"
     resultsContainer.style.display = "none"
     startButton.style.display = "inline-flex"
@@ -717,6 +960,9 @@ document.addEventListener("DOMContentLoaded", () => {
     currentMatchIndex = 0
     results = []
     history = []
+    selectedSongs.clear()
+    updateSongGridSelection()
+    updateSelectedCount()
   }
 
   // Helper function to shuffle an array
@@ -736,7 +982,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (ranking) {
       const rankingIds = ranking.split(",").map((id) => Number.parseInt(id))
-      const rankedSongs = rankingIds.map((id) => staycSongs.find((song) => song.id === id)).filter((song) => song) // Filter out any undefined songs
+      const rankedSongs = rankingIds.map((id) => staycSongs.find((song) => song.id === id)).filter((song) => song)
 
       if (rankedSongs.length > 0) {
         currentRankings = rankedSongs
