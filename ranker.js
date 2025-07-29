@@ -73,6 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const ourBluesAlbums = assets + "star.png"
   const overuAlbum =  assets + "overu.jpg"
   const tstarsAlbum = assets + "tstars.jpeg"
+  const iwiAlbum = assets + "iwi.jpeg"
 
   // Sample song data
   const staycSongs = [
@@ -168,6 +169,9 @@ document.addEventListener("DOMContentLoaded", () => {
     { id: 60, title: "DIAMOND", album: "S", albumCover: SAlbum, isTitle: false },
     { id: 61, title: "PIPE DOWN", album: "S", albumCover: SAlbum, isTitle: false },
     { id: 62, title: "Trace of Stars (ISA)", album: "Trace of Stars (Crushology 101 OST Part.1)", albumCover: tstarsAlbum, isTitle: false },
+    { id: 63, title: "I WANT IT", album: "STAYC Special Single [I WANT IT]", albumCover: iwiAlbum, isTitle: true },
+    { id: 64, title: "BOY", album: "STAYC Special Single [I WANT IT]", albumCover: iwiAlbum, isTitle: false },
+    { id: 65, title: "반칙 (Honestly)", album: "STAYC Special Single [I WANT IT]", albumCover: iwiAlbum, isTitle: false },
   ]
 
   // Album colors for fallback
