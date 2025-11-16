@@ -38,12 +38,12 @@ const ChatQuiz = (() => {
   const introMessage = "¡Vamos a empezar de nuevo! 💖";
   let stepIndex = 0;
   const avatarChoices = [
-    "assets/chat-avatar-mint-cat.svg",
-    "assets/chat-avatar-puppy-bone.svg",
-    "assets/chat-avatar-tiger-cream.svg",
-    "assets/chat-avatar-peach-fox.svg",
-    "assets/chat-avatar-bow-pup.svg",
-    "assets/chat-avatar-bunny-nightcap.svg",
+    "assets/gptJp.jpg",
+    "assets/meow.jpeg",
+    "assets/metamorphic.jpeg",
+    "assets/stereotype.jpeg",
+    "assets/teddy-bear-jp.jpg",
+    "assets/poppy.jpg",
   ];
 
   const chatToggle = document.getElementById("chat-toggle");
