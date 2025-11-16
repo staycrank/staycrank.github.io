@@ -288,7 +288,31 @@
           </footer>
         </div>
 
+        <button id="chat-toggle" class="chat-toggle" aria-label="Abrir chat interactivo" aria-expanded="false">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+        </button>
+
+        <div id="chatbox" class="chatbox" aria-live="polite">
+          <div class="chatbox-header">
+            <div class="chatbox-title">
+              <div class="chat-avatar"></div>
+              <div>
+                <h4>Photocard Quiz 💖</h4>
+                <p class="chatbox-subtitle">Discover your photocard match!</p>
+              </div>
+            </div>
+            <button id="chat-close" class="chat-close" aria-label="Cerrar chat">×</button>
+          </div>
+          <div class="chatbox-body">
+            <div id="chat-messages" class="chat-messages"></div>
+            <div id="chat-options" class="chat-options"></div>
+          </div>
+        </div>
+
         <!-- Scripts -->
+        <script src="chat.js"></script>
         <script src="songs.js"></script>
         <script src="ranker.js"></script>
         </body>
