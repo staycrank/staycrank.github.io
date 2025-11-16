@@ -41,8 +41,8 @@ const ChatQuiz = (() => {
     "assets/avatars/isa.webp",
     "assets/avatars/j.webp",
     "assets/avatars/seeun.webp",
-    "assets/avatars/sieun.webp",
     "assets/avatars/sumin.webp",
+    "assets/avatars/sieun.webp",
     "assets/avatars/yoon.webp",
   ];
 
@@ -51,6 +51,7 @@ const ChatQuiz = (() => {
   const chatClose = document.getElementById("chat-close");
   const messages = document.getElementById("chat-messages");
   const optionsContainer = document.getElementById("chat-options");
+  const activeTimeouts = new Set();
   let shouldStartNewSession = true;
 
   if (!chatToggle || !chatbox || !chatClose || !messages || !optionsContainer) {
@@ -61,7 +62,25 @@ const ChatQuiz = (() => {
     messages.scrollTop = messages.scrollHeight;
   };
 
-  const addBotMessage = (text) => {
+  const schedule = (fn, delay) => {
+    const id = setTimeout(() => {
+      activeTimeouts.delete(id);
+      fn();
+    }, delay);
+    activeTimeouts.add(id);
+    return id;
+  };
+
+  const clearScheduledResponses = () => {
+    activeTimeouts.forEach((id) => clearTimeout(id));
+    activeTimeouts.clear();
+  };
+
+  const removeTypingIndicators = () => {
+    messages.querySelectorAll(".typing-indicator").forEach((node) => node.remove());
+  };
+
+  const addBotBubble = (text) => {
     const wrapper = document.createElement("div");
     wrapper.className = "chat-message bot";
 
@@ -76,6 +95,47 @@ const ChatQuiz = (() => {
     wrapper.appendChild(bubble);
     messages.appendChild(wrapper);
     scrollToBottom();
+  };
+
+  const showTypingIndicator = () => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "chat-message bot typing-indicator";
+
+    const avatar = document.createElement("div");
+    avatar.className = "chat-avatar-small";
+
+    const bubble = document.createElement("div");
+    bubble.className = "message-bubble typing-bubble";
+
+    const dots = document.createElement("div");
+    dots.className = "typing-dots";
+
+    [0, 1, 2].forEach((index) => {
+      const dot = document.createElement("span");
+      dot.className = "typing-dot";
+      dot.style.animationDelay = `${index * 0.12}s`;
+      dots.appendChild(dot);
+    });
+
+    bubble.appendChild(dots);
+    wrapper.appendChild(avatar);
+    wrapper.appendChild(bubble);
+    messages.appendChild(wrapper);
+    scrollToBottom();
+    return wrapper;
+  };
+
+  const addBotMessage = (text, withTyping = true) => {
+    if (!withTyping) {
+      addBotBubble(text);
+      return;
+    }
+
+    const indicator = showTypingIndicator();
+    schedule(() => {
+      indicator.remove();
+      addBotBubble(text);
+    }, 650);
   };
 
   const addUserMessage = (text) => {
@@ -142,11 +202,11 @@ const ChatQuiz = (() => {
     stepIndex += 1;
 
     if (stepIndex < chatFlow.length) {
-      setTimeout(() => {
+      schedule(() => {
         askCurrentStep();
       }, 450);
     } else {
-      setTimeout(() => {
+      schedule(() => {
         renderCompletion();
       }, 380);
     }
@@ -159,13 +219,15 @@ const ChatQuiz = (() => {
   };
 
   const startConversation = () => {
+    clearScheduledResponses();
+    removeTypingIndicators();
     pickAvatar();
     messages.innerHTML = "";
     optionsContainer.innerHTML = "";
     stepIndex = 0;
     shouldStartNewSession = false;
     addBotMessage(introMessage);
-    setTimeout(() => {
+    schedule(() => {
       askCurrentStep();
     }, 400);
   };
@@ -179,6 +241,8 @@ const ChatQuiz = (() => {
   };
 
   const closeChat = () => {
+    clearScheduledResponses();
+    removeTypingIndicators();
     chatbox.classList.remove("open");
     chatToggle.setAttribute("aria-expanded", "false");
     messages.innerHTML = "";
