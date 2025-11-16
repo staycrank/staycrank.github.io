@@ -35,7 +35,10 @@ const ChatQuiz = (() => {
     },
   ];
 
-  const introMessage = "¡Vamos a empezar de nuevo! 💖";
+  const VISITOR_COOKIE = "stayc_chat_visitor";
+  const COMPLETED_COOKIE = "stayc_chat_completed";
+  const FIRST_TIME_MESSAGE = "¡Bienvenida! Empecemos con tu vibra STAYC. 💖";
+  const RETURNING_MESSAGE = "¡Hola de nuevo! Ya hiciste el test, ¿quieres volver a hacerlo?";
   let stepIndex = 0;
   const avatarChoices = [
     "assets/avatars/isa.webp",
@@ -57,6 +60,35 @@ const ChatQuiz = (() => {
   if (!chatToggle || !chatbox || !chatClose || !messages || !optionsContainer) {
     return {};
   }
+
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) {
+      return parts.pop().split(";").shift();
+    }
+    return undefined;
+  };
+
+  const setCookie = (name, value, days = 365) => {
+    const expires = new Date();
+    expires.setDate(expires.getDate() + days);
+    document.cookie = `${name}=${value}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
+  };
+
+  const ensureVisitorId = () => {
+    if (!getCookie(VISITOR_COOKIE)) {
+      const id = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2);
+      setCookie(VISITOR_COOKIE, id);
+    }
+  };
+
+  const hasCompletedQuiz = () => getCookie(COMPLETED_COOKIE) === "true";
+
+  const markQuizCompleted = () => {
+    ensureVisitorId();
+    setCookie(COMPLETED_COOKIE, "true");
+  };
 
   const scrollToBottom = () => {
     messages.scrollTop = messages.scrollHeight;
@@ -165,6 +197,7 @@ const ChatQuiz = (() => {
   };
 
   const renderCompletion = () => {
+    markQuizCompleted();
     addBotMessage("¡Listo! Gracias por jugar. ¿Quieres reiniciar?");
     optionsContainer.innerHTML = "";
 
@@ -226,6 +259,8 @@ const ChatQuiz = (() => {
     optionsContainer.innerHTML = "";
     stepIndex = 0;
     shouldStartNewSession = false;
+    const introMessage = hasCompletedQuiz() ? RETURNING_MESSAGE : FIRST_TIME_MESSAGE;
+    ensureVisitorId();
     addBotMessage(introMessage);
     schedule(() => {
       askCurrentStep();
