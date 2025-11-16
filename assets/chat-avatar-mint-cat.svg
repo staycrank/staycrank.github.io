@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Mint cat avatar">
+  <defs>
+    <linearGradient id="mint" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#d8ffef"/>
+      <stop offset="100%" stop-color="#b8f0d6"/>
+    </linearGradient>
+  </defs>
+  <circle cx="60" cy="60" r="54" fill="url(#mint)" stroke="#4f9e7b" stroke-width="4"/>
+  <path d="M36 32 l-4 -14 10 10z" fill="#6b7280"/>
+  <path d="M84 32 l4 -14 -10 10z" fill="#6b7280"/>
+  <path d="M60 17c-6 4-9 9-9 14 0 8 7 12 9 16 2-4 9-8 9-16 0-5-3-10-9-14z" fill="#7ccba7" stroke="#4f9e7b" stroke-width="3"/>
+  <circle cx="60" cy="60" r="32" fill="#fff" stroke="#4f9e7b" stroke-width="3"/>
+  <path d="M48 62c4 5 7 8 12 8s8-3 12-8" stroke="#111827" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M52 56c0 4-5 8-8 8-3 0-6-2-6-5s3-5 6-5c3 0 8-2 8 2z" fill="#ec4899"/>
+  <circle cx="46" cy="53" r="5" fill="#111827"/>
+  <circle cx="74" cy="53" r="5" fill="#111827"/>
+  <path d="M64 70c-2 3-6 3-8 0" stroke="#111827" stroke-width="4" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Peach fox avatar">
+  <defs>
+    <linearGradient id="peach" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffd1dc"/>
+      <stop offset="100%" stop-color="#ffb4c0"/>
+    </linearGradient>
+  </defs>
+  <path d="M60 6c-26 16-44 38-44 60 0 24 18 42 44 42s44-18 44-42C104 44 86 22 60 6z" fill="url(#peach)" stroke="#c24176" stroke-width="4"/>
+  <circle cx="60" cy="66" r="34" fill="#fff" stroke="#c24176" stroke-width="3"/>
+  <path d="M42 58c3-8 10-12 18-12s15 4 18 12" stroke="#f472b6" stroke-width="6" stroke-linecap="round" fill="none"/>
+  <circle cx="48" cy="64" r="6" fill="#111827"/>
+  <circle cx="72" cy="64" r="6" fill="#111827"/>
+  <path d="M54 76c2 3 6 4 6 4s4-1 6-4" stroke="#c24176" stroke-width="4" stroke-linecap="round" fill="none"/>
+  <path d="M60 48c-3 0-6-2-6-5s3-5 6-5 6 2 6 5-3 5-6 5z" fill="#fde68a" stroke="#c24176" stroke-width="3"/>
+</svg>

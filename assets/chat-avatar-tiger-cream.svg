@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Tiger cream avatar">
+  <circle cx="60" cy="60" r="54" fill="#fdf3d7" stroke="#c47f2e" stroke-width="4"/>
+  <circle cx="60" cy="60" r="40" fill="#fffaf1"/>
+  <path d="M32 40c0-12 8-22 20-22s18 10 18 22" fill="#f5d48a" stroke="#c47f2e" stroke-width="3"/>
+  <path d="M88 40c0-12-8-22-20-22s-18 10-18 22" fill="#f5d48a" stroke="#c47f2e" stroke-width="3"/>
+  <path d="M60 18c-4 3-6 7-6 12 0 7 5 12 6 14 1-2 6-7 6-14 0-5-2-9-6-12z" fill="#b78a3f"/>
+  <path d="M68 78c4 4 8 6 12 6 8 0 14-8 14-16 0-9-7-16-16-16-6 0-10 3-14 9" fill="#fefefe" stroke="#e5b45d" stroke-width="3"/>
+  <circle cx="46" cy="58" r="6" fill="#111827"/>
+  <circle cx="74" cy="58" r="6" fill="#111827"/>
+  <path d="M52 72c4 3 8 4 8 4s4-1 8-4" stroke="#c47f2e" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M42 48l-8 6m52-6l8 6" stroke="#c47f2e" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="60" cy="65" r="3" fill="#111827"/>
+  <path d="M56 70c2 2 6 2 8 0" stroke="#111827" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="60" cy="30" r="6" fill="#8b5cf6"/>
+  <circle cx="60" cy="28" r="3" fill="#ede9fe"/>
+</svg>

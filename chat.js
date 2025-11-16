@@ -37,6 +37,14 @@ const ChatQuiz = (() => {
 
   const introMessage = "¡Vamos a empezar de nuevo! 💖";
   let stepIndex = 0;
+  const avatarChoices = [
+    "assets/chat-avatar-mint-cat.svg",
+    "assets/chat-avatar-puppy-bone.svg",
+    "assets/chat-avatar-tiger-cream.svg",
+    "assets/chat-avatar-peach-fox.svg",
+    "assets/chat-avatar-bow-pup.svg",
+    "assets/chat-avatar-bunny-nightcap.svg",
+  ];
 
   const chatToggle = document.getElementById("chat-toggle");
   const chatbox = document.getElementById("chatbox");
@@ -143,7 +151,14 @@ const ChatQuiz = (() => {
     }
   };
 
+  const pickAvatar = () => {
+    const randomIndex = Math.floor(Math.random() * avatarChoices.length);
+    const chosenAvatar = avatarChoices[randomIndex];
+    chatbox.style.setProperty("--chat-avatar-url", `url("${chosenAvatar}")`);
+  };
+
   const startConversation = () => {
+    pickAvatar();
     messages.innerHTML = "";
     optionsContainer.innerHTML = "";
     stepIndex = 0;
