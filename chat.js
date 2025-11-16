@@ -38,12 +38,12 @@ const ChatQuiz = (() => {
   const introMessage = "¡Vamos a empezar de nuevo! 💖";
   let stepIndex = 0;
   const avatarChoices = [
-    "assets/gptJp.jpg",
-    "assets/meow.jpeg",
-    "assets/metamorphic.jpeg",
-    "assets/stereotype.jpeg",
-    "assets/teddy-bear-jp.jpg",
-    "assets/poppy.jpg",
+    "assets/avatars/isa.webp",
+    "assets/avatars/j.webp",
+    "assets/avatars/seeun.webp",
+    "assets/avatars/sieun.webp",
+    "assets/avatars/sumin.webp",
+    "assets/avatars/yoon.webp",
   ];
 
   const chatToggle = document.getElementById("chat-toggle");
