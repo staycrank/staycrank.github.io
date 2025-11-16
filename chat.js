@@ -61,114 +61,42 @@ const ChatQuiz = (() => {
   ];
 
   const avatarMatchReplies = {
-    "assets/avatars/isa.webp": [
-      {
-        option: "Sofisticada y elegante, siempre impecable",
-        reply: "¡Ese estilo sofisticado es super Isa vibra!",
-      },
-      {
-        option: "Romántica y soñadora, creo en el amor verdadero",
-        reply: "También creo en esos romances de película.",
-      },
-      {
-        option: "Salir a un café bonito y tomar fotos",
-        reply: "Los cafecitos lindos son mi plan favorito.",
-      },
-      {
-        option: "Los bolsos",
-        reply: "¡A mí también me gustan los bolsos!",
-      },
-    ],
-    "assets/avatars/j.webp": [
-      {
-        option: "Misteriosa y profunda, con múltiples capas",
-        reply: "Me encanta esa aura misteriosa, te queda perfecta.",
-      },
-      {
-        option: "Leal y protectora, siempre presente",
-        reply: "La lealtad lo es todo, ¡gracias por tenerla!",
-      },
-      {
-        option: "Maratón de series con snacks infinitos",
-        reply: "Una buena serie y botanas es mi tarde ideal.",
-      },
-      {
-        option: "Las cámaras desechables",
-        reply: "Siempre llevo una cámara para capturar recuerdos.",
-      },
-    ],
-    "assets/avatars/seeun.webp": [
-      {
-        option: "Explosiva y brillante, llena de vida",
-        reply: "¡Esa energía brillante me inspira muchísimo!",
-      },
-      {
-        option: "Coqueta y juguetona, me gusta el misterio",
-        reply: "Un poco de coqueteo siempre mantiene la chispa.",
-      },
-      {
-        option: "Crear playlists y bailar en casa",
-        reply: "Yo también vivo armando playlists interminables.",
-      },
-      {
-        option: "Los stickers",
-        reply: "Decoro todo con stickers, ¡son lo máximo!",
-      },
-    ],
-    "assets/avatars/sumin.webp": [
-      {
-        option: "Dulce y reconfortante, como un abrazo",
-        reply: "Esa dulzura reconfortante me representa un montón.",
-      },
-      {
-        option: "Digital y moderna, conectamos online",
-        reply: "Las conexiones online también pueden ser especiales.",
-      },
-      {
-        option: "Día creativo: journaling, dibujo o collages",
-        reply: "Un día creativo es mi terapia favorita.",
-      },
-      {
-        option: "Los vinilos",
-        reply: "El sonido en vinilo tiene una vibra única, ¿cierto?",
-      },
-    ],
-    "assets/avatars/sieun.webp": [
-      {
-        option: "Fresca y juvenil, siempre renovándome",
-        reply: "Renovarse y mantenerlo fresco es la clave.",
-      },
-      {
-        option: "Intensa y directa, voy tras lo que quiero",
-        reply: "Me encanta esa determinación para ir por todo.",
-      },
-      {
-        option: "Reunión tranquila con amigos cercanos",
-        reply: "Un plan chill con amigxs es justo lo que amo.",
-      },
-      {
-        option: "Los tenis",
-        reply: "Unos buenos tenis te acompañan a todas partes.",
-      },
-    ],
-    "assets/avatars/yoon.webp": [
-      {
-        option: "Intensa y apasionada, sin términos medios",
-        reply: "Esa pasión a tope me hace sentir super viva.",
-      },
-      {
-        option: "Energética y divertida, nunca me aburro",
-        reply: "¡La diversión sin pausa es la mejor manera de vivir!",
-      },
-      {
-        option: "Spa casero con mascarillas y velas",
-        reply: "Los spas caseros son mi ritual de amor propio.",
-      },
-      {
-        option: "Los coleccionables kawaii",
-        reply: "Todo lo kawaii me hace feliz, ¡somos dos!",
-      },
-    ],
+    "assets/avatars/isa.webp": {
+      "Sofisticada y elegante, siempre impecable": "¡Ese estilo sofisticado es super Isa vibra!",
+      "Romántica y soñadora, creo en el amor verdadero": "También creo en esos romances de película.",
+      "Salir a un café bonito y tomar fotos": "Los cafecitos lindos son mi plan favorito.",
+      "Los bolsos": "¡A mí también me gustan los bolsos!",
+    },
+    "assets/avatars/j.webp": {
+      "Misteriosa y profunda, con múltiples capas": "Me encanta esa aura misteriosa, te queda perfecta.",
+      "Leal y protectora, siempre presente": "La lealtad lo es todo, ¡gracias por tenerla!",
+      "Maratón de series con snacks infinitos": "Una buena serie y botanas es mi tarde ideal.",
+      "Las cámaras desechables": "Siempre llevo una cámara para capturar recuerdos.",
+    },
+    "assets/avatars/seeun.webp": {
+      "Explosiva y brillante, llena de vida": "¡Esa energía brillante me inspira muchísimo!",
+      "Coqueta y juguetona, me gusta el misterio": "Un poco de coqueteo siempre mantiene la chispa.",
+      "Crear playlists y bailar en casa": "Yo también vivo armando playlists interminables.",
+      "Los stickers": "Decoro todo con stickers, ¡son lo máximo!",
+    },
+    "assets/avatars/sumin.webp": {
+      "Dulce y reconfortante, como un abrazo": "Esa dulzura reconfortante me representa un montón.",
+      "Digital y moderna, conectamos online": "Las conexiones online también pueden ser especiales.",
+      "Día creativo: journaling, dibujo o collages": "Un día creativo es mi terapia favorita.",
+      "Los vinilos": "El sonido en vinilo tiene una vibra única, ¿cierto?",
+    },
+    "assets/avatars/sieun.webp": {
+      "Fresca y juvenil, siempre renovándome": "Renovarse y mantenerlo fresco es la clave.",
+      "Intensa y directa, voy tras lo que quiero": "Me encanta esa determinación para ir por todo.",
+      "Reunión tranquila con amigos cercanos": "Un plan chill con amigxs es justo lo que amo.",
+      "Los tenis": "Unos buenos tenis te acompañan a todas partes.",
+    },
+    "assets/avatars/yoon.webp": {
+      "Intensa y apasionada, sin términos medios": "Esa pasión a tope me hace sentir super viva.",
+      "Energética y divertida, nunca me aburro": "¡La diversión sin pausa es la mejor manera de vivir!",
+      "Spa casero con mascarillas y velas": "Los spas caseros son mi ritual de amor propio.",
+      "Los coleccionables kawaii": "Todo lo kawaii me hace feliz, ¡somos dos!",
+    },
   };
 
   const chatToggle = document.getElementById("chat-toggle");
@@ -406,17 +334,16 @@ const ChatQuiz = (() => {
 
   const handleOption = (choice) => {
     addUserMessage(choice);
-    const avatarReactions = avatarMatchReplies[currentAvatar] || [];
-    const reactionConfig = avatarReactions[stepIndex];
-    const shouldReact = reactionConfig && reactionConfig.option === choice;
+    const avatarReactions = avatarMatchReplies[currentAvatar] || {};
+    const reactionReply = avatarReactions[choice];
 
-    if (shouldReact) {
+    if (reactionReply) {
       schedule(() => {
-        addBotMessage(reactionConfig.reply);
+        addBotMessage(reactionReply);
       }, 280);
     }
 
-    const delayBeforeNext = shouldReact ? 1000 : 450;
+    const delayBeforeNext = reactionReply ? 1000 : 450;
     stepIndex += 1;
 
     if (stepIndex < chatFlow.length) {
