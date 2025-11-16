@@ -51,6 +51,7 @@ const ChatQuiz = (() => {
   const chatClose = document.getElementById("chat-close");
   const messages = document.getElementById("chat-messages");
   const optionsContainer = document.getElementById("chat-options");
+  let shouldStartNewSession = true;
 
   if (!chatToggle || !chatbox || !chatClose || !messages || !optionsContainer) {
     return {};
@@ -162,6 +163,7 @@ const ChatQuiz = (() => {
     messages.innerHTML = "";
     optionsContainer.innerHTML = "";
     stepIndex = 0;
+    shouldStartNewSession = false;
     addBotMessage(introMessage);
     setTimeout(() => {
       askCurrentStep();
@@ -171,7 +173,7 @@ const ChatQuiz = (() => {
   const openChat = () => {
     chatbox.classList.add("open");
     chatToggle.setAttribute("aria-expanded", "true");
-    if (messages.childElementCount === 0) {
+    if (shouldStartNewSession) {
       startConversation();
     }
   };
@@ -179,6 +181,9 @@ const ChatQuiz = (() => {
   const closeChat = () => {
     chatbox.classList.remove("open");
     chatToggle.setAttribute("aria-expanded", "false");
+    messages.innerHTML = "";
+    optionsContainer.innerHTML = "";
+    shouldStartNewSession = true;
   };
 
   chatToggle.addEventListener("click", () => {
