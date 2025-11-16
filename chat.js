@@ -33,6 +33,17 @@ const ChatQuiz = (() => {
         "Spa casero con mascarillas y velas",
       ],
     },
+    {
+      prompt: "¿Qué cosas no pueden faltar en tu mundo?",
+      options: [
+        "Los bolsos",
+        "Las cámaras desechables",
+        "Los vinilos",
+        "Los coleccionables kawaii",
+        "Los tenis",
+        "Los stickers",
+      ],
+    },
   ];
 
   const VISITOR_COOKIE = "stayc_chat_visitor";
@@ -49,6 +60,33 @@ const ChatQuiz = (() => {
     "assets/avatars/yoon.webp",
   ];
 
+  const avatarMatchReplies = {
+    "assets/avatars/isa.webp": {
+      option: "Los bolsos",
+      reply: "¡A mí también me gustan los bolsos!",
+    },
+    "assets/avatars/j.webp": {
+      option: "Las cámaras desechables",
+      reply: "Siempre llevo una cámara para capturar recuerdos.",
+    },
+    "assets/avatars/seeun.webp": {
+      option: "Los stickers",
+      reply: "Decoro todo con stickers, ¡son lo máximo!",
+    },
+    "assets/avatars/sumin.webp": {
+      option: "Los vinilos",
+      reply: "El sonido en vinilo tiene una vibra única, ¿cierto?",
+    },
+    "assets/avatars/sieun.webp": {
+      option: "Los tenis",
+      reply: "Unos buenos tenis te acompañan a todas partes.",
+    },
+    "assets/avatars/yoon.webp": {
+      option: "Los coleccionables kawaii",
+      reply: "Todo lo kawaii me hace feliz, ¡somos dos!",
+    },
+  };
+
   const chatToggle = document.getElementById("chat-toggle");
   const chatbox = document.getElementById("chatbox");
   const chatClose = document.getElementById("chat-close");
@@ -56,6 +94,7 @@ const ChatQuiz = (() => {
   const optionsContainer = document.getElementById("chat-options");
   const activeTimeouts = new Set();
   let shouldStartNewSession = true;
+  let currentAvatar = null;
 
   if (!chatToggle || !chatbox || !chatClose || !messages || !optionsContainer) {
     return {};
@@ -283,12 +322,24 @@ const ChatQuiz = (() => {
 
   const handleOption = (choice) => {
     addUserMessage(choice);
+    const hasNextStep = stepIndex + 1 < chatFlow.length;
+    const avatarReaction = avatarMatchReplies[currentAvatar];
+    const shouldReact =
+      hasNextStep && avatarReaction && avatarReaction.option === choice;
+
+    if (shouldReact) {
+      schedule(() => {
+        addBotMessage(avatarReaction.reply);
+      }, 280);
+    }
+
     stepIndex += 1;
 
     if (stepIndex < chatFlow.length) {
+      const delayBeforeNext = shouldReact ? 1000 : 450;
       schedule(() => {
         askCurrentStep();
-      }, 450);
+      }, delayBeforeNext);
     } else {
       schedule(() => {
         renderCompletion();
@@ -299,6 +350,7 @@ const ChatQuiz = (() => {
   const pickAvatar = () => {
     const randomIndex = Math.floor(Math.random() * avatarChoices.length);
     const chosenAvatar = avatarChoices[randomIndex];
+    currentAvatar = chosenAvatar;
     chatbox.style.setProperty("--chat-avatar-url", `url("${chosenAvatar}")`);
   };
 
