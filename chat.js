@@ -37,8 +37,8 @@ const ChatQuiz = (() => {
 
   const VISITOR_COOKIE = "stayc_chat_visitor";
   const COMPLETED_COOKIE = "stayc_chat_completed";
-  const FIRST_TIME_MESSAGE = "¡Bienvenida! Empecemos con tu vibra STAYC. 💖";
-  const RETURNING_MESSAGE = "¡Hola de nuevo! Ya hiciste el test, ¿quieres volver a hacerlo?";
+  const FIRST_TIME_MESSAGE = "¡Bienvenida! ¿Quieres empezar a jugar y descubrir tu vibra STAYC? 💖";
+  const RETURNING_MESSAGE = "¡Hola de nuevo! Ya hiciste el test, ¿quieres volver a jugar?";
   let stepIndex = 0;
   const avatarChoices = [
     "assets/avatars/isa.webp",
@@ -219,6 +219,57 @@ const ChatQuiz = (() => {
     optionsContainer.appendChild(close);
   };
 
+  const renderStartOptions = () => {
+    optionsContainer.innerHTML = "";
+
+    const yesOption = document.createElement("button");
+    yesOption.type = "button";
+    yesOption.className = "chat-option";
+    yesOption.textContent = "Sí";
+    yesOption.addEventListener("click", () => {
+      addUserMessage("Sí");
+      optionsContainer.innerHTML = "";
+      schedule(() => {
+        askCurrentStep();
+      }, 320);
+    });
+
+    const noOption = document.createElement("button");
+    noOption.type = "button";
+    noOption.className = "chat-option";
+    noOption.textContent = "No";
+    noOption.addEventListener("click", () => {
+      addUserMessage("No");
+      optionsContainer.innerHTML = "";
+      schedule(() => {
+        renderEarlyExit();
+      }, 280);
+    });
+
+    optionsContainer.appendChild(yesOption);
+    optionsContainer.appendChild(noOption);
+  };
+
+  const renderEarlyExit = () => {
+    addBotMessage("Entendido. Cuando quieras empezar a jugar, aquí estaré. ✨");
+    optionsContainer.innerHTML = "";
+
+    const restart = document.createElement("button");
+    restart.type = "button";
+    restart.className = "chat-option";
+    restart.textContent = "Empezar quiz";
+    restart.addEventListener("click", startConversation);
+
+    const close = document.createElement("button");
+    close.type = "button";
+    close.className = "chat-option";
+    close.textContent = "Cerrar chat";
+    close.addEventListener("click", closeChat);
+
+    optionsContainer.appendChild(restart);
+    optionsContainer.appendChild(close);
+  };
+
   const askCurrentStep = () => {
     const step = chatFlow[stepIndex];
     if (!step) {
@@ -262,9 +313,7 @@ const ChatQuiz = (() => {
     const introMessage = hasCompletedQuiz() ? RETURNING_MESSAGE : FIRST_TIME_MESSAGE;
     ensureVisitorId();
     addBotMessage(introMessage);
-    schedule(() => {
-      askCurrentStep();
-    }, 400);
+    renderStartOptions();
   };
 
   const openChat = () => {
