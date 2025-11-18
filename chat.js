@@ -208,9 +208,16 @@ const ChatQuiz = (() => {
     return wrapper;
   };
 
-  const addBotMessage = (text, withTyping = true) => {
+  const addBotMessage = (text, withTyping = true, onDisplayed) => {
+    const handleDisplayed = () => {
+      if (typeof onDisplayed === "function") {
+        onDisplayed();
+      }
+    };
+
     if (!withTyping) {
       addBotBubble(text);
+      handleDisplayed();
       return;
     }
 
@@ -218,6 +225,7 @@ const ChatQuiz = (() => {
     schedule(() => {
       indicator.remove();
       addBotBubble(text);
+      handleDisplayed();
     }, 650);
   };
 
@@ -249,25 +257,26 @@ const ChatQuiz = (() => {
 
   const renderCompletion = () => {
     markQuizCompleted();
-    addBotMessage("¡Listo! Gracias por jugar. ¿Quieres reiniciar?");
-    optionsContainer.innerHTML = "";
+    addBotMessage("¡Listo! Gracias por jugar. ¿Quieres reiniciar?", true, () => {
+      optionsContainer.innerHTML = "";
 
-    const restart = document.createElement("button");
-    restart.type = "button";
-    restart.className = "chat-option";
-    restart.textContent = "Volver a empezar";
-    restart.addEventListener("click", startConversation);
+      const restart = document.createElement("button");
+      restart.type = "button";
+      restart.className = "chat-option";
+      restart.textContent = "Volver a empezar";
+      restart.addEventListener("click", startConversation);
 
-    const close = document.createElement("button");
-    close.type = "button";
-    close.className = "chat-option";
-    close.textContent = "Cerrar chat";
-    close.addEventListener("click", () => {
-      closeChat();
+      const close = document.createElement("button");
+      close.type = "button";
+      close.className = "chat-option";
+      close.textContent = "Cerrar chat";
+      close.addEventListener("click", () => {
+        closeChat();
+      });
+
+      optionsContainer.appendChild(restart);
+      optionsContainer.appendChild(close);
     });
-
-    optionsContainer.appendChild(restart);
-    optionsContainer.appendChild(close);
   };
 
   const renderStartOptions = () => {
@@ -302,23 +311,24 @@ const ChatQuiz = (() => {
   };
 
   const renderEarlyExit = () => {
-    addBotMessage("Entendido. Cuando quieras empezar a jugar, aquí estaré. ✨");
-    optionsContainer.innerHTML = "";
+    addBotMessage("Entendido. Cuando quieras empezar a jugar, aquí estaré. ✨", true, () => {
+      optionsContainer.innerHTML = "";
 
-    const restart = document.createElement("button");
-    restart.type = "button";
-    restart.className = "chat-option";
-    restart.textContent = "Empezar quiz";
-    restart.addEventListener("click", startConversation);
+      const restart = document.createElement("button");
+      restart.type = "button";
+      restart.className = "chat-option";
+      restart.textContent = "Empezar quiz";
+      restart.addEventListener("click", startConversation);
 
-    const close = document.createElement("button");
-    close.type = "button";
-    close.className = "chat-option";
-    close.textContent = "Cerrar chat";
-    close.addEventListener("click", closeChat);
+      const close = document.createElement("button");
+      close.type = "button";
+      close.className = "chat-option";
+      close.textContent = "Cerrar chat";
+      close.addEventListener("click", closeChat);
 
-    optionsContainer.appendChild(restart);
-    optionsContainer.appendChild(close);
+      optionsContainer.appendChild(restart);
+      optionsContainer.appendChild(close);
+    });
   };
 
   const askCurrentStep = () => {
@@ -328,8 +338,9 @@ const ChatQuiz = (() => {
       return;
     }
 
-    addBotMessage(step.prompt);
-    renderOptions(step.options);
+    addBotMessage(step.prompt, true, () => {
+      renderOptions(step.options);
+    });
   };
 
   const handleOption = (choice) => {
@@ -374,8 +385,9 @@ const ChatQuiz = (() => {
     shouldStartNewSession = false;
     const introMessage = hasCompletedQuiz() ? RETURNING_MESSAGE : FIRST_TIME_MESSAGE;
     ensureVisitorId();
-    addBotMessage(introMessage);
-    renderStartOptions();
+    addBotMessage(introMessage, true, () => {
+      renderStartOptions();
+    });
   };
 
   const openChat = () => {
