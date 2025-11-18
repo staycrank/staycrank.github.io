@@ -83,7 +83,7 @@ const ChatQuiz = (() => {
         "My energy is calm but firm, like when I practice in silence and suddenly get serious without warning.": "Ah, so we're alike... that calm that seems soft but works hard inside, 맞지?",
         "In friendship I'm the one who takes care, makes bad jokes, remembers details... but also the one who trips first.": "That sounds just like me... taking care and joking while tripping a bit, I like your vibe.",
         "A perfect Sunday is good food, a nice drama, playing with keropi... and resting at home in pajamas.": "You like keropi? Me too! There's nothing I like more than keropi! Except SWITH, hehe.",
-        "In my world there's Girl's Generation music, delicious food, a little bit of adorable chaos...": "Ah, so our worlds are alike... that makes me feel closer to you, SWITH.",
+        "In my world there's Girl's Generation music, delicious food, a little bit of adorable chaos... and STAYC ♡": "Ah, so our worlds are alike... that makes me feel closer to you, SWITH.",
       },
       "assets/avatars/sieun.webp": {
         "Active; when I do something, I do it with all my energy.": "Ah ~ I think we'd understand each other very well... Although I'm actually quite calm and tranquil; I reflect on things a lot.",
@@ -98,6 +98,45 @@ const ChatQuiz = (() => {
         "My favorite k-pop group, my video games, my favorite snacks, my friends, and STAYC ♡.": "OMG you have INCREDIBLE taste! I think you just became my favorite person hahaha",
       },
     };
+
+  const avatarIntroMessages = {
+    "assets/avatars/isa.webp": {
+      firstTime:
+        "¡Hola! Soy Isa. ¿Te animas a descubrir juntas qué vibra STAYC compartimos hoy? 💄",
+      returning:
+        "¡Holiii, volvió Isa! Ya hicimos el test antes, ¿lo repetimos para ver si cambió tu vibra?",
+    },
+    "assets/avatars/j.webp": {
+      firstTime:
+        "¡Hey, soy J! Tengo mil preguntas para ti, ¿empezamos el quiz y vemos si coincidimos en energía? ✨",
+      returning:
+        "¡Siii, regresaste! Soy J otra vez. Ya lo jugamos, pero podemos repetirlo y seguir riendo juntas.",
+    },
+    "assets/avatars/seeun.webp": {
+      firstTime:
+        "¡Hola, soy Seeun! Vamos a jugar con calma y descubrir tu vibra STAYC, ¿sí? 🦊",
+      returning:
+        "SWITH linda, soy Seeun de nuevo~ Si quieres podemos rehacer el test y charlar otro ratito.",
+    },
+    "assets/avatars/sumin.webp": {
+      firstTime:
+        "Soy Sumin. Preparé este juego para conocerte mejor, ¿lista para empezar ahora mismo? ☕",
+      returning:
+        "Hola otra vez, habla Sumin. Ya completamos el quiz, pero podemos intentarlo de nuevo si quieres ♡",
+    },
+    "assets/avatars/sieun.webp": {
+      firstTime:
+        "Sieun aquí. Me encantaría saber todo sobre tu vibra, ¿le damos al quiz? 🎤",
+      returning:
+        "¡Reunión de nuevo! Soy Sieun. Ya tienes resultados, pero podemos compararlos si repetimos el test.",
+    },
+    "assets/avatars/yoon.webp": {
+      firstTime:
+        "¡Hii, soy Yoon! Estoy lista para jugar y descubrir tu vibra STAYC, ¿vienes conmigo? 💛",
+      returning:
+        "¡Yoon está de vuelta! Si quieres seguimos jugando el quiz hasta que encontremos tu mood perfecto~",
+    },
+  };
 
   const chatToggle = document.getElementById("chat-toggle");
   const chatbox = document.getElementById("chatbox");
@@ -142,7 +181,19 @@ const ChatQuiz = (() => {
   };
 
   const scrollToBottom = () => {
-    messages.scrollTop = messages.scrollHeight;
+    if (!messages) {
+      return;
+    }
+
+    const stick = () => {
+      messages.scrollTop = messages.scrollHeight;
+    };
+
+    if (typeof requestAnimationFrame === "function") {
+      requestAnimationFrame(stick);
+    } else {
+      stick();
+    }
   };
 
   const schedule = (fn, delay) => {
@@ -208,9 +259,16 @@ const ChatQuiz = (() => {
     return wrapper;
   };
 
-  const addBotMessage = (text, withTyping = true) => {
+  const addBotMessage = (text, withTyping = true, onDisplayed) => {
+    const handleDisplayed = () => {
+      if (typeof onDisplayed === "function") {
+        onDisplayed();
+      }
+    };
+
     if (!withTyping) {
       addBotBubble(text);
+      handleDisplayed();
       return;
     }
 
@@ -218,6 +276,7 @@ const ChatQuiz = (() => {
     schedule(() => {
       indicator.remove();
       addBotBubble(text);
+      handleDisplayed();
     }, 650);
   };
 
@@ -234,8 +293,14 @@ const ChatQuiz = (() => {
     scrollToBottom();
   };
 
-  const renderOptions = (options) => {
+  const clearOptions = () => {
     optionsContainer.innerHTML = "";
+    optionsContainer.scrollTop = 0;
+    scrollToBottom();
+  };
+
+  const renderOptions = (options) => {
+    clearOptions();
 
     options.forEach((option) => {
       const button = document.createElement("button");
@@ -245,33 +310,38 @@ const ChatQuiz = (() => {
       button.addEventListener("click", () => handleOption(option));
       optionsContainer.appendChild(button);
     });
+
+    scrollToBottom();
   };
 
   const renderCompletion = () => {
     markQuizCompleted();
-    addBotMessage("¡Listo! Gracias por jugar. ¿Quieres reiniciar?");
-    optionsContainer.innerHTML = "";
+    clearOptions();
+    addBotMessage("¡Listo! Gracias por jugar. ¿Quieres reiniciar?", true, () => {
+      clearOptions();
 
-    const restart = document.createElement("button");
-    restart.type = "button";
-    restart.className = "chat-option";
-    restart.textContent = "Volver a empezar";
-    restart.addEventListener("click", startConversation);
+      const restart = document.createElement("button");
+      restart.type = "button";
+      restart.className = "chat-option";
+      restart.textContent = "Volver a empezar";
+      restart.addEventListener("click", startConversation);
 
-    const close = document.createElement("button");
-    close.type = "button";
-    close.className = "chat-option";
-    close.textContent = "Cerrar chat";
-    close.addEventListener("click", () => {
-      closeChat();
+      const close = document.createElement("button");
+      close.type = "button";
+      close.className = "chat-option";
+      close.textContent = "Cerrar chat";
+      close.addEventListener("click", () => {
+        closeChat();
+      });
+
+      optionsContainer.appendChild(restart);
+      optionsContainer.appendChild(close);
+      scrollToBottom();
     });
-
-    optionsContainer.appendChild(restart);
-    optionsContainer.appendChild(close);
   };
 
   const renderStartOptions = () => {
-    optionsContainer.innerHTML = "";
+    clearOptions();
 
     const yesOption = document.createElement("button");
     yesOption.type = "button";
@@ -279,7 +349,7 @@ const ChatQuiz = (() => {
     yesOption.textContent = "Sí";
     yesOption.addEventListener("click", () => {
       addUserMessage("Sí");
-      optionsContainer.innerHTML = "";
+      clearOptions();
       schedule(() => {
         askCurrentStep();
       }, 320);
@@ -291,7 +361,7 @@ const ChatQuiz = (() => {
     noOption.textContent = "No";
     noOption.addEventListener("click", () => {
       addUserMessage("No");
-      optionsContainer.innerHTML = "";
+      clearOptions();
       schedule(() => {
         renderEarlyExit();
       }, 280);
@@ -302,23 +372,26 @@ const ChatQuiz = (() => {
   };
 
   const renderEarlyExit = () => {
-    addBotMessage("Entendido. Cuando quieras empezar a jugar, aquí estaré. ✨");
-    optionsContainer.innerHTML = "";
+    clearOptions();
+    addBotMessage("Entendido. Cuando quieras empezar a jugar, aquí estaré. ✨", true, () => {
+      clearOptions();
 
-    const restart = document.createElement("button");
-    restart.type = "button";
-    restart.className = "chat-option";
-    restart.textContent = "Empezar quiz";
-    restart.addEventListener("click", startConversation);
+      const restart = document.createElement("button");
+      restart.type = "button";
+      restart.className = "chat-option";
+      restart.textContent = "Empezar quiz";
+      restart.addEventListener("click", startConversation);
 
-    const close = document.createElement("button");
-    close.type = "button";
-    close.className = "chat-option";
-    close.textContent = "Cerrar chat";
-    close.addEventListener("click", closeChat);
+      const close = document.createElement("button");
+      close.type = "button";
+      close.className = "chat-option";
+      close.textContent = "Cerrar chat";
+      close.addEventListener("click", closeChat);
 
-    optionsContainer.appendChild(restart);
-    optionsContainer.appendChild(close);
+      optionsContainer.appendChild(restart);
+      optionsContainer.appendChild(close);
+      scrollToBottom();
+    });
   };
 
   const askCurrentStep = () => {
@@ -328,12 +401,15 @@ const ChatQuiz = (() => {
       return;
     }
 
-    addBotMessage(step.prompt);
-    renderOptions(step.options);
+    clearOptions();
+    addBotMessage(step.prompt, true, () => {
+      renderOptions(step.options);
+    });
   };
 
   const handleOption = (choice) => {
     addUserMessage(choice);
+    clearOptions();
     const avatarReactions = avatarMatchReplies[currentAvatar] || {};
     const reactionReply = avatarReactions[choice];
 
@@ -364,18 +440,30 @@ const ChatQuiz = (() => {
     chatbox.style.setProperty("--chat-avatar-url", `url("${chosenAvatar}")`);
   };
 
+  const getIntroMessage = () => {
+    const avatarIntro = avatarIntroMessages[currentAvatar];
+    const fallback = hasCompletedQuiz() ? RETURNING_MESSAGE : FIRST_TIME_MESSAGE;
+    if (!avatarIntro) {
+      return fallback;
+    }
+
+    return hasCompletedQuiz()
+      ? avatarIntro.returning || RETURNING_MESSAGE
+      : avatarIntro.firstTime || FIRST_TIME_MESSAGE;
+  };
+
   const startConversation = () => {
     clearScheduledResponses();
     removeTypingIndicators();
     pickAvatar();
     messages.innerHTML = "";
-    optionsContainer.innerHTML = "";
+    clearOptions();
     stepIndex = 0;
     shouldStartNewSession = false;
-    const introMessage = hasCompletedQuiz() ? RETURNING_MESSAGE : FIRST_TIME_MESSAGE;
     ensureVisitorId();
-    addBotMessage(introMessage);
-    renderStartOptions();
+    addBotMessage(getIntroMessage(), true, () => {
+      renderStartOptions();
+    });
   };
 
   const openChat = () => {
@@ -392,7 +480,7 @@ const ChatQuiz = (() => {
     chatbox.classList.remove("open");
     chatToggle.setAttribute("aria-expanded", "false");
     messages.innerHTML = "";
-    optionsContainer.innerHTML = "";
+    clearOptions();
     shouldStartNewSession = true;
   };
 
