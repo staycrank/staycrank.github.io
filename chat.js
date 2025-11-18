@@ -281,8 +281,12 @@ const ChatQuiz = (() => {
     scrollToBottom();
   };
 
-  const renderOptions = (options) => {
+  const clearOptions = () => {
     optionsContainer.innerHTML = "";
+  };
+
+  const renderOptions = (options) => {
+    clearOptions();
 
     options.forEach((option) => {
       const button = document.createElement("button");
@@ -296,8 +300,9 @@ const ChatQuiz = (() => {
 
   const renderCompletion = () => {
     markQuizCompleted();
+    clearOptions();
     addBotMessage("¡Listo! Gracias por jugar. ¿Quieres reiniciar?", true, () => {
-      optionsContainer.innerHTML = "";
+      clearOptions();
 
       const restart = document.createElement("button");
       restart.type = "button";
@@ -319,7 +324,7 @@ const ChatQuiz = (() => {
   };
 
   const renderStartOptions = () => {
-    optionsContainer.innerHTML = "";
+    clearOptions();
 
     const yesOption = document.createElement("button");
     yesOption.type = "button";
@@ -350,8 +355,9 @@ const ChatQuiz = (() => {
   };
 
   const renderEarlyExit = () => {
+    clearOptions();
     addBotMessage("Entendido. Cuando quieras empezar a jugar, aquí estaré. ✨", true, () => {
-      optionsContainer.innerHTML = "";
+      clearOptions();
 
       const restart = document.createElement("button");
       restart.type = "button";
@@ -377,6 +383,7 @@ const ChatQuiz = (() => {
       return;
     }
 
+    clearOptions();
     addBotMessage(step.prompt, true, () => {
       renderOptions(step.options);
     });
@@ -384,6 +391,7 @@ const ChatQuiz = (() => {
 
   const handleOption = (choice) => {
     addUserMessage(choice);
+    clearOptions();
     const avatarReactions = avatarMatchReplies[currentAvatar] || {};
     const reactionReply = avatarReactions[choice];
 
@@ -431,7 +439,7 @@ const ChatQuiz = (() => {
     removeTypingIndicators();
     pickAvatar();
     messages.innerHTML = "";
-    optionsContainer.innerHTML = "";
+    clearOptions();
     stepIndex = 0;
     shouldStartNewSession = false;
     ensureVisitorId();
@@ -454,7 +462,7 @@ const ChatQuiz = (() => {
     chatbox.classList.remove("open");
     chatToggle.setAttribute("aria-expanded", "false");
     messages.innerHTML = "";
-    optionsContainer.innerHTML = "";
+    clearOptions();
     shouldStartNewSession = true;
   };
 
