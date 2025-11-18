@@ -99,6 +99,45 @@ const ChatQuiz = (() => {
       },
     };
 
+  const avatarIntroMessages = {
+    "assets/avatars/isa.webp": {
+      firstTime:
+        "¡Hola! Soy Isa. ¿Te animas a descubrir juntas qué vibra STAYC compartimos hoy? 💄",
+      returning:
+        "¡Holiii, volvió Isa! Ya hicimos el test antes, ¿lo repetimos para ver si cambió tu vibra?",
+    },
+    "assets/avatars/j.webp": {
+      firstTime:
+        "¡Hey, soy J! Tengo mil preguntas para ti, ¿empezamos el quiz y vemos si coincidimos en energía? ✨",
+      returning:
+        "¡Siii, regresaste! Soy J otra vez. Ya lo jugamos, pero podemos repetirlo y seguir riendo juntas.",
+    },
+    "assets/avatars/seeun.webp": {
+      firstTime:
+        "¡Hola, soy Seeun! Vamos a jugar con calma y descubrir tu vibra STAYC, ¿sí? 🦊",
+      returning:
+        "SWITH linda, soy Seeun de nuevo~ Si quieres podemos rehacer el test y charlar otro ratito.",
+    },
+    "assets/avatars/sumin.webp": {
+      firstTime:
+        "Soy Sumin. Preparé este juego para conocerte mejor, ¿lista para empezar ahora mismo? ☕",
+      returning:
+        "Hola otra vez, habla Sumin. Ya completamos el quiz, pero podemos intentarlo de nuevo si quieres ♡",
+    },
+    "assets/avatars/sieun.webp": {
+      firstTime:
+        "Sieun aquí. Me encantaría saber todo sobre tu vibra, ¿le damos al quiz? 🎤",
+      returning:
+        "¡Reunión de nuevo! Soy Sieun. Ya tienes resultados, pero podemos compararlos si repetimos el test.",
+    },
+    "assets/avatars/yoon.webp": {
+      firstTime:
+        "¡Hii, soy Yoon! Estoy lista para jugar y descubrir tu vibra STAYC, ¿vienes conmigo? 💛",
+      returning:
+        "¡Yoon está de vuelta! Si quieres seguimos jugando el quiz hasta que encontremos tu mood perfecto~",
+    },
+  };
+
   const chatToggle = document.getElementById("chat-toggle");
   const chatbox = document.getElementById("chatbox");
   const chatClose = document.getElementById("chat-close");
@@ -375,6 +414,18 @@ const ChatQuiz = (() => {
     chatbox.style.setProperty("--chat-avatar-url", `url("${chosenAvatar}")`);
   };
 
+  const getIntroMessage = () => {
+    const avatarIntro = avatarIntroMessages[currentAvatar];
+    const fallback = hasCompletedQuiz() ? RETURNING_MESSAGE : FIRST_TIME_MESSAGE;
+    if (!avatarIntro) {
+      return fallback;
+    }
+
+    return hasCompletedQuiz()
+      ? avatarIntro.returning || RETURNING_MESSAGE
+      : avatarIntro.firstTime || FIRST_TIME_MESSAGE;
+  };
+
   const startConversation = () => {
     clearScheduledResponses();
     removeTypingIndicators();
@@ -383,9 +434,8 @@ const ChatQuiz = (() => {
     optionsContainer.innerHTML = "";
     stepIndex = 0;
     shouldStartNewSession = false;
-    const introMessage = hasCompletedQuiz() ? RETURNING_MESSAGE : FIRST_TIME_MESSAGE;
     ensureVisitorId();
-    addBotMessage(introMessage, true, () => {
+    addBotMessage(getIntroMessage(), true, () => {
       renderStartOptions();
     });
   };
