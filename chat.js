@@ -1,49 +1,49 @@
 const ChatQuiz = (() => {
   const chatFlow = [
-    {
-      prompt: "¿Qué tipo de energía te representa mejor?",
-      options: [
-        "Sofisticada y elegante, siempre impecable",
-        "Misteriosa y profunda, con múltiples capas",
-        "Explosiva y brillante, llena de vida",
-        "Dulce y reconfortante, como un abrazo",
-        "Fresca y juvenil, siempre renovándome",
-        "Intensa y apasionada, sin términos medios",
-      ],
-    },
-    {
-      prompt: "¿Cómo te comportas en una relación o amistad?",
-      options: [
-        "Romántica y soñadora, creo en el amor verdadero",
-        "Leal y protectora, siempre presente",
-        "Coqueta y juguetona, me gusta el misterio",
-        "Digital y moderna, conectamos online",
-        "Intensa y directa, voy tras lo que quiero",
-        "Energética y divertida, nunca me aburro",
-      ],
-    },
-    {
-      prompt: "¿Qué plan te hace feliz un domingo?",
-      options: [
-        "Maratón de series con snacks infinitos",
-        "Salir a un café bonito y tomar fotos",
-        "Crear playlists y bailar en casa",
-        "Día creativo: journaling, dibujo o collages",
-        "Reunión tranquila con amigos cercanos",
-        "Spa casero con mascarillas y velas",
-      ],
-    },
-    {
-      prompt: "¿Qué cosas no pueden faltar en tu mundo?",
-      options: [
-        "Los bolsos",
-        "Las cámaras desechables",
-        "Los vinilos",
-        "Los coleccionables kawaii",
-        "Los tenis",
-        "Los stickers",
-      ],
-    },
+{
+  prompt: "What type of energy represents you best?",
+  options: [
+    "I might seem cold at first, but I'm actually very warm and I laugh a lot.",
+    "My energy is calm but firm, like when I practice in silence and suddenly get serious without warning.",
+    "Active; when I do something, I do it with all my energy.",
+    "Super energetic with my friends! And with a very powerful laugh. But I also have my calm moments.",
+    "Pure energy! I'm hyperactive, playful, and the life of the party.",
+    "I look calm, but when I'm comfortable I have a 4D personality and I'm very playful.",
+  ],
+},
+{
+  prompt: "How do you behave in a relationship or friendship?",
+  options: [
+    "I'm the one who listens, smiles with you, and gives you strength without you even realizing it.",
+    "I'm not a direct person, so I try to say things subtly to my friends... And I get a bit pouty sometimes~",
+    "I try to give encouragement and support to my friends, especially by making them laugh and saying nice things to them.",
+    "I'm like the mom of my friend group; I'm always looking out for their well-being.",
+    "Playful; I'm always hugging my friends or looking to play with them.",
+    "In friendship I'm the one who takes care, makes bad jokes, remembers details... but also the one who trips first.",
+  ],
+},
+{
+  prompt: "What plan makes you happy on a Sunday?",
+  options: [
+    "Going out to a café to talk with a friend for hours!",
+    "Planning my next trip to a majestic city like LA or similar.",
+    "A perfect Sunday is good food, a nice drama, playing with keropi... and resting at home in pajamas.",
+    "Video games, anime, consuming k-pop content.",
+    "Anything related to animals! They're adorable... Maybe going to a cat café?",
+    "Dramas, candy crush, sweet snacks...",
+  ],
+},
+{
+  prompt: "What things can't be missing from your world?",
+  options: [
+    "Music, a good coffee, shopping, friends... and STAYC ♡.",
+    "My favorite k-pop group, my video games, my favorite snacks, my friends, and STAYC ♡.",
+    "The important people in my life, animals, and STAYC ♡.",
+    "My headphones, organization, and STAYC's music ♡.",
+    "In my world there's Girl's Generation music, delicious food, a little bit of adorable chaos... and STAYC ♡",
+    "Fantasy! Series, books, movies... and STAYC ♡",
+  ],
+},
   ];
 
   const VISITOR_COOKIE = "stayc_chat_visitor";
@@ -61,43 +61,43 @@ const ChatQuiz = (() => {
   ];
 
   const avatarMatchReplies = {
-    "assets/avatars/isa.webp": {
-      "Sofisticada y elegante, siempre impecable": "¡Ese estilo sofisticado es super Isa vibra!",
-      "Romántica y soñadora, creo en el amor verdadero": "También creo en esos romances de película.",
-      "Salir a un café bonito y tomar fotos": "Los cafecitos lindos son mi plan favorito.",
-      "Los bolsos": "¡A mí también me gustan los bolsos!",
-    },
-    "assets/avatars/j.webp": {
-      "Misteriosa y profunda, con múltiples capas": "Me encanta esa aura misteriosa, te queda perfecta.",
-      "Leal y protectora, siempre presente": "La lealtad lo es todo, ¡gracias por tenerla!",
-      "Maratón de series con snacks infinitos": "Una buena serie y botanas es mi tarde ideal.",
-      "Las cámaras desechables": "Siempre llevo una cámara para capturar recuerdos.",
-    },
-    "assets/avatars/seeun.webp": {
-      "Explosiva y brillante, llena de vida": "¡Esa energía brillante me inspira muchísimo!",
-      "Coqueta y juguetona, me gusta el misterio": "Un poco de coqueteo siempre mantiene la chispa.",
-      "Crear playlists y bailar en casa": "Yo también vivo armando playlists interminables.",
-      "Los stickers": "Decoro todo con stickers, ¡son lo máximo!",
-    },
-    "assets/avatars/sumin.webp": {
-      "Dulce y reconfortante, como un abrazo": "Esa dulzura reconfortante me representa un montón.",
-      "Digital y moderna, conectamos online": "Las conexiones online también pueden ser especiales.",
-      "Día creativo: journaling, dibujo o collages": "Un día creativo es mi terapia favorita.",
-      "Los vinilos": "El sonido en vinilo tiene una vibra única, ¿cierto?",
-    },
-    "assets/avatars/sieun.webp": {
-      "Fresca y juvenil, siempre renovándome": "Renovarse y mantenerlo fresco es la clave.",
-      "Intensa y directa, voy tras lo que quiero": "Me encanta esa determinación para ir por todo.",
-      "Reunión tranquila con amigos cercanos": "Un plan chill con amigxs es justo lo que amo.",
-      "Los tenis": "Unos buenos tenis te acompañan a todas partes.",
-    },
-    "assets/avatars/yoon.webp": {
-      "Intensa y apasionada, sin términos medios": "Esa pasión a tope me hace sentir super viva.",
-      "Energética y divertida, nunca me aburro": "¡La diversión sin pausa es la mejor manera de vivir!",
-      "Spa casero con mascarillas y velas": "Los spas caseros son mi ritual de amor propio.",
-      "Los coleccionables kawaii": "Todo lo kawaii me hace feliz, ¡somos dos!",
-    },
-  };
+      "assets/avatars/isa.webp": {
+        "I might seem cold at first, but I'm actually very warm and I laugh a lot.": "I identify so much with you... I think we'd get along really well♡",
+        "I'm like the mom of my friend group; I'm always looking out for their well-being.": "We need more people like you in the world... I'm sure you're someone very special to those around you",
+        "Going out to a café to talk with a friend for hours!": "That plan sounds perfect, we should do it together someday! SWITH and I!",
+        "Music, a good coffee, shopping, friends... and STAYC ♡.": "Really?! We're so alike, SWITH! What kind of music do you listen to? I love R&B!",
+      },
+      "assets/avatars/j.webp": {
+        "Super energetic with my friends! And with a very powerful laugh. But I also have my calm moments.": "Waaaah, just like me! I like you so much already~ It seems like we're soulmates!",
+        "I try to give encouragement and support to my friends, especially by making them laugh and saying nice things to them.": "I'm one of those who always gives encouragement and support to my friends~ Like when I tell Sieun that she does look tall hahaha. I like making people feel good!",
+        "Anything related to animals! They're adorable... Maybe going to a cat café?": "Oh! Me too! Should we go together next time, SWITH? I'll treat you to BHC Bburing Chicken hahaha.",
+        "The important people in my life, animals, and STAYC ♡.": "Waaah I identify so much with you! I think we'd be best friends in real life hahaha You have such great taste!",
+      },
+      "assets/avatars/seeun.webp": {
+        "I look calm, but when I'm comfortable I have a 4D personality and I'm very playful.": "I seem calm at first but when you get to know me I'm super 4D and playful... although I also like staying home watching dramas like '별에서 온 그대' ♡.",
+        "I'm not a direct person, so I try to say things subtly to my friends... And I get a bit pouty sometimes~": "They also say I'm pouty! But in a cute way... Or so they say. I'm sure we'd understand each other perfectly without needing words!",
+        "Dramas, candy crush, sweet snacks...": "For me the perfect plan is staying home watching my favorite dramas, eating garlic bread and not going out at all... literally I only go out three times a year hahaha.",
+        "Fantasy! Series, books, movies... and STAYC ♡": "Aww ~ For me STAYC can't be missing, my SWITH, mint choco (I'm the captain of team민초단), Crayon Shin-chan, romance dramas, and being able to stay home 🦊.",
+      },
+      "assets/avatars/sumin.webp": {
+        "My energy is calm but firm, like when I practice in silence and suddenly get serious without warning.": "Ah, so we're alike... that calm that seems soft but works hard inside, 맞지?",
+        "In friendship I'm the one who takes care, makes bad jokes, remembers details... but also the one who trips first.": "That sounds just like me... taking care and joking while tripping a bit, I like your vibe.",
+        "A perfect Sunday is good food, a nice drama, playing with keropi... and resting at home in pajamas.": "You like keropi? Me too! There's nothing I like more than keropi! Except SWITH, hehe.",
+        "In my world there's Girl's Generation music, delicious food, a little bit of adorable chaos...": "Ah, so our worlds are alike... that makes me feel closer to you, SWITH.",
+      },
+      "assets/avatars/sieun.webp": {
+        "Active; when I do something, I do it with all my energy.": "Ah ~ I think we'd understand each other very well... Although I'm actually quite calm and tranquil; I reflect on things a lot.",
+        "Direct and clear, I don't beat around the bush.": "That's right! Honesty is something I value a lot. I also think I tend to be very responsible and organized in my relationships with other people; I like doing things well.",
+        "Planning my next trip to a majestic city like LA or similar.": "Ohhh, I love Los Angeles ~ It's definitely one of my favorite cities in the world.",
+        "My headphones, organization, and STAYC's music ♡.": "For me... STAYC, SWITH, IU... And also music and organization, haha 🐩",
+      },
+      "assets/avatars/yoon.webp": {
+        "Pure energy! I'm hyperactive, playful, and the life of the party.": "Wooow you're just like me! My members always laugh with me.",
+        "Playful; I'm always hugging my friends or looking to play with them.": "You're adorable! I'm sure it's impossible to get bored with you.",
+        "Video games, anime, consuming k-pop content.": "WHAT! Really? We have to play together someday, this is destiny! What do you play?",
+        "My favorite k-pop group, my video games, my favorite snacks, my friends, and STAYC ♡.": "OMG you have INCREDIBLE taste! I think you just became my favorite person hahaha",
+      },
+    };
 
   const chatToggle = document.getElementById("chat-toggle");
   const chatbox = document.getElementById("chatbox");
