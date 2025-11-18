@@ -83,7 +83,7 @@ const ChatQuiz = (() => {
         "My energy is calm but firm, like when I practice in silence and suddenly get serious without warning.": "Ah, so we're alike... that calm that seems soft but works hard inside, 맞지?",
         "In friendship I'm the one who takes care, makes bad jokes, remembers details... but also the one who trips first.": "That sounds just like me... taking care and joking while tripping a bit, I like your vibe.",
         "A perfect Sunday is good food, a nice drama, playing with keropi... and resting at home in pajamas.": "You like keropi? Me too! There's nothing I like more than keropi! Except SWITH, hehe.",
-        "In my world there's Girl's Generation music, delicious food, a little bit of adorable chaos...": "Ah, so our worlds are alike... that makes me feel closer to you, SWITH.",
+        "In my world there's Girl's Generation music, delicious food, a little bit of adorable chaos... and STAYC ♡": "Ah, so our worlds are alike... that makes me feel closer to you, SWITH.",
       },
       "assets/avatars/sieun.webp": {
         "Active; when I do something, I do it with all my energy.": "Ah ~ I think we'd understand each other very well... Although I'm actually quite calm and tranquil; I reflect on things a lot.",
@@ -181,7 +181,19 @@ const ChatQuiz = (() => {
   };
 
   const scrollToBottom = () => {
-    messages.scrollTop = messages.scrollHeight;
+    if (!messages) {
+      return;
+    }
+
+    const stick = () => {
+      messages.scrollTop = messages.scrollHeight;
+    };
+
+    if (typeof requestAnimationFrame === "function") {
+      requestAnimationFrame(stick);
+    } else {
+      stick();
+    }
   };
 
   const schedule = (fn, delay) => {
@@ -283,6 +295,8 @@ const ChatQuiz = (() => {
 
   const clearOptions = () => {
     optionsContainer.innerHTML = "";
+    optionsContainer.scrollTop = 0;
+    scrollToBottom();
   };
 
   const renderOptions = (options) => {
@@ -296,6 +310,8 @@ const ChatQuiz = (() => {
       button.addEventListener("click", () => handleOption(option));
       optionsContainer.appendChild(button);
     });
+
+    scrollToBottom();
   };
 
   const renderCompletion = () => {
@@ -320,6 +336,7 @@ const ChatQuiz = (() => {
 
       optionsContainer.appendChild(restart);
       optionsContainer.appendChild(close);
+      scrollToBottom();
     });
   };
 
@@ -332,7 +349,7 @@ const ChatQuiz = (() => {
     yesOption.textContent = "Sí";
     yesOption.addEventListener("click", () => {
       addUserMessage("Sí");
-      optionsContainer.innerHTML = "";
+      clearOptions();
       schedule(() => {
         askCurrentStep();
       }, 320);
@@ -344,7 +361,7 @@ const ChatQuiz = (() => {
     noOption.textContent = "No";
     noOption.addEventListener("click", () => {
       addUserMessage("No");
-      optionsContainer.innerHTML = "";
+      clearOptions();
       schedule(() => {
         renderEarlyExit();
       }, 280);
@@ -373,6 +390,7 @@ const ChatQuiz = (() => {
 
       optionsContainer.appendChild(restart);
       optionsContainer.appendChild(close);
+      scrollToBottom();
     });
   };
 
