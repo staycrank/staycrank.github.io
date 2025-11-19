@@ -934,6 +934,19 @@ footer a:hover {
   line-height: 1.45;
 }
 
+.photocard-bubble {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.photocard-preview {
+  width: 180px;
+  border-radius: 14px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+  border: 1px solid #e5e7eb;
+}
+
 .chat-message.bot .message-bubble {
   border-bottom-left-radius: 6px;
 }

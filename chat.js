@@ -1,49 +1,67 @@
 const ChatQuiz = (() => {
   const chatFlow = [
-{
-  prompt: "What type of energy represents you best?",
-  options: [
-    "I might seem cold at first, but I'm actually very warm and I laugh a lot.",
-    "My energy is calm but firm, like when I practice in silence and suddenly get serious without warning.",
-    "Active; when I do something, I do it with all my energy.",
-    "Super energetic with my friends! And with a very powerful laugh. But I also have my calm moments.",
-    "Pure energy! I'm hyperactive, playful, and the life of the party.",
-    "I look calm, but when I'm comfortable I have a 4D personality and I'm very playful.",
-  ],
-},
-{
-  prompt: "How do you behave in a relationship or friendship?",
-  options: [
-    "I'm the one who listens, smiles with you, and gives you strength without you even realizing it.",
-    "I'm not a direct person, so I try to say things subtly to my friends... And I get a bit pouty sometimes~",
-    "I try to give encouragement and support to my friends, especially by making them laugh and saying nice things to them.",
-    "I'm like the mom of my friend group; I'm always looking out for their well-being.",
-    "Playful; I'm always hugging my friends or looking to play with them.",
-    "In friendship I'm the one who takes care, makes bad jokes, remembers details... but also the one who trips first.",
-  ],
-},
-{
-  prompt: "What plan makes you happy on a Sunday?",
-  options: [
-    "Going out to a café to talk with a friend for hours!",
-    "Planning my next trip to a majestic city like LA or similar.",
-    "A perfect Sunday is good food, a nice drama, playing with keropi... and resting at home in pajamas.",
-    "Video games, anime, consuming k-pop content.",
-    "Anything related to animals! They're adorable... Maybe going to a cat café?",
-    "Dramas, candy crush, sweet snacks...",
-  ],
-},
-{
-  prompt: "What things can't be missing from your world?",
-  options: [
-    "Music, a good coffee, shopping, friends... and STAYC ♡.",
-    "My favorite k-pop group, my video games, my favorite snacks, my friends, and STAYC ♡.",
-    "The important people in my life, animals, and STAYC ♡.",
-    "My headphones, organization, and STAYC's music ♡.",
-    "In my world there's Girl's Generation music, delicious food, a little bit of adorable chaos... and STAYC ♡",
-    "Fantasy! Series, books, movies... and STAYC ♡",
-  ],
-},
+    {
+      prompt: "What type of energy represents you best?",
+      options: [
+        "I might seem cold at first, but I'm actually very warm and I laugh a lot.",
+        "My energy is calm but firm, like when I practice in silence and suddenly get serious without warning.",
+        "Active; when I do something, I do it with all my energy.",
+        "Super energetic with my friends! And with a very powerful laugh. But I also have my calm moments.",
+        "Pure energy! I'm hyperactive, playful, and the life of the party.",
+        "I look calm, but when I'm comfortable I have a 4D personality and I'm very playful.",
+      ],
+    },
+    {
+      prompt: "How do you behave in a relationship or friendship?",
+      options: [
+        "I'm the one who listens, smiles with you, and gives you strength without you even realizing it.",
+        "I'm not a direct person, so I try to say things subtly to my friends... And I get a bit pouty sometimes~",
+        "I try to give encouragement and support to my friends, especially by making them laugh and saying nice things to them.",
+        "I'm like the mom of my friend group; I'm always looking out for their well-being.",
+        "Playful; I'm always hugging my friends or looking to play with them.",
+        "In friendship I'm the one who takes care, makes bad jokes, remembers details... but also the one who trips first.",
+      ],
+    },
+    {
+      prompt: "What plan makes you happy on a Sunday?",
+      options: [
+        "Going out to a café to talk with a friend for hours!",
+        "Planning my next trip to a majestic city like LA or similar.",
+        "A perfect Sunday is good food, a nice drama, playing with keropi... and resting at home in pajamas.",
+        "Video games, anime, consuming k-pop content.",
+        "Anything related to animals! They're adorable... Maybe going to a cat café?",
+        "Dramas, candy crush, sweet snacks...",
+      ],
+    },
+    {
+      prompt: "What things can't be missing from your world?",
+      options: [
+        "Music, a good coffee, shopping, friends... and STAYC ♡.",
+        "My favorite k-pop group, my video games, my favorite snacks, my friends, and STAYC ♡.",
+        "The important people in my life, animals, and STAYC ♡.",
+        "My headphones, organization, and STAYC's music ♡.",
+        "In my world there's Girl's Generation music, delicious food, a little bit of adorable chaos... and STAYC ♡",
+        "Fantasy! Series, books, movies... and STAYC ♡",
+      ],
+    },
+    {
+      prompt: "¿Qué estilo visual encaja mejor contigo?",
+      options: [
+        "Cute, colorido y con una vibra alegre",
+        "Elegante y minimalista, con detalles sofisticados",
+        "Oscuro/edgy, con un punto rebelde",
+        "Retro pop, con un toque nostálgico",
+      ],
+    },
+    {
+      prompt: "¿Qué tipo de música te imaginas para tu comeback ideal?",
+      options: [
+        "Un himno veraniego y refrescante",
+        "Un sonido powerful y girl crush",
+        "Algo juguetón y pegadizo para subir el ánimo",
+        "Una balada/medio tiempo emotiva",
+      ],
+    },
   ];
 
   const VISITOR_COOKIE = "stayc_chat_visitor";
@@ -51,6 +69,15 @@ const ChatQuiz = (() => {
   const FIRST_TIME_MESSAGE = "¡Bienvenida! ¿Quieres empezar a jugar y descubrir tu vibra STAYC? 💖";
   const RETURNING_MESSAGE = "¡Hola de nuevo! Ya hiciste el test, ¿quieres volver a jugar?";
   let stepIndex = 0;
+  const memberScores = {
+    isa: 0,
+    j: 0,
+    seeun: 0,
+    sumin: 0,
+    sieun: 0,
+    yoon: 0,
+  };
+  const preferredAlbums = new Set();
   const avatarChoices = [
     "assets/avatars/isa.webp",
     "assets/avatars/j.webp",
@@ -59,6 +86,329 @@ const ChatQuiz = (() => {
     "assets/avatars/sieun.webp",
     "assets/avatars/yoon.webp",
   ];
+
+  const albumLabels = {
+    sobad: "SO BAD era",
+    stereotype: "STEREOTYPE era",
+    asap: "ASAP era",
+    weneedlove: "WE NEED LOVE era",
+    teenfresh: "TEENFRESH era",
+    metamorphic: "METAMORPHIC era",
+  };
+
+  const memberLabels = {
+    isa: "Isa",
+    j: "J",
+    seeun: "Seeun",
+    sumin: "Sumin",
+    sieun: "Sieun",
+    yoon: "Yoon",
+  };
+
+  const optionMemberMap = {
+    "I might seem cold at first, but I'm actually very warm and I laugh a lot.": "isa",
+    "My energy is calm but firm, like when I practice in silence and suddenly get serious without warning.": "sumin",
+    "Active; when I do something, I do it with all my energy.": "sieun",
+    "Super energetic with my friends! And with a very powerful laugh. But I also have my calm moments.": "j",
+    "Pure energy! I'm hyperactive, playful, and the life of the party.": "yoon",
+    "I look calm, but when I'm comfortable I have a 4D personality and I'm very playful.": "seeun",
+    "I'm the one who listens, smiles with you, and gives you strength without you even realizing it.": "isa",
+    "I'm not a direct person, so I try to say things subtly to my friends... And I get a bit pouty sometimes~": "seeun",
+    "I try to give encouragement and support to my friends, especially by making them laugh and saying nice things to them.": "j",
+    "I'm like the mom of my friend group; I'm always looking out for their well-being.": "isa",
+    "Playful; I'm always hugging my friends or looking to play with them.": "yoon",
+    "In friendship I'm the one who takes care, makes bad jokes, remembers details... but also the one who trips first.": "sumin",
+    "Going out to a café to talk with a friend for hours!": "isa",
+    "Planning my next trip to a majestic city like LA or similar.": "sieun",
+    "A perfect Sunday is good food, a nice drama, playing with keropi... and resting at home in pajamas.": "sumin",
+    "Video games, anime, consuming k-pop content.": "yoon",
+    "Anything related to animals! They're adorable... Maybe going to a cat café?": "j",
+    "Dramas, candy crush, sweet snacks...": "seeun",
+    "Music, a good coffee, shopping, friends... and STAYC ♡.": "isa",
+    "My favorite k-pop group, my video games, my favorite snacks, my friends, and STAYC ♡.": "yoon",
+    "The important people in my life, animals, and STAYC ♡.": "j",
+    "My headphones, organization, and STAYC's music ♡.": "sieun",
+    "In my world there's Girl's Generation music, delicious food, a little bit of adorable chaos... and STAYC ♡": "sumin",
+    "Fantasy! Series, books, movies... and STAYC ♡": "seeun",
+  };
+
+  const optionAlbumMap = {
+    "Cute, colorido y con una vibra alegre": ["teenfresh", "asap"],
+    "Elegante y minimalista, con detalles sofisticados": ["stereotype", "weneedlove"],
+    "Oscuro/edgy, con un punto rebelde": ["metamorphic", "sobad"],
+    "Retro pop, con un toque nostálgico": ["sobad", "asap"],
+    "Un himno veraniego y refrescante": ["teenfresh", "weneedlove", "asap"],
+    "Un sonido powerful y girl crush": ["metamorphic", "stereotype"],
+    "Algo juguetón y pegadizo para subir el ánimo": ["sobad", "asap", "teenfresh"],
+    "Una balada/medio tiempo emotiva": ["weneedlove", "stereotype"],
+  };
+
+  const photocardPool = {
+    sobad: {
+      isa: {
+        base: [
+          "assets/photocards/sobad/isad.jpg",
+          "assets/photocards/sobad/isal.png",
+        ],
+        special: "assets/photocards/sobad/isas.png",
+      },
+      j: {
+        base: [
+          "assets/photocards/sobad/jd.jpg",
+          "assets/photocards/sobad/jl.jpg",
+        ],
+        special: "assets/photocards/sobad/js.png",
+      },
+      seeun: {
+        base: [
+          "assets/photocards/sobad/seeund.jpg",
+          "assets/photocards/sobad/seeunl.jpg",
+        ],
+        special: "assets/photocards/sobad/seeuns.png",
+      },
+      sieun: {
+        base: [
+          "assets/photocards/sobad/sieund.jpg",
+          "assets/photocards/sobad/sieunl.jpg",
+        ],
+        special: "assets/photocards/sobad/sieuns.png",
+      },
+      sumin: {
+        base: [
+          "assets/photocards/sobad/sumind.jpg",
+          "assets/photocards/sobad/suminl.jpg",
+        ],
+        special: "assets/photocards/sobad/sumins.png",
+      },
+      yoon: {
+        base: [
+          "assets/photocards/sobad/yoond.jpg",
+          "assets/photocards/sobad/yoonl.jpg",
+        ],
+        special: "assets/photocards/sobad/yoons.png",
+      },
+    },
+    stereotype: {
+      isa: {
+        base: [
+          "assets/photocards/stereotype/isaa.jpg",
+          "assets/photocards/stereotype/isab.jpg",
+        ],
+        special: "assets/photocards/stereotype/isas.png",
+      },
+      j: {
+        base: [
+          "assets/photocards/stereotype/ja.jpg",
+          "assets/photocards/stereotype/jb.jpg",
+        ],
+        special: "assets/photocards/stereotype/js.png",
+      },
+      seeun: {
+        base: [
+          "assets/photocards/stereotype/seeuna.jpg",
+          "assets/photocards/stereotype/seeunb.jpg",
+        ],
+        special: "assets/photocards/stereotype/seeuns.png",
+      },
+      sieun: {
+        base: [
+          "assets/photocards/stereotype/sieuna.jpg",
+          "assets/photocards/stereotype/sieunb.jpg",
+        ],
+        special: "assets/photocards/stereotype/sieuns.png",
+      },
+      sumin: {
+        base: [
+          "assets/photocards/stereotype/sumina.jpg",
+          "assets/photocards/stereotype/suminb.jpg",
+        ],
+        special: "assets/photocards/stereotype/sumins.png",
+      },
+      yoon: {
+        base: [
+          "assets/photocards/stereotype/yoona.jpg",
+          "assets/photocards/stereotype/yoonb.jpg",
+        ],
+        special: "assets/photocards/stereotype/yoons.png",
+      },
+    },
+    asap: {
+      isa: {
+        base: [
+          "assets/photocards/asap/isaa.jpg",
+          "assets/photocards/asap/isab.jpg",
+        ],
+        special: "assets/photocards/asap/isas.png",
+      },
+      j: {
+        base: [
+          "assets/photocards/asap/ja.jpg",
+          "assets/photocards/asap/jb.jpg",
+        ],
+        special: "assets/photocards/asap/js.png",
+      },
+      seeun: {
+        base: [
+          "assets/photocards/asap/seeuna.jpg",
+          "assets/photocards/asap/seeunb.jpg",
+        ],
+        special: "assets/photocards/asap/seeuns.png",
+      },
+      sieun: {
+        base: [
+          "assets/photocards/asap/sieuna.jpg",
+          "assets/photocards/asap/sieunb.jpg",
+        ],
+        special: "assets/photocards/asap/sieuns.png",
+      },
+      sumin: {
+        base: [
+          "assets/photocards/asap/sumina.png",
+          "assets/photocards/asap/suminb.jpg",
+        ],
+        special: "assets/photocards/asap/sumins.png",
+      },
+      yoon: {
+        base: [
+          "assets/photocards/asap/yoona.jpg",
+          "assets/photocards/asap/yoonb.jpg",
+        ],
+        special: "assets/photocards/asap/yoons.png",
+      },
+    },
+    weneedlove: {
+      isa: {
+        base: [
+          "assets/photocards/weneedlove/isaa.jpg",
+          "assets/photocards/weneedlove/isab.jpg",
+        ],
+        special: "assets/photocards/weneedlove/isas.png",
+      },
+      j: {
+        base: [
+          "assets/photocards/weneedlove/ja.jpg",
+          "assets/photocards/weneedlove/jb.jpg",
+        ],
+        special: "assets/photocards/weneedlove/js.png",
+      },
+      seeun: {
+        base: [
+          "assets/photocards/weneedlove/seeuna.jpg",
+          "assets/photocards/weneedlove/seeunb.jpg",
+        ],
+        special: "assets/photocards/weneedlove/seeuns.png",
+      },
+      sieun: {
+        base: [
+          "assets/photocards/weneedlove/sieuna.jpg",
+          "assets/photocards/weneedlove/sieunb.jpg",
+        ],
+        special: "assets/photocards/weneedlove/sieuns.png",
+      },
+      sumin: {
+        base: [
+          "assets/photocards/weneedlove/sumina.jpg",
+          "assets/photocards/weneedlove/suminb.jpg",
+        ],
+        special: "assets/photocards/weneedlove/sumins.png",
+      },
+      yoon: {
+        base: [
+          "assets/photocards/weneedlove/yoona.jpg",
+          "assets/photocards/weneedlove/yoonb.jpg",
+        ],
+        special: "assets/photocards/weneedlove/yoons.png",
+      },
+    },
+    teenfresh: {
+      isa: {
+        base: [
+          "assets/photocards/teenfresh/isaa.jpg",
+          "assets/photocards/teenfresh/isab.jpg",
+        ],
+        special: "assets/photocards/teenfresh/isas.png",
+      },
+      j: {
+        base: [
+          "assets/photocards/teenfresh/ja.jpg",
+          "assets/photocards/teenfresh/jb.jpg",
+        ],
+        special: "assets/photocards/teenfresh/js.png",
+      },
+      seeun: {
+        base: [
+          "assets/photocards/teenfresh/seeuna.jpg",
+          "assets/photocards/teenfresh/seeunb.jpg",
+        ],
+        special: "assets/photocards/teenfresh/seeuns.png",
+      },
+      sieun: {
+        base: [
+          "assets/photocards/teenfresh/sieuna.jpg",
+          "assets/photocards/teenfresh/sieunb.jpg",
+        ],
+        special: "assets/photocards/teenfresh/sieuns.png",
+      },
+      sumin: {
+        base: [
+          "assets/photocards/teenfresh/sumina.jpg",
+          "assets/photocards/teenfresh/suminb.jpg",
+        ],
+        special: "assets/photocards/teenfresh/sumins.png",
+      },
+      yoon: {
+        base: [
+          "assets/photocards/teenfresh/yoona.jpg",
+          "assets/photocards/teenfresh/yoonb.jpg",
+        ],
+        special: "assets/photocards/teenfresh/yoons.png",
+      },
+    },
+    metamorphic: {
+      isa: {
+        base: [
+          "assets/photocards/metamorphic/isaa.jpg",
+          "assets/photocards/metamorphic/isab.jpg",
+        ],
+        special: "assets/photocards/metamorphic/isas.png",
+      },
+      j: {
+        base: [
+          "assets/photocards/metamorphic/ja.jpg",
+          "assets/photocards/metamorphic/jb.jpg",
+        ],
+        special: "assets/photocards/metamorphic/js.png",
+      },
+      seeun: {
+        base: [
+          "assets/photocards/metamorphic/seeuna.jpg",
+          "assets/photocards/metamorphic/seeunb.jpg",
+        ],
+        special: "assets/photocards/metamorphic/seeuns.png",
+      },
+      sieun: {
+        base: [
+          "assets/photocards/metamorphic/sieuna.jpg",
+          "assets/photocards/metamorphic/sieunb.jpg",
+        ],
+        special: "assets/photocards/metamorphic/sieuns.png",
+      },
+      sumin: {
+        base: [
+          "assets/photocards/metamorphic/sumina.jpg",
+          "assets/photocards/metamorphic/suminb.jpg",
+        ],
+        special: "assets/photocards/metamorphic/sumins.png",
+      },
+      yoon: {
+        base: [
+          "assets/photocards/metamorphic/yoona.jpg",
+          "assets/photocards/metamorphic/yoonb.jpg",
+        ],
+        special: "assets/photocards/metamorphic/yoons.png",
+      },
+    },
+  };
 
   const avatarMatchReplies = {
       "assets/avatars/isa.webp": {
@@ -147,6 +497,20 @@ const ChatQuiz = (() => {
   let shouldStartNewSession = true;
   let currentAvatar = null;
 
+  const resetMemberScores = () => {
+    Object.keys(memberScores).forEach((key) => {
+      memberScores[key] = 0;
+    });
+  };
+
+  const addPreferredAlbums = (choice) => {
+    const albums = optionAlbumMap[choice];
+    if (!albums) {
+      return;
+    }
+    albums.forEach((album) => preferredAlbums.add(album));
+  };
+
   if (!chatToggle || !chatbox || !chatClose || !messages || !optionsContainer) {
     return {};
   }
@@ -231,6 +595,32 @@ const ChatQuiz = (() => {
     scrollToBottom();
   };
 
+  const addPhotocardBubble = (text, imageUrl) => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "chat-message bot";
+
+    const avatar = document.createElement("div");
+    avatar.className = "chat-avatar-small";
+
+    const bubble = document.createElement("div");
+    bubble.className = "message-bubble photocard-bubble";
+
+    const content = document.createElement("p");
+    content.textContent = text;
+
+    const image = document.createElement("img");
+    image.src = imageUrl;
+    image.alt = text;
+    image.className = "photocard-preview";
+
+    bubble.appendChild(content);
+    bubble.appendChild(image);
+    wrapper.appendChild(avatar);
+    wrapper.appendChild(bubble);
+    messages.appendChild(wrapper);
+    scrollToBottom();
+  };
+
   const showTypingIndicator = () => {
     const wrapper = document.createElement("div");
     wrapper.className = "chat-message bot typing-indicator";
@@ -280,6 +670,55 @@ const ChatQuiz = (() => {
     }, 650);
   };
 
+  const addMemberScore = (choice) => {
+    const memberKey = optionMemberMap[choice];
+    if (memberKey && typeof memberScores[memberKey] === "number") {
+      memberScores[memberKey] += 1;
+    }
+  };
+
+  const chooseRandom = (list) => list[Math.floor(Math.random() * list.length)];
+
+  const getTopMember = () => {
+    const scores = Object.entries(memberScores);
+    const maxScore = Math.max(...scores.map(([, score]) => score));
+    const topMembers = scores
+      .filter(([, score]) => score === maxScore)
+      .map(([member]) => member);
+    return chooseRandom(topMembers);
+  };
+
+  const getAlbumChoice = () => {
+    if (preferredAlbums.size === 0) {
+      return chooseRandom(Object.keys(albumLabels));
+    }
+    const albumList = Array.from(preferredAlbums);
+    return chooseRandom(albumList);
+  };
+
+  const pickPhotocard = (member, album) => {
+    const albumPool = photocardPool[album];
+    if (!albumPool || !albumPool[member]) {
+      return null;
+    }
+
+    const { base = [], special } = albumPool[member];
+    const roll = Math.random();
+
+    if (special && roll <= 0.05) {
+      return { url: special, variant: "S" };
+    }
+
+    const baseOptions = base.length ? base : special ? [special] : [];
+    if (!baseOptions.length) {
+      return null;
+    }
+
+    const chosenBase = chooseRandom(baseOptions);
+    const variant = baseOptions.length > 1 && chosenBase === baseOptions[1] ? "B" : "A";
+    return { url: chosenBase, variant };
+  };
+
   const addUserMessage = (text) => {
     const wrapper = document.createElement("div");
     wrapper.className = "chat-message user";
@@ -317,26 +756,47 @@ const ChatQuiz = (() => {
   const renderCompletion = () => {
     markQuizCompleted();
     clearOptions();
-    addBotMessage("¡Listo! Gracias por jugar. ¿Quieres reiniciar?", true, () => {
-      clearOptions();
 
-      const restart = document.createElement("button");
-      restart.type = "button";
-      restart.className = "chat-option";
-      restart.textContent = "Volver a empezar";
-      restart.addEventListener("click", startConversation);
+    const restart = document.createElement("button");
+    restart.type = "button";
+    restart.className = "chat-option";
+    restart.textContent = "Volver a empezar";
+    restart.addEventListener("click", startConversation);
 
-      const close = document.createElement("button");
-      close.type = "button";
-      close.className = "chat-option";
-      close.textContent = "Cerrar chat";
-      close.addEventListener("click", () => {
-        closeChat();
-      });
+    const close = document.createElement("button");
+    close.type = "button";
+    close.className = "chat-option";
+    close.textContent = "Cerrar chat";
+    close.addEventListener("click", () => {
+      closeChat();
+    });
 
-      optionsContainer.appendChild(restart);
-      optionsContainer.appendChild(close);
-      scrollToBottom();
+    optionsContainer.appendChild(restart);
+    optionsContainer.appendChild(close);
+    scrollToBottom();
+  };
+
+  const showPhotocardResult = () => {
+    const member = getTopMember();
+    const album = getAlbumChoice();
+    const memberLabel = memberLabels[member] || member;
+    const albumLabel = albumLabels[album] || album;
+    const photocard = pickPhotocard(member, album);
+
+    const introText = `¡Listo! Hoy tu vibra STAYC es ${memberLabel} en la era ${albumLabel}.`;
+
+    addBotMessage(introText, true, () => {
+      if (photocard) {
+        schedule(() => {
+          addPhotocardBubble(`Photocard ${memberLabel} (${photocard.variant} ver.)`, photocard.url);
+        }, 320);
+      }
+
+      schedule(() => {
+        addBotMessage("¿Quieres reiniciar?", true, () => {
+          renderCompletion();
+        });
+      }, 900);
     });
   };
 
@@ -397,7 +857,6 @@ const ChatQuiz = (() => {
   const askCurrentStep = () => {
     const step = chatFlow[stepIndex];
     if (!step) {
-      renderCompletion();
       return;
     }
 
@@ -412,6 +871,9 @@ const ChatQuiz = (() => {
     clearOptions();
     const avatarReactions = avatarMatchReplies[currentAvatar] || {};
     const reactionReply = avatarReactions[choice];
+
+    addMemberScore(choice);
+    addPreferredAlbums(choice);
 
     if (reactionReply) {
       schedule(() => {
@@ -428,7 +890,7 @@ const ChatQuiz = (() => {
       }, delayBeforeNext);
     } else {
       schedule(() => {
-        renderCompletion();
+        showPhotocardResult();
       }, delayBeforeNext);
     }
   };
@@ -455,6 +917,8 @@ const ChatQuiz = (() => {
   const startConversation = () => {
     clearScheduledResponses();
     removeTypingIndicators();
+    resetMemberScores();
+    preferredAlbums.clear();
     pickAvatar();
     messages.innerHTML = "";
     clearOptions();
