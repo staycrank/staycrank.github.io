@@ -703,21 +703,34 @@ const ChatQuiz = (() => {
     return chooseRandom(albumList);
   };
 
-  const loadPhotocardImage = (url) => {
+  const loadPhotocardImage = async (url) => {
     if (photocardImageCache.has(url)) {
-      return Promise.resolve(photocardImageCache.get(url));
+      return photocardImageCache.get(url);
     }
 
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.crossOrigin = "anonymous";
-      img.onload = () => {
-        photocardImageCache.set(url, img);
-        resolve(img);
-      };
-      img.onerror = reject;
-      img.src = url;
+    const response = await fetch(url, { cache: "force-cache" });
+    if (!response.ok) {
+      throw new Error(`No se pudo cargar la photocard (${response.status})`);
+    }
+
+    const blob = await response.blob();
+    const dataUrl = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
     });
+
+    const img = new Image();
+    img.src = dataUrl;
+
+    await (img.decode ? img.decode() : new Promise((resolve, reject) => {
+      img.onload = resolve;
+      img.onerror = reject;
+    }));
+
+    photocardImageCache.set(url, img);
+    return img;
   };
 
   const pickPhotocard = (member, album) => {
