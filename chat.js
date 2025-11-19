@@ -45,23 +45,23 @@ const ChatQuiz = (() => {
       ],
     },
     {
-      prompt: "¿Qué estilo visual encaja mejor contigo?",
+      prompt: "What visual style fits you best?",
       options: [
-        "Cute, colorido y con una vibra alegre",
-        "Elegante y minimalista, con detalles sofisticados",
-        "Oscuro/edgy, con un punto rebelde",
-        "Retro pop, con un toque nostálgico",
-      ],
-    },
-    {
-      prompt: "¿Qué tipo de música te imaginas para tu comeback ideal?",
-      options: [
-        "Un himno veraniego y refrescante",
-        "Un sonido powerful y girl crush",
-        "Algo juguetón y pegadizo para subir el ánimo",
-        "Una balada/medio tiempo emotiva",
-      ],
-    },
+        "Cute, colorful, and bursting with happy vibes.",
+    "Elegant and minimalist, with sophisticated details.",
+    "Dark/edgy, with a rebellious edge.",
+    "Retro pop, with a nostalgic touch.",
+  ],
+},
+{
+  prompt: "What type of music do you imagine for your ideal comeback?",
+  options: [
+    "A summery and refreshing anthem.",
+    "A powerful and girl crush sound.",
+    "Something playful and catchy to lift your mood.",
+    "An emotional ballad/mid-tempo.",
+  ],
+},
   ];
 
   const VISITOR_COOKIE = "stayc_chat_visitor";
@@ -133,282 +133,45 @@ const ChatQuiz = (() => {
   };
 
   const optionAlbumMap = {
-    "Cute, colorido y con una vibra alegre": ["teenfresh", "asap"],
-    "Elegante y minimalista, con detalles sofisticados": ["stereotype", "weneedlove"],
-    "Oscuro/edgy, con un punto rebelde": ["metamorphic", "sobad"],
-    "Retro pop, con un toque nostálgico": ["sobad", "asap"],
-    "Un himno veraniego y refrescante": ["teenfresh", "weneedlove", "asap"],
-    "Un sonido powerful y girl crush": ["metamorphic", "stereotype"],
-    "Algo juguetón y pegadizo para subir el ánimo": ["sobad", "asap", "teenfresh"],
-    "Una balada/medio tiempo emotiva": ["weneedlove", "stereotype"],
+    "Cute, colorful, and bursting with happy vibes.": ["iwantit", "asap", "teddybear"],
+    "Elegant and minimalist, with sophisticated details.": ["metamorphic", "s"],
+    "Dark/edgy, with a rebellious edge.": ["s", "sobad", "youngluv"],
+    "Retro pop, with a nostalgic touch.": ["weneedlove", "stereotype"],
+    "A summery and refreshing anthem.": ["iwantit", "teenfresh"],
+    "A powerful and girl crush sound.": ["metamorphic", "s", "sobad", "youngluv"],
+    "Something playful and catchy to lift your mood.": ["iwantit", "teddybear"],
+    "An emotional ballad/mid-tempo.": ["weneedlove", "stereotype"],
   };
 
-  const photocardPool = {
-    sobad: {
-      isa: {
-        base: [
-          "assets/photocards/sobad/isad.jpg",
-          "assets/photocards/sobad/isal.png",
-        ],
-        special: "assets/photocards/sobad/isas.png",
-      },
-      j: {
-        base: [
-          "assets/photocards/sobad/jd.jpg",
-          "assets/photocards/sobad/jl.jpg",
-        ],
-        special: "assets/photocards/sobad/js.png",
-      },
-      seeun: {
-        base: [
-          "assets/photocards/sobad/seeund.jpg",
-          "assets/photocards/sobad/seeunl.jpg",
-        ],
-        special: "assets/photocards/sobad/seeuns.png",
-      },
-      sieun: {
-        base: [
-          "assets/photocards/sobad/sieund.jpg",
-          "assets/photocards/sobad/sieunl.jpg",
-        ],
-        special: "assets/photocards/sobad/sieuns.png",
-      },
-      sumin: {
-        base: [
-          "assets/photocards/sobad/sumind.jpg",
-          "assets/photocards/sobad/suminl.jpg",
-        ],
-        special: "assets/photocards/sobad/sumins.png",
-      },
-      yoon: {
-        base: [
-          "assets/photocards/sobad/yoond.jpg",
-          "assets/photocards/sobad/yoonl.jpg",
-        ],
-        special: "assets/photocards/sobad/yoons.png",
-      },
-    },
-    stereotype: {
-      isa: {
-        base: [
-          "assets/photocards/stereotype/isaa.jpg",
-          "assets/photocards/stereotype/isab.jpg",
-        ],
-        special: "assets/photocards/stereotype/isas.png",
-      },
-      j: {
-        base: [
-          "assets/photocards/stereotype/ja.jpg",
-          "assets/photocards/stereotype/jb.jpg",
-        ],
-        special: "assets/photocards/stereotype/js.png",
-      },
-      seeun: {
-        base: [
-          "assets/photocards/stereotype/seeuna.jpg",
-          "assets/photocards/stereotype/seeunb.jpg",
-        ],
-        special: "assets/photocards/stereotype/seeuns.png",
-      },
-      sieun: {
-        base: [
-          "assets/photocards/stereotype/sieuna.jpg",
-          "assets/photocards/stereotype/sieunb.jpg",
-        ],
-        special: "assets/photocards/stereotype/sieuns.png",
-      },
-      sumin: {
-        base: [
-          "assets/photocards/stereotype/sumina.jpg",
-          "assets/photocards/stereotype/suminb.jpg",
-        ],
-        special: "assets/photocards/stereotype/sumins.png",
-      },
-      yoon: {
-        base: [
-          "assets/photocards/stereotype/yoona.jpg",
-          "assets/photocards/stereotype/yoonb.jpg",
-        ],
-        special: "assets/photocards/stereotype/yoons.png",
-      },
-    },
-    asap: {
-      isa: {
-        base: [
-          "assets/photocards/asap/isaa.jpg",
-          "assets/photocards/asap/isab.jpg",
-        ],
-        special: "assets/photocards/asap/isas.png",
-      },
-      j: {
-        base: [
-          "assets/photocards/asap/ja.jpg",
-          "assets/photocards/asap/jb.jpg",
-        ],
-        special: "assets/photocards/asap/js.png",
-      },
-      seeun: {
-        base: [
-          "assets/photocards/asap/seeuna.jpg",
-          "assets/photocards/asap/seeunb.jpg",
-        ],
-        special: "assets/photocards/asap/seeuns.png",
-      },
-      sieun: {
-        base: [
-          "assets/photocards/asap/sieuna.jpg",
-          "assets/photocards/asap/sieunb.jpg",
-        ],
-        special: "assets/photocards/asap/sieuns.png",
-      },
-      sumin: {
-        base: [
-          "assets/photocards/asap/sumina.png",
-          "assets/photocards/asap/suminb.jpg",
-        ],
-        special: "assets/photocards/asap/sumins.png",
-      },
-      yoon: {
-        base: [
-          "assets/photocards/asap/yoona.jpg",
-          "assets/photocards/asap/yoonb.jpg",
-        ],
-        special: "assets/photocards/asap/yoons.png",
-      },
-    },
-    weneedlove: {
-      isa: {
-        base: [
-          "assets/photocards/weneedlove/isaa.jpg",
-          "assets/photocards/weneedlove/isab.jpg",
-        ],
-        special: "assets/photocards/weneedlove/isas.png",
-      },
-      j: {
-        base: [
-          "assets/photocards/weneedlove/ja.jpg",
-          "assets/photocards/weneedlove/jb.jpg",
-        ],
-        special: "assets/photocards/weneedlove/js.png",
-      },
-      seeun: {
-        base: [
-          "assets/photocards/weneedlove/seeuna.jpg",
-          "assets/photocards/weneedlove/seeunb.jpg",
-        ],
-        special: "assets/photocards/weneedlove/seeuns.png",
-      },
-      sieun: {
-        base: [
-          "assets/photocards/weneedlove/sieuna.jpg",
-          "assets/photocards/weneedlove/sieunb.jpg",
-        ],
-        special: "assets/photocards/weneedlove/sieuns.png",
-      },
-      sumin: {
-        base: [
-          "assets/photocards/weneedlove/sumina.jpg",
-          "assets/photocards/weneedlove/suminb.jpg",
-        ],
-        special: "assets/photocards/weneedlove/sumins.png",
-      },
-      yoon: {
-        base: [
-          "assets/photocards/weneedlove/yoona.jpg",
-          "assets/photocards/weneedlove/yoonb.jpg",
-        ],
-        special: "assets/photocards/weneedlove/yoons.png",
-      },
-    },
-    teenfresh: {
-      isa: {
-        base: [
-          "assets/photocards/teenfresh/isaa.jpg",
-          "assets/photocards/teenfresh/isab.jpg",
-        ],
-        special: "assets/photocards/teenfresh/isas.png",
-      },
-      j: {
-        base: [
-          "assets/photocards/teenfresh/ja.jpg",
-          "assets/photocards/teenfresh/jb.jpg",
-        ],
-        special: "assets/photocards/teenfresh/js.png",
-      },
-      seeun: {
-        base: [
-          "assets/photocards/teenfresh/seeuna.jpg",
-          "assets/photocards/teenfresh/seeunb.jpg",
-        ],
-        special: "assets/photocards/teenfresh/seeuns.png",
-      },
-      sieun: {
-        base: [
-          "assets/photocards/teenfresh/sieuna.jpg",
-          "assets/photocards/teenfresh/sieunb.jpg",
-        ],
-        special: "assets/photocards/teenfresh/sieuns.png",
-      },
-      sumin: {
-        base: [
-          "assets/photocards/teenfresh/sumina.jpg",
-          "assets/photocards/teenfresh/suminb.jpg",
-        ],
-        special: "assets/photocards/teenfresh/sumins.png",
-      },
-      yoon: {
-        base: [
-          "assets/photocards/teenfresh/yoona.jpg",
-          "assets/photocards/teenfresh/yoonb.jpg",
-        ],
-        special: "assets/photocards/teenfresh/yoons.png",
-      },
-    },
-    metamorphic: {
-      isa: {
-        base: [
-          "assets/photocards/metamorphic/isaa.jpg",
-          "assets/photocards/metamorphic/isab.jpg",
-        ],
-        special: "assets/photocards/metamorphic/isas.png",
-      },
-      j: {
-        base: [
-          "assets/photocards/metamorphic/ja.jpg",
-          "assets/photocards/metamorphic/jb.jpg",
-        ],
-        special: "assets/photocards/metamorphic/js.png",
-      },
-      seeun: {
-        base: [
-          "assets/photocards/metamorphic/seeuna.jpg",
-          "assets/photocards/metamorphic/seeunb.jpg",
-        ],
-        special: "assets/photocards/metamorphic/seeuns.png",
-      },
-      sieun: {
-        base: [
-          "assets/photocards/metamorphic/sieuna.jpg",
-          "assets/photocards/metamorphic/sieunb.jpg",
-        ],
-        special: "assets/photocards/metamorphic/sieuns.png",
-      },
-      sumin: {
-        base: [
-          "assets/photocards/metamorphic/sumina.jpg",
-          "assets/photocards/metamorphic/suminb.jpg",
-        ],
-        special: "assets/photocards/metamorphic/sumins.png",
-      },
-      yoon: {
-        base: [
-          "assets/photocards/metamorphic/yoona.jpg",
-          "assets/photocards/metamorphic/yoonb.jpg",
-        ],
-        special: "assets/photocards/metamorphic/yoons.png",
-      },
-    },
+  const photocardConfig = {
+    sobad: true,
+    stereotype: true,
+    asap: true,
+    weneedlove: true,
+    teenfresh: true,
+    metamorphic: true,
   };
+
+  const buildPath = (album, member, variant) => {
+    const ext = variant === "s" ? "png" : "jpg";
+    return `assets/photocards/${album}/${member}${variant}.${ext}`;
+  };
+
+  const getMemberPool = (album, member) => {
+    if (!photocardConfig[album]) return null;
+
+    const variants = ["a", "b", "s"];
+
+    const base = variants
+      .filter(v => v !== "s")
+      .map(v => buildPath(album, member, v));
+
+    const special = buildPath(album, member, "s");
+
+    return { base, special };
+  };
+
+
 
   let lastPhotocardResult = null;
   const shareCanvas = document.createElement("canvas");
@@ -789,28 +552,26 @@ const ChatQuiz = (() => {
   };
 
   const pickPhotocard = (member, album) => {
-    const albumPool = photocardPool[album];
-    if (!albumPool || !albumPool[member]) {
-      return null;
-    }
+    const pool = getMemberPool(album, member);
+    if (!pool) return null;
 
-    const { base = [], special } = albumPool[member];
+    const { base, special } = pool;
+
     const roll = Math.random();
 
-    if (special && roll <= 0.05) {
+    // 5% de probabilidad especial
+    if (roll <= 0.05) {
       return { url: special, variant: "S" };
     }
 
-    const baseOptions = base.length ? base : special ? [special] : [];
-    if (!baseOptions.length) {
-      return null;
-    }
+    // Selección normal
+    const idx = Math.floor(Math.random() * base.length);
+    const chosen = base[idx];
+    const variant = idx === 1 ? "B" : "A";
 
-    const randomIndex = Math.floor(Math.random() * baseOptions.length);
-    const chosenBase = baseOptions[randomIndex];
-    const variant = randomIndex === 1 ? "B" : "A";
-    return { url: chosenBase, variant };
+    return { url: chosen, variant };
   };
+
 
   const addUserMessage = (text) => {
     const wrapper = document.createElement("div");
