@@ -410,6 +410,13 @@ const ChatQuiz = (() => {
     },
   };
 
+  let lastPhotocardResult = null;
+  const shareCanvas = document.createElement("canvas");
+  shareCanvas.id = "photocard-share-canvas";
+  shareCanvas.style.display = "none";
+  document.body.appendChild(shareCanvas);
+  const photocardImageCache = new Map();
+
   const avatarMatchReplies = {
       "assets/avatars/isa.webp": {
         "I might seem cold at first, but I'm actually very warm and I laugh a lot.": "I identify so much with you... I think we'd get along really well♡",
@@ -696,6 +703,23 @@ const ChatQuiz = (() => {
     return chooseRandom(albumList);
   };
 
+  const loadPhotocardImage = (url) => {
+    if (photocardImageCache.has(url)) {
+      return Promise.resolve(photocardImageCache.get(url));
+    }
+
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = () => {
+        photocardImageCache.set(url, img);
+        resolve(img);
+      };
+      img.onerror = reject;
+      img.src = url;
+    });
+  };
+
   const pickPhotocard = (member, album) => {
     const albumPool = photocardPool[album];
     if (!albumPool || !albumPool[member]) {
@@ -714,8 +738,9 @@ const ChatQuiz = (() => {
       return null;
     }
 
-    const chosenBase = chooseRandom(baseOptions);
-    const variant = baseOptions.length > 1 && chosenBase === baseOptions[1] ? "B" : "A";
+    const randomIndex = Math.floor(Math.random() * baseOptions.length);
+    const chosenBase = baseOptions[randomIndex];
+    const variant = randomIndex === 1 ? "B" : "A";
     return { url: chosenBase, variant };
   };
 
@@ -757,11 +782,34 @@ const ChatQuiz = (() => {
     markQuizCompleted();
     clearOptions();
 
-    const restart = document.createElement("button");
-    restart.type = "button";
-    restart.className = "chat-option";
-    restart.textContent = "Volver a empezar";
-    restart.addEventListener("click", startConversation);
+    const share = document.createElement("button");
+    share.type = "button";
+    share.className = "chat-option";
+    share.textContent = "Compartir";
+    share.addEventListener("click", async () => {
+      share.disabled = true;
+      const previousLabel = share.textContent;
+      share.textContent = "Generando...";
+
+      try {
+        const imageUrl = await generatePhotocardShareImage();
+        if (imageUrl) {
+          schedule(() => {
+            addBotMessage("¡Imagen lista para compartir! Descárgala y súbela a tus redes. 💖", true, () => {
+              addSharePreview(imageUrl);
+            });
+          }, 200);
+        } else {
+          addBotMessage("Todavía no hay una photocard para compartir. Completa el quiz primero. ✨");
+        }
+      } catch (error) {
+        console.error("Error generating photocard share image", error);
+        addBotMessage("No pude crear la imagen ahora mismo. Inténtalo de nuevo en unos segundos. ✨");
+      } finally {
+        share.disabled = false;
+        share.textContent = previousLabel;
+      }
+    });
 
     const close = document.createElement("button");
     close.type = "button";
@@ -771,7 +819,7 @@ const ChatQuiz = (() => {
       closeChat();
     });
 
-    optionsContainer.appendChild(restart);
+    optionsContainer.appendChild(share);
     optionsContainer.appendChild(close);
     scrollToBottom();
   };
@@ -785,6 +833,10 @@ const ChatQuiz = (() => {
 
     const introText = `¡Listo! Hoy tu vibra STAYC es ${memberLabel} en la era ${albumLabel}.`;
 
+    lastPhotocardResult = photocard
+      ? { member, memberLabel, album, albumLabel, photocardUrl: photocard.url, variant: photocard.variant }
+      : null;
+
     addBotMessage(introText, true, () => {
       if (photocard) {
         schedule(() => {
@@ -793,11 +845,127 @@ const ChatQuiz = (() => {
       }
 
       schedule(() => {
-        addBotMessage("¿Quieres reiniciar?", true, () => {
+        addBotMessage("¿Quieres compartir tu photocard?", true, () => {
           renderCompletion();
         });
       }, 900);
     });
+  };
+
+  const addSharePreview = (imageUrl) => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "chat-message bot";
+
+    const avatar = document.createElement("div");
+    avatar.className = "chat-avatar-small";
+
+    const bubble = document.createElement("div");
+    bubble.className = "message-bubble share-preview";
+
+    const content = document.createElement("p");
+    content.textContent = "Descarga y comparte tu photocard";
+
+    const image = document.createElement("img");
+    image.src = imageUrl;
+    image.alt = "Imagen para compartir";
+    image.className = "share-preview-image";
+
+    const download = document.createElement("a");
+    download.href = imageUrl;
+    download.download = "stayc-photocard.png";
+    download.className = "share-download";
+    download.textContent = "Descargar imagen";
+
+    bubble.appendChild(content);
+    bubble.appendChild(image);
+    bubble.appendChild(download);
+
+    wrapper.appendChild(avatar);
+    wrapper.appendChild(bubble);
+    messages.appendChild(wrapper);
+    scrollToBottom();
+  };
+
+  const generatePhotocardShareImage = async () => {
+    if (!lastPhotocardResult || !lastPhotocardResult.photocardUrl) {
+      return null;
+    }
+
+    const { memberLabel, albumLabel, photocardUrl, variant } = lastPhotocardResult;
+
+    const width = 1080;
+    const height = 1920;
+    shareCanvas.width = width;
+    shareCanvas.height = height;
+    const ctx = shareCanvas.getContext("2d");
+
+    const gradient = ctx.createLinearGradient(0, 0, 0, height);
+    gradient.addColorStop(0, "#ff7eb3");
+    gradient.addColorStop(1, "#6c63ff");
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, width, height);
+
+    ctx.fillStyle = "rgba(255, 255, 255, 0.12)";
+    ctx.beginPath();
+    ctx.ellipse(width * 0.75, height * 0.08, 220, 120, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(width * 0.25, height * 0.85, 260, 140, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "bold 42px Poppins, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("STAYC Photocard Quiz", width / 2, 110);
+
+    ctx.font = "28px Poppins, sans-serif";
+    ctx.fillText(`Tu vibra: ${memberLabel}`, width / 2, 170);
+    ctx.font = "24px Poppins, sans-serif";
+    ctx.fillText(albumLabel, width / 2, 215);
+
+    const cardX = 160;
+    const cardY = 260;
+    const cardWidth = width - 320;
+    const cardHeight = 1200;
+    ctx.fillStyle = "#ffffff";
+    ctx.shadowColor = "rgba(0, 0, 0, 0.18)";
+    ctx.shadowBlur = 28;
+    ctx.shadowOffsetY = 18;
+    ctx.fillRect(cardX, cardY, cardWidth, cardHeight);
+    ctx.shadowColor = "transparent";
+
+    const framePadding = 60;
+    const imageMaxWidth = cardWidth - framePadding * 2;
+    const imageMaxHeight = cardHeight - framePadding * 2 - 120;
+    const photo = await loadPhotocardImage(photocardUrl);
+    const ratio = Math.min(imageMaxWidth / photo.width, imageMaxHeight / photo.height);
+    const drawWidth = photo.width * ratio;
+    const drawHeight = photo.height * ratio;
+    const imageX = cardX + (cardWidth - drawWidth) / 2;
+    const imageY = cardY + 90;
+
+    ctx.drawImage(photo, imageX, imageY, drawWidth, drawHeight);
+
+    ctx.fillStyle = "#0f172a";
+    ctx.font = "bold 30px Poppins, sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText(memberLabel, cardX + framePadding, cardY + 58);
+
+    ctx.fillStyle = "#6c63ff";
+    ctx.font = "24px Poppins, sans-serif";
+    ctx.fillText(albumLabel, cardX + framePadding, cardY + 98);
+
+    ctx.fillStyle = "#ff5fa2";
+    ctx.font = "bold 22px Poppins, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(`Versión ${variant}`, width / 2, cardY + cardHeight - 30);
+
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "20px Poppins, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("Comparte tu vibra STAYC ✨", width / 2, height - 80);
+
+    return shareCanvas.toDataURL("image/png");
   };
 
   const renderStartOptions = () => {
@@ -919,6 +1087,7 @@ const ChatQuiz = (() => {
     removeTypingIndicators();
     resetMemberScores();
     preferredAlbums.clear();
+    lastPhotocardResult = null;
     pickAvatar();
     messages.innerHTML = "";
     clearOptions();

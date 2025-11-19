@@ -947,6 +947,38 @@ footer a:hover {
   border: 1px solid #e5e7eb;
 }
 
+.share-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.share-preview-image {
+  width: 220px;
+  border-radius: 14px;
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.15);
+  border: 1px solid #e5e7eb;
+}
+
+.share-download {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 14px;
+  background: #0f172a;
+  color: #ffffff;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 600;
+  width: fit-content;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.share-download:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.2);
+}
+
 .chat-message.bot .message-bubble {
   border-bottom-left-radius: 6px;
 }
