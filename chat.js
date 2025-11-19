@@ -88,12 +88,16 @@ const ChatQuiz = (() => {
   ];
 
   const albumLabels = {
-    sobad: "SO BAD era",
-    stereotype: "STEREOTYPE era",
-    asap: "ASAP era",
-    weneedlove: "WE NEED LOVE era",
-    teenfresh: "TEENFRESH era",
-    metamorphic: "METAMORPHIC era",
+    sobad: "SO BAD album",
+    stereotype: "STEREOTYPE album",
+    asap: "ASAP album",
+    weneedlove: "WE NEED LOVE album",
+    teenfresh: "TEENFRESH album",
+    metamorphic: "METAMORPHIC album",
+    iwantit: "I WANT IT album",
+    s: "[S] album",
+    teddybear: "Teddy Bear album",
+    youngluv: "Young Luv album"
   };
 
   const memberLabels = {
@@ -150,6 +154,10 @@ const ChatQuiz = (() => {
     weneedlove: true,
     teenfresh: true,
     metamorphic: true,
+    iwantit: true,
+    s: true,
+    teddybear: true,
+    youngluv: true,
   };
 
   const buildPath = (album, member, variant) => {
@@ -222,37 +230,37 @@ const ChatQuiz = (() => {
   const avatarIntroMessages = {
     "assets/avatars/isa.webp": {
       firstTime:
-        "¡Hola! Soy Isa. ¿Te animas a descubrir juntas qué vibra STAYC compartimos hoy? 💄",
+        "SWITH! 🐱 I'm so glad to see you here~ Do you want to find out which STAYC photocard represents you? It'll be fun getting to know you better.",
       returning:
         "¡Holiii, volvió Isa! Ya hicimos el test antes, ¿lo repetimos para ver si cambió tu vibra?",
     },
     "assets/avatars/j.webp": {
       firstTime:
-        "¡Hey, soy J! Tengo mil preguntas para ti, ¿empezamos el quiz y vemos si coincidimos en energía? ✨",
+        "SWITH! 🐶 Hi hi! I'm so happy to see you here~ Want to find out which STAYC photocard you are? I'm sure you're gonna love the result!",
       returning:
         "¡Siii, regresaste! Soy J otra vez. Ya lo jugamos, pero podemos repetirlo y seguir riendo juntas.",
     },
     "assets/avatars/seeun.webp": {
       firstTime:
-        "¡Hola, soy Seeun! Vamos a jugar con calma y descubrir tu vibra STAYC, ¿sí? 🦊",
+        "SWITH! 🦊 Hi hi~ I'm so happy to see you here. Would you like to find out which STAYC photocard represents you? It's going to be fun, I promise.",
       returning:
         "SWITH linda, soy Seeun de nuevo~ Si quieres podemos rehacer el test y charlar otro ratito.",
     },
     "assets/avatars/sumin.webp": {
       firstTime:
-        "Soy Sumin. Preparé este juego para conocerte mejor, ¿lista para empezar ahora mismo? ☕",
+        "SWITH! 🐰 Hello hello~ I'm really happy you're here. Want to discover which STAYC photocard represents you? It's going to be special, I think you'll like it",
       returning:
         "Hola otra vez, habla Sumin. Ya completamos el quiz, pero podemos intentarlo de nuevo si quieres ♡",
     },
     "assets/avatars/sieun.webp": {
       firstTime:
-        "Sieun aquí. Me encantaría saber todo sobre tu vibra, ¿le damos al quiz? 🎤",
+        "SWITH! 🐩 I'm glad to see you~ Want to find out which STAYC photocard represents you? It's going to be interesting getting to know you better",
       returning:
         "¡Reunión de nuevo! Soy Sieun. Ya tienes resultados, pero podemos compararlos si repetimos el test.",
     },
     "assets/avatars/yoon.webp": {
       firstTime:
-        "¡Hii, soy Yoon! Estoy lista para jugar y descubrir tu vibra STAYC, ¿vienes conmigo? 💛",
+        "SWITH! 🐯 Hi hiii! I'm so happy to see you here~ Want to find out which STAYC photocard represents you? It's gonna be super fun, I promise!",
       returning:
         "¡Yoon está de vuelta! Si quieres seguimos jugando el quiz hasta que encontremos tu mood perfecto~",
     },
@@ -623,7 +631,7 @@ const ChatQuiz = (() => {
     const share = document.createElement("button");
     share.type = "button";
     share.className = "chat-option";
-    share.textContent = "Generar Imagen";
+    share.textContent = "Generate Image and Share!";
     share.addEventListener("click", async () => {
       share.disabled = true;
       const previousLabel = share.textContent;
@@ -653,7 +661,7 @@ const ChatQuiz = (() => {
     const close = document.createElement("button");
     close.type = "button";
     close.className = "chat-option";
-    close.textContent = "Cerrar chat";
+    close.textContent = "Close chat";
     close.addEventListener("click", () => {
       closeChat();
     });
@@ -670,7 +678,8 @@ const ChatQuiz = (() => {
     const albumLabel = albumLabels[album] || album;
     const photocard = pickPhotocard(member, album);
 
-    const introText = `¡Listo! Hoy tu vibra STAYC es ${memberLabel} en la era ${albumLabel}.`;
+    const introText = `Processing the photocard that identifies you...`;
+    console.log(photocard)
 
     lastPhotocardResult = photocard
       ? { member, memberLabel, album, albumLabel, photocardUrl: photocard.url, variant: photocard.variant }
@@ -679,12 +688,12 @@ const ChatQuiz = (() => {
     addBotMessage(introText, true, () => {
       if (photocard) {
         schedule(() => {
-          addPhotocardBubble(`Photocard ${memberLabel} (${photocard.variant} ver.)`, photocard.url);
+          addPhotocardBubble(`Photocard ${memberLabel} from (${albumLabel})`, photocard.url);
         }, 320);
       }
 
       schedule(() => {
-        addBotMessage("¿Quieres generar la imagen de tu resultado?", true, () => {
+        addBotMessage("Share your result with everyone!", true, () => {
           renderCompletion();
         });
       }, 900);
@@ -890,9 +899,9 @@ const ChatQuiz = (() => {
     const yesOption = document.createElement("button");
     yesOption.type = "button";
     yesOption.className = "chat-option";
-    yesOption.textContent = "Sí";
+    yesOption.textContent = "Yes";
     yesOption.addEventListener("click", () => {
-      addUserMessage("Sí");
+      addUserMessage("Yes");
       clearOptions();
       schedule(() => {
         askCurrentStep();
@@ -917,19 +926,19 @@ const ChatQuiz = (() => {
 
   const renderEarlyExit = () => {
     clearOptions();
-    addBotMessage("Entendido. Cuando quieras empezar a jugar, aquí estaré. ✨", true, () => {
+    addBotMessage("Understood! Whenever you want to start playing, I'll be here waiting. ✨", true, () => {
       clearOptions();
 
       const restart = document.createElement("button");
       restart.type = "button";
       restart.className = "chat-option";
-      restart.textContent = "Empezar quiz";
+      restart.textContent = "Restart quiz!";
       restart.addEventListener("click", startConversation);
 
       const close = document.createElement("button");
       close.type = "button";
       close.className = "chat-option";
-      close.textContent = "Cerrar chat";
+      close.textContent = "Close chat";
       close.addEventListener("click", closeChat);
 
       optionsContainer.appendChild(restart);
