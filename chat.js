@@ -615,15 +615,6 @@ const ChatQuiz = (() => {
     scrollToBottom();
   };
 
-  const autoDownloadImage = (dataUrl, filename = "stayc-photocard-ranking.png") => {
-    const link = document.createElement("a");
-    link.href = dataUrl;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-  };
-
   const renderCompletion = () => {
     markQuizCompleted();
     clearOptions();
@@ -640,11 +631,8 @@ const ChatQuiz = (() => {
       try {
         const imageUrl = await generatePhotocardShareImage();
         if (imageUrl) {
-          autoDownloadImage(imageUrl, "stayc-photocard-ranking.png");
           schedule(() => {
-            addBotMessage("¡Imagen generada! Se descargó automáticamente, guárdala y compártela en tus redes. 💖", true, () => {
-              addSharePreview(imageUrl);
-            });
+            addSharePreview(imageUrl);
           }, 200);
         } else {
           addBotMessage("Todavía no hay una photocard para generar. Completa el quiz primero. ✨");
@@ -701,6 +689,8 @@ const ChatQuiz = (() => {
   };
 
   const addSharePreview = (imageUrl) => {
+    clearOptions();
+
     const wrapper = document.createElement("div");
     wrapper.className = "chat-message bot";
 
