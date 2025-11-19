@@ -689,6 +689,8 @@ const ChatQuiz = (() => {
   };
 
   const addSharePreview = (imageUrl) => {
+    clearOptions();
+
     const wrapper = document.createElement("div");
     wrapper.className = "chat-message bot";
 
