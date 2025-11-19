@@ -703,34 +703,89 @@ const ChatQuiz = (() => {
     return chooseRandom(albumList);
   };
 
-  const loadPhotocardImage = async (url) => {
-    if (photocardImageCache.has(url)) {
-      return photocardImageCache.get(url);
+  const resolveAssetUrl = (url) => {
+    if (!url) return url;
+    try {
+      return new URL(url, window.location.href).toString();
+    } catch (error) {
+      console.warn("No se pudo resolver la ruta de la photocard", url, error);
+      return url;
     }
+  };
 
-    const response = await fetch(url, { cache: "force-cache" });
-    if (!response.ok) {
-      throw new Error(`No se pudo cargar la photocard (${response.status})`);
-    }
+  const readBlobAsDataUrl = (blob) => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
 
-    const blob = await response.blob();
-    const dataUrl = await new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
-    });
-
+  const decodeImage = (src) => new Promise((resolve, reject) => {
     const img = new Image();
-    img.src = dataUrl;
+    let settled = false;
+    img.crossOrigin = "anonymous";
 
-    await (img.decode ? img.decode() : new Promise((resolve, reject) => {
-      img.onload = resolve;
-      img.onerror = reject;
-    }));
+    const finish = () => {
+      if (!settled) {
+        settled = true;
+        resolve(img);
+      }
+    };
 
-    photocardImageCache.set(url, img);
-    return img;
+    img.onload = finish;
+    img.onerror = reject;
+    img.src = src;
+
+    if (img.decode) {
+      img.decode().then(finish).catch(reject);
+    }
+  });
+
+  const convertImageToDataUrl = async (img) => {
+    const canvas = document.createElement("canvas");
+    canvas.width = img.naturalWidth || img.width;
+    canvas.height = img.naturalHeight || img.height;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0);
+    try {
+      return canvas.toDataURL("image/png");
+    } catch (error) {
+      throw new Error("No se pudo preparar la photocard para compartir");
+    }
+  };
+
+  const loadPhotocardImage = async (url) => {
+    const resolvedUrl = resolveAssetUrl(url);
+    if (photocardImageCache.has(resolvedUrl)) {
+      return photocardImageCache.get(resolvedUrl);
+    }
+
+    const tryFetchDecode = async () => {
+      const response = await fetch(resolvedUrl, { cache: "force-cache" });
+      if (!response.ok) {
+        throw new Error(`No se pudo cargar la photocard (${response.status})`);
+      }
+      const blob = await response.blob();
+      const dataUrl = await readBlobAsDataUrl(blob);
+      return decodeImage(dataUrl);
+    };
+
+    const tryImageFallback = async () => {
+      const rawImage = await decodeImage(resolvedUrl);
+      const safeDataUrl = await convertImageToDataUrl(rawImage);
+      return decodeImage(safeDataUrl);
+    };
+
+    let image;
+    try {
+      image = await tryFetchDecode();
+    } catch (fetchError) {
+      console.warn("Fallo al cargar la photocard con fetch, usando alternativa", fetchError);
+      image = await tryImageFallback();
+    }
+
+    photocardImageCache.set(resolvedUrl, image);
+    return image;
   };
 
   const pickPhotocard = (member, album) => {
