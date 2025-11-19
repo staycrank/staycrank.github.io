@@ -1,49 +1,67 @@
 const ChatQuiz = (() => {
   const chatFlow = [
-{
-  prompt: "What type of energy represents you best?",
-  options: [
-    "I might seem cold at first, but I'm actually very warm and I laugh a lot.",
-    "My energy is calm but firm, like when I practice in silence and suddenly get serious without warning.",
-    "Active; when I do something, I do it with all my energy.",
-    "Super energetic with my friends! And with a very powerful laugh. But I also have my calm moments.",
-    "Pure energy! I'm hyperactive, playful, and the life of the party.",
-    "I look calm, but when I'm comfortable I have a 4D personality and I'm very playful.",
-  ],
-},
-{
-  prompt: "How do you behave in a relationship or friendship?",
-  options: [
-    "I'm the one who listens, smiles with you, and gives you strength without you even realizing it.",
-    "I'm not a direct person, so I try to say things subtly to my friends... And I get a bit pouty sometimes~",
-    "I try to give encouragement and support to my friends, especially by making them laugh and saying nice things to them.",
-    "I'm like the mom of my friend group; I'm always looking out for their well-being.",
-    "Playful; I'm always hugging my friends or looking to play with them.",
-    "In friendship I'm the one who takes care, makes bad jokes, remembers details... but also the one who trips first.",
-  ],
-},
-{
-  prompt: "What plan makes you happy on a Sunday?",
-  options: [
-    "Going out to a café to talk with a friend for hours!",
-    "Planning my next trip to a majestic city like LA or similar.",
-    "A perfect Sunday is good food, a nice drama, playing with keropi... and resting at home in pajamas.",
-    "Video games, anime, consuming k-pop content.",
-    "Anything related to animals! They're adorable... Maybe going to a cat café?",
-    "Dramas, candy crush, sweet snacks...",
-  ],
-},
-{
-  prompt: "What things can't be missing from your world?",
-  options: [
-    "Music, a good coffee, shopping, friends... and STAYC ♡.",
-    "My favorite k-pop group, my video games, my favorite snacks, my friends, and STAYC ♡.",
-    "The important people in my life, animals, and STAYC ♡.",
-    "My headphones, organization, and STAYC's music ♡.",
-    "In my world there's Girl's Generation music, delicious food, a little bit of adorable chaos... and STAYC ♡",
-    "Fantasy! Series, books, movies... and STAYC ♡",
-  ],
-},
+    {
+      prompt: "What type of energy represents you best?",
+      options: [
+        "I might seem cold at first, but I'm actually very warm and I laugh a lot.",
+        "My energy is calm but firm, like when I practice in silence and suddenly get serious without warning.",
+        "Active; when I do something, I do it with all my energy.",
+        "Super energetic with my friends! And with a very powerful laugh. But I also have my calm moments.",
+        "Pure energy! I'm hyperactive, playful, and the life of the party.",
+        "I look calm, but when I'm comfortable I have a 4D personality and I'm very playful.",
+      ],
+    },
+    {
+      prompt: "How do you behave in a relationship or friendship?",
+      options: [
+        "I'm the one who listens, smiles with you, and gives you strength without you even realizing it.",
+        "I'm not a direct person, so I try to say things subtly to my friends... And I get a bit pouty sometimes~",
+        "I try to give encouragement and support to my friends, especially by making them laugh and saying nice things to them.",
+        "I'm like the mom of my friend group; I'm always looking out for their well-being.",
+        "Playful; I'm always hugging my friends or looking to play with them.",
+        "In friendship I'm the one who takes care, makes bad jokes, remembers details... but also the one who trips first.",
+      ],
+    },
+    {
+      prompt: "What plan makes you happy on a Sunday?",
+      options: [
+        "Going out to a café to talk with a friend for hours!",
+        "Planning my next trip to a majestic city like LA or similar.",
+        "A perfect Sunday is good food, a nice drama, playing with keropi... and resting at home in pajamas.",
+        "Video games, anime, consuming k-pop content.",
+        "Anything related to animals! They're adorable... Maybe going to a cat café?",
+        "Dramas, candy crush, sweet snacks...",
+      ],
+    },
+    {
+      prompt: "What things can't be missing from your world?",
+      options: [
+        "Music, a good coffee, shopping, friends... and STAYC ♡.",
+        "My favorite k-pop group, my video games, my favorite snacks, my friends, and STAYC ♡.",
+        "The important people in my life, animals, and STAYC ♡.",
+        "My headphones, organization, and STAYC's music ♡.",
+        "In my world there's Girl's Generation music, delicious food, a little bit of adorable chaos... and STAYC ♡",
+        "Fantasy! Series, books, movies... and STAYC ♡",
+      ],
+    },
+    {
+      prompt: "¿Qué estilo visual encaja mejor contigo?",
+      options: [
+        "Cute, colorido y con una vibra alegre",
+        "Elegante y minimalista, con detalles sofisticados",
+        "Oscuro/edgy, con un punto rebelde",
+        "Retro pop, con un toque nostálgico",
+      ],
+    },
+    {
+      prompt: "¿Qué tipo de música te imaginas para tu comeback ideal?",
+      options: [
+        "Un himno veraniego y refrescante",
+        "Un sonido powerful y girl crush",
+        "Algo juguetón y pegadizo para subir el ánimo",
+        "Una balada/medio tiempo emotiva",
+      ],
+    },
   ];
 
   const VISITOR_COOKIE = "stayc_chat_visitor";
@@ -51,6 +69,15 @@ const ChatQuiz = (() => {
   const FIRST_TIME_MESSAGE = "¡Bienvenida! ¿Quieres empezar a jugar y descubrir tu vibra STAYC? 💖";
   const RETURNING_MESSAGE = "¡Hola de nuevo! Ya hiciste el test, ¿quieres volver a jugar?";
   let stepIndex = 0;
+  const memberScores = {
+    isa: 0,
+    j: 0,
+    seeun: 0,
+    sumin: 0,
+    sieun: 0,
+    yoon: 0,
+  };
+  const preferredAlbums = new Set();
   const avatarChoices = [
     "assets/avatars/isa.webp",
     "assets/avatars/j.webp",
@@ -59,6 +86,336 @@ const ChatQuiz = (() => {
     "assets/avatars/sieun.webp",
     "assets/avatars/yoon.webp",
   ];
+
+  const albumLabels = {
+    sobad: "SO BAD era",
+    stereotype: "STEREOTYPE era",
+    asap: "ASAP era",
+    weneedlove: "WE NEED LOVE era",
+    teenfresh: "TEENFRESH era",
+    metamorphic: "METAMORPHIC era",
+  };
+
+  const memberLabels = {
+    isa: "Isa",
+    j: "J",
+    seeun: "Seeun",
+    sumin: "Sumin",
+    sieun: "Sieun",
+    yoon: "Yoon",
+  };
+
+  const optionMemberMap = {
+    "I might seem cold at first, but I'm actually very warm and I laugh a lot.": "isa",
+    "My energy is calm but firm, like when I practice in silence and suddenly get serious without warning.": "sumin",
+    "Active; when I do something, I do it with all my energy.": "sieun",
+    "Super energetic with my friends! And with a very powerful laugh. But I also have my calm moments.": "j",
+    "Pure energy! I'm hyperactive, playful, and the life of the party.": "yoon",
+    "I look calm, but when I'm comfortable I have a 4D personality and I'm very playful.": "seeun",
+    "I'm the one who listens, smiles with you, and gives you strength without you even realizing it.": "isa",
+    "I'm not a direct person, so I try to say things subtly to my friends... And I get a bit pouty sometimes~": "seeun",
+    "I try to give encouragement and support to my friends, especially by making them laugh and saying nice things to them.": "j",
+    "I'm like the mom of my friend group; I'm always looking out for their well-being.": "isa",
+    "Playful; I'm always hugging my friends or looking to play with them.": "yoon",
+    "In friendship I'm the one who takes care, makes bad jokes, remembers details... but also the one who trips first.": "sumin",
+    "Going out to a café to talk with a friend for hours!": "isa",
+    "Planning my next trip to a majestic city like LA or similar.": "sieun",
+    "A perfect Sunday is good food, a nice drama, playing with keropi... and resting at home in pajamas.": "sumin",
+    "Video games, anime, consuming k-pop content.": "yoon",
+    "Anything related to animals! They're adorable... Maybe going to a cat café?": "j",
+    "Dramas, candy crush, sweet snacks...": "seeun",
+    "Music, a good coffee, shopping, friends... and STAYC ♡.": "isa",
+    "My favorite k-pop group, my video games, my favorite snacks, my friends, and STAYC ♡.": "yoon",
+    "The important people in my life, animals, and STAYC ♡.": "j",
+    "My headphones, organization, and STAYC's music ♡.": "sieun",
+    "In my world there's Girl's Generation music, delicious food, a little bit of adorable chaos... and STAYC ♡": "sumin",
+    "Fantasy! Series, books, movies... and STAYC ♡": "seeun",
+  };
+
+  const optionAlbumMap = {
+    "Cute, colorido y con una vibra alegre": ["teenfresh", "asap"],
+    "Elegante y minimalista, con detalles sofisticados": ["stereotype", "weneedlove"],
+    "Oscuro/edgy, con un punto rebelde": ["metamorphic", "sobad"],
+    "Retro pop, con un toque nostálgico": ["sobad", "asap"],
+    "Un himno veraniego y refrescante": ["teenfresh", "weneedlove", "asap"],
+    "Un sonido powerful y girl crush": ["metamorphic", "stereotype"],
+    "Algo juguetón y pegadizo para subir el ánimo": ["sobad", "asap", "teenfresh"],
+    "Una balada/medio tiempo emotiva": ["weneedlove", "stereotype"],
+  };
+
+  const photocardPool = {
+    sobad: {
+      isa: {
+        base: [
+          "assets/photocards/sobad/isad.jpg",
+          "assets/photocards/sobad/isal.png",
+        ],
+        special: "assets/photocards/sobad/isas.png",
+      },
+      j: {
+        base: [
+          "assets/photocards/sobad/jd.jpg",
+          "assets/photocards/sobad/jl.jpg",
+        ],
+        special: "assets/photocards/sobad/js.png",
+      },
+      seeun: {
+        base: [
+          "assets/photocards/sobad/seeund.jpg",
+          "assets/photocards/sobad/seeunl.jpg",
+        ],
+        special: "assets/photocards/sobad/seeuns.png",
+      },
+      sieun: {
+        base: [
+          "assets/photocards/sobad/sieund.jpg",
+          "assets/photocards/sobad/sieunl.jpg",
+        ],
+        special: "assets/photocards/sobad/sieuns.png",
+      },
+      sumin: {
+        base: [
+          "assets/photocards/sobad/sumind.jpg",
+          "assets/photocards/sobad/suminl.jpg",
+        ],
+        special: "assets/photocards/sobad/sumins.png",
+      },
+      yoon: {
+        base: [
+          "assets/photocards/sobad/yoond.jpg",
+          "assets/photocards/sobad/yoonl.jpg",
+        ],
+        special: "assets/photocards/sobad/yoons.png",
+      },
+    },
+    stereotype: {
+      isa: {
+        base: [
+          "assets/photocards/stereotype/isaa.jpg",
+          "assets/photocards/stereotype/isab.jpg",
+        ],
+        special: "assets/photocards/stereotype/isas.png",
+      },
+      j: {
+        base: [
+          "assets/photocards/stereotype/ja.jpg",
+          "assets/photocards/stereotype/jb.jpg",
+        ],
+        special: "assets/photocards/stereotype/js.png",
+      },
+      seeun: {
+        base: [
+          "assets/photocards/stereotype/seeuna.jpg",
+          "assets/photocards/stereotype/seeunb.jpg",
+        ],
+        special: "assets/photocards/stereotype/seeuns.png",
+      },
+      sieun: {
+        base: [
+          "assets/photocards/stereotype/sieuna.jpg",
+          "assets/photocards/stereotype/sieunb.jpg",
+        ],
+        special: "assets/photocards/stereotype/sieuns.png",
+      },
+      sumin: {
+        base: [
+          "assets/photocards/stereotype/sumina.jpg",
+          "assets/photocards/stereotype/suminb.jpg",
+        ],
+        special: "assets/photocards/stereotype/sumins.png",
+      },
+      yoon: {
+        base: [
+          "assets/photocards/stereotype/yoona.jpg",
+          "assets/photocards/stereotype/yoonb.jpg",
+        ],
+        special: "assets/photocards/stereotype/yoons.png",
+      },
+    },
+    asap: {
+      isa: {
+        base: [
+          "assets/photocards/asap/isaa.jpg",
+          "assets/photocards/asap/isab.jpg",
+        ],
+        special: "assets/photocards/asap/isas.png",
+      },
+      j: {
+        base: [
+          "assets/photocards/asap/ja.jpg",
+          "assets/photocards/asap/jb.jpg",
+        ],
+        special: "assets/photocards/asap/js.png",
+      },
+      seeun: {
+        base: [
+          "assets/photocards/asap/seeuna.jpg",
+          "assets/photocards/asap/seeunb.jpg",
+        ],
+        special: "assets/photocards/asap/seeuns.png",
+      },
+      sieun: {
+        base: [
+          "assets/photocards/asap/sieuna.jpg",
+          "assets/photocards/asap/sieunb.jpg",
+        ],
+        special: "assets/photocards/asap/sieuns.png",
+      },
+      sumin: {
+        base: [
+          "assets/photocards/asap/sumina.png",
+          "assets/photocards/asap/suminb.jpg",
+        ],
+        special: "assets/photocards/asap/sumins.png",
+      },
+      yoon: {
+        base: [
+          "assets/photocards/asap/yoona.jpg",
+          "assets/photocards/asap/yoonb.jpg",
+        ],
+        special: "assets/photocards/asap/yoons.png",
+      },
+    },
+    weneedlove: {
+      isa: {
+        base: [
+          "assets/photocards/weneedlove/isaa.jpg",
+          "assets/photocards/weneedlove/isab.jpg",
+        ],
+        special: "assets/photocards/weneedlove/isas.png",
+      },
+      j: {
+        base: [
+          "assets/photocards/weneedlove/ja.jpg",
+          "assets/photocards/weneedlove/jb.jpg",
+        ],
+        special: "assets/photocards/weneedlove/js.png",
+      },
+      seeun: {
+        base: [
+          "assets/photocards/weneedlove/seeuna.jpg",
+          "assets/photocards/weneedlove/seeunb.jpg",
+        ],
+        special: "assets/photocards/weneedlove/seeuns.png",
+      },
+      sieun: {
+        base: [
+          "assets/photocards/weneedlove/sieuna.jpg",
+          "assets/photocards/weneedlove/sieunb.jpg",
+        ],
+        special: "assets/photocards/weneedlove/sieuns.png",
+      },
+      sumin: {
+        base: [
+          "assets/photocards/weneedlove/sumina.jpg",
+          "assets/photocards/weneedlove/suminb.jpg",
+        ],
+        special: "assets/photocards/weneedlove/sumins.png",
+      },
+      yoon: {
+        base: [
+          "assets/photocards/weneedlove/yoona.jpg",
+          "assets/photocards/weneedlove/yoonb.jpg",
+        ],
+        special: "assets/photocards/weneedlove/yoons.png",
+      },
+    },
+    teenfresh: {
+      isa: {
+        base: [
+          "assets/photocards/teenfresh/isaa.jpg",
+          "assets/photocards/teenfresh/isab.jpg",
+        ],
+        special: "assets/photocards/teenfresh/isas.png",
+      },
+      j: {
+        base: [
+          "assets/photocards/teenfresh/ja.jpg",
+          "assets/photocards/teenfresh/jb.jpg",
+        ],
+        special: "assets/photocards/teenfresh/js.png",
+      },
+      seeun: {
+        base: [
+          "assets/photocards/teenfresh/seeuna.jpg",
+          "assets/photocards/teenfresh/seeunb.jpg",
+        ],
+        special: "assets/photocards/teenfresh/seeuns.png",
+      },
+      sieun: {
+        base: [
+          "assets/photocards/teenfresh/sieuna.jpg",
+          "assets/photocards/teenfresh/sieunb.jpg",
+        ],
+        special: "assets/photocards/teenfresh/sieuns.png",
+      },
+      sumin: {
+        base: [
+          "assets/photocards/teenfresh/sumina.jpg",
+          "assets/photocards/teenfresh/suminb.jpg",
+        ],
+        special: "assets/photocards/teenfresh/sumins.png",
+      },
+      yoon: {
+        base: [
+          "assets/photocards/teenfresh/yoona.jpg",
+          "assets/photocards/teenfresh/yoonb.jpg",
+        ],
+        special: "assets/photocards/teenfresh/yoons.png",
+      },
+    },
+    metamorphic: {
+      isa: {
+        base: [
+          "assets/photocards/metamorphic/isaa.jpg",
+          "assets/photocards/metamorphic/isab.jpg",
+        ],
+        special: "assets/photocards/metamorphic/isas.png",
+      },
+      j: {
+        base: [
+          "assets/photocards/metamorphic/ja.jpg",
+          "assets/photocards/metamorphic/jb.jpg",
+        ],
+        special: "assets/photocards/metamorphic/js.png",
+      },
+      seeun: {
+        base: [
+          "assets/photocards/metamorphic/seeuna.jpg",
+          "assets/photocards/metamorphic/seeunb.jpg",
+        ],
+        special: "assets/photocards/metamorphic/seeuns.png",
+      },
+      sieun: {
+        base: [
+          "assets/photocards/metamorphic/sieuna.jpg",
+          "assets/photocards/metamorphic/sieunb.jpg",
+        ],
+        special: "assets/photocards/metamorphic/sieuns.png",
+      },
+      sumin: {
+        base: [
+          "assets/photocards/metamorphic/sumina.jpg",
+          "assets/photocards/metamorphic/suminb.jpg",
+        ],
+        special: "assets/photocards/metamorphic/sumins.png",
+      },
+      yoon: {
+        base: [
+          "assets/photocards/metamorphic/yoona.jpg",
+          "assets/photocards/metamorphic/yoonb.jpg",
+        ],
+        special: "assets/photocards/metamorphic/yoons.png",
+      },
+    },
+  };
+
+  let lastPhotocardResult = null;
+  const shareCanvas = document.createElement("canvas");
+  shareCanvas.id = "photocard-share-canvas";
+  shareCanvas.style.display = "none";
+  document.body.appendChild(shareCanvas);
+  const photocardImageCache = new Map();
 
   const avatarMatchReplies = {
       "assets/avatars/isa.webp": {
@@ -147,6 +504,20 @@ const ChatQuiz = (() => {
   let shouldStartNewSession = true;
   let currentAvatar = null;
 
+  const resetMemberScores = () => {
+    Object.keys(memberScores).forEach((key) => {
+      memberScores[key] = 0;
+    });
+  };
+
+  const addPreferredAlbums = (choice) => {
+    const albums = optionAlbumMap[choice];
+    if (!albums) {
+      return;
+    }
+    albums.forEach((album) => preferredAlbums.add(album));
+  };
+
   if (!chatToggle || !chatbox || !chatClose || !messages || !optionsContainer) {
     return {};
   }
@@ -231,6 +602,32 @@ const ChatQuiz = (() => {
     scrollToBottom();
   };
 
+  const addPhotocardBubble = (text, imageUrl) => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "chat-message bot";
+
+    const avatar = document.createElement("div");
+    avatar.className = "chat-avatar-small";
+
+    const bubble = document.createElement("div");
+    bubble.className = "message-bubble photocard-bubble";
+
+    const content = document.createElement("p");
+    content.textContent = text;
+
+    const image = document.createElement("img");
+    image.src = imageUrl;
+    image.alt = text;
+    image.className = "photocard-preview";
+
+    bubble.appendChild(content);
+    bubble.appendChild(image);
+    wrapper.appendChild(avatar);
+    wrapper.appendChild(bubble);
+    messages.appendChild(wrapper);
+    scrollToBottom();
+  };
+
   const showTypingIndicator = () => {
     const wrapper = document.createElement("div");
     wrapper.className = "chat-message bot typing-indicator";
@@ -280,6 +677,141 @@ const ChatQuiz = (() => {
     }, 650);
   };
 
+  const addMemberScore = (choice) => {
+    const memberKey = optionMemberMap[choice];
+    if (memberKey && typeof memberScores[memberKey] === "number") {
+      memberScores[memberKey] += 1;
+    }
+  };
+
+  const chooseRandom = (list) => list[Math.floor(Math.random() * list.length)];
+
+  const getTopMember = () => {
+    const scores = Object.entries(memberScores);
+    const maxScore = Math.max(...scores.map(([, score]) => score));
+    const topMembers = scores
+      .filter(([, score]) => score === maxScore)
+      .map(([member]) => member);
+    return chooseRandom(topMembers);
+  };
+
+  const getAlbumChoice = () => {
+    if (preferredAlbums.size === 0) {
+      return chooseRandom(Object.keys(albumLabels));
+    }
+    const albumList = Array.from(preferredAlbums);
+    return chooseRandom(albumList);
+  };
+
+  const resolveAssetUrl = (url) => {
+    if (!url) return url;
+    try {
+      return new URL(url, window.location.href).toString();
+    } catch (error) {
+      console.warn("No se pudo resolver la ruta de la photocard", url, error);
+      return url;
+    }
+  };
+
+  const readBlobAsDataUrl = (blob) => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+
+  const decodeImage = (src) => new Promise((resolve, reject) => {
+    const img = new Image();
+    let settled = false;
+    img.crossOrigin = "anonymous";
+
+    const finish = () => {
+      if (!settled) {
+        settled = true;
+        resolve(img);
+      }
+    };
+
+    img.onload = finish;
+    img.onerror = reject;
+    img.src = src;
+
+    if (img.decode) {
+      img.decode().then(finish).catch(reject);
+    }
+  });
+
+  const convertImageToDataUrl = async (img) => {
+    const canvas = document.createElement("canvas");
+    canvas.width = img.naturalWidth || img.width;
+    canvas.height = img.naturalHeight || img.height;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0);
+    try {
+      return canvas.toDataURL("image/png");
+    } catch (error) {
+      throw new Error("No se pudo preparar la photocard para compartir");
+    }
+  };
+
+  const loadPhotocardImage = async (url) => {
+    const resolvedUrl = resolveAssetUrl(url);
+    if (photocardImageCache.has(resolvedUrl)) {
+      return photocardImageCache.get(resolvedUrl);
+    }
+
+    const tryFetchDecode = async () => {
+      const response = await fetch(resolvedUrl, { cache: "force-cache" });
+      if (!response.ok) {
+        throw new Error(`No se pudo cargar la photocard (${response.status})`);
+      }
+      const blob = await response.blob();
+      const dataUrl = await readBlobAsDataUrl(blob);
+      return decodeImage(dataUrl);
+    };
+
+    const tryImageFallback = async () => {
+      const rawImage = await decodeImage(resolvedUrl);
+      const safeDataUrl = await convertImageToDataUrl(rawImage);
+      return decodeImage(safeDataUrl);
+    };
+
+    let image;
+    try {
+      image = await tryFetchDecode();
+    } catch (fetchError) {
+      console.warn("Fallo al cargar la photocard con fetch, usando alternativa", fetchError);
+      image = await tryImageFallback();
+    }
+
+    photocardImageCache.set(resolvedUrl, image);
+    return image;
+  };
+
+  const pickPhotocard = (member, album) => {
+    const albumPool = photocardPool[album];
+    if (!albumPool || !albumPool[member]) {
+      return null;
+    }
+
+    const { base = [], special } = albumPool[member];
+    const roll = Math.random();
+
+    if (special && roll <= 0.05) {
+      return { url: special, variant: "S" };
+    }
+
+    const baseOptions = base.length ? base : special ? [special] : [];
+    if (!baseOptions.length) {
+      return null;
+    }
+
+    const randomIndex = Math.floor(Math.random() * baseOptions.length);
+    const chosenBase = baseOptions[randomIndex];
+    const variant = randomIndex === 1 ? "B" : "A";
+    return { url: chosenBase, variant };
+  };
+
   const addUserMessage = (text) => {
     const wrapper = document.createElement("div");
     wrapper.className = "chat-message user";
@@ -314,30 +846,281 @@ const ChatQuiz = (() => {
     scrollToBottom();
   };
 
+  const autoDownloadImage = (dataUrl, filename = "stayc-photocard-ranking.png") => {
+    const link = document.createElement("a");
+    link.href = dataUrl;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  };
+
   const renderCompletion = () => {
     markQuizCompleted();
     clearOptions();
-    addBotMessage("¡Listo! Gracias por jugar. ¿Quieres reiniciar?", true, () => {
-      clearOptions();
 
-      const restart = document.createElement("button");
-      restart.type = "button";
-      restart.className = "chat-option";
-      restart.textContent = "Volver a empezar";
-      restart.addEventListener("click", startConversation);
+    const share = document.createElement("button");
+    share.type = "button";
+    share.className = "chat-option";
+    share.textContent = "Generar Imagen";
+    share.addEventListener("click", async () => {
+      share.disabled = true;
+      const previousLabel = share.textContent;
+      share.textContent = "Generando...";
 
-      const close = document.createElement("button");
-      close.type = "button";
-      close.className = "chat-option";
-      close.textContent = "Cerrar chat";
-      close.addEventListener("click", () => {
-        closeChat();
-      });
-
-      optionsContainer.appendChild(restart);
-      optionsContainer.appendChild(close);
-      scrollToBottom();
+      try {
+        const imageUrl = await generatePhotocardShareImage();
+        if (imageUrl) {
+          autoDownloadImage(imageUrl, "stayc-photocard-ranking.png");
+          schedule(() => {
+            addBotMessage("¡Imagen generada! Se descargó automáticamente, guárdala y compártela en tus redes. 💖", true, () => {
+              addSharePreview(imageUrl);
+            });
+          }, 200);
+        } else {
+          addBotMessage("Todavía no hay una photocard para generar. Completa el quiz primero. ✨");
+        }
+      } catch (error) {
+        console.error("Error generating photocard share image", error);
+        addBotMessage("No pude crear la imagen ahora mismo. Inténtalo de nuevo en unos segundos. ✨");
+      } finally {
+        share.disabled = false;
+        share.textContent = previousLabel;
+      }
     });
+
+    const close = document.createElement("button");
+    close.type = "button";
+    close.className = "chat-option";
+    close.textContent = "Cerrar chat";
+    close.addEventListener("click", () => {
+      closeChat();
+    });
+
+    optionsContainer.appendChild(share);
+    optionsContainer.appendChild(close);
+    scrollToBottom();
+  };
+
+  const showPhotocardResult = () => {
+    const member = getTopMember();
+    const album = getAlbumChoice();
+    const memberLabel = memberLabels[member] || member;
+    const albumLabel = albumLabels[album] || album;
+    const photocard = pickPhotocard(member, album);
+
+    const introText = `¡Listo! Hoy tu vibra STAYC es ${memberLabel} en la era ${albumLabel}.`;
+
+    lastPhotocardResult = photocard
+      ? { member, memberLabel, album, albumLabel, photocardUrl: photocard.url, variant: photocard.variant }
+      : null;
+
+    addBotMessage(introText, true, () => {
+      if (photocard) {
+        schedule(() => {
+          addPhotocardBubble(`Photocard ${memberLabel} (${photocard.variant} ver.)`, photocard.url);
+        }, 320);
+      }
+
+      schedule(() => {
+        addBotMessage("¿Quieres generar la imagen de tu resultado?", true, () => {
+          renderCompletion();
+        });
+      }, 900);
+    });
+  };
+
+  const addSharePreview = (imageUrl) => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "chat-message bot";
+
+    const avatar = document.createElement("div");
+    avatar.className = "chat-avatar-small";
+
+    const bubble = document.createElement("div");
+    bubble.className = "message-bubble share-preview";
+
+    const content = document.createElement("p");
+    content.textContent = "Tu imagen de resultado está lista";
+
+    const image = document.createElement("img");
+    image.src = imageUrl;
+    image.alt = "Imagen para compartir";
+    image.className = "share-preview-image";
+
+    const download = document.createElement("a");
+    download.href = imageUrl;
+    download.download = "stayc-photocard-ranking.png";
+    download.className = "share-download";
+    download.textContent = "Descargar imagen";
+
+    bubble.appendChild(content);
+    bubble.appendChild(image);
+    bubble.appendChild(download);
+
+    wrapper.appendChild(avatar);
+    wrapper.appendChild(bubble);
+    messages.appendChild(wrapper);
+    scrollToBottom();
+  };
+
+  const generatePhotocardShareImage = async () => {
+    if (!lastPhotocardResult || !lastPhotocardResult.photocardUrl) {
+      return null;
+    }
+
+    const { memberLabel, albumLabel, photocardUrl, variant } = lastPhotocardResult;
+    const width = 1080;
+    const height = 1920;
+    shareCanvas.width = width;
+    shareCanvas.height = height;
+    const ctx = shareCanvas.getContext("2d");
+
+    const drawRoundedRect = (x, y, w, h, r) => {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      ctx.lineTo(x + r, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+    };
+
+    ctx.fillStyle = "#f8fafc";
+    ctx.fillRect(0, 0, width, height);
+
+    const headerHeight = 320;
+    const headerGradient = ctx.createLinearGradient(0, 0, width, 0);
+    headerGradient.addColorStop(0, "#ff76b8");
+    headerGradient.addColorStop(1, "#ff9f7f");
+    ctx.fillStyle = headerGradient;
+    drawRoundedRect(60, 60, width - 120, headerHeight, 32);
+    ctx.fill();
+
+    ctx.fillStyle = "#ffffff";
+    ctx.textAlign = "center";
+    ctx.font = "bold 54px Poppins, sans-serif";
+    ctx.fillText("Mi ranking STAYC", width / 2, 180);
+    ctx.font = "28px Poppins, sans-serif";
+    ctx.fillText("Resultado del Photocard Quiz", width / 2, 230);
+
+    ctx.fillStyle = "rgba(255, 255, 255, 0.22)";
+    ctx.font = "20px Poppins, sans-serif";
+    ctx.fillText(`${memberLabel} · ${albumLabel}`, width / 2, 270);
+
+    const panelX = 70;
+    const panelY = headerHeight + 100;
+    const panelWidth = width - panelX * 2;
+    const panelHeight = 1180;
+    ctx.shadowColor = "rgba(0, 0, 0, 0.18)";
+    ctx.shadowBlur = 26;
+    ctx.shadowOffsetY = 18;
+    ctx.fillStyle = "#ffffff";
+    drawRoundedRect(panelX, panelY, panelWidth, panelHeight, 28);
+    ctx.fill();
+    ctx.shadowColor = "transparent";
+
+    ctx.fillStyle = "#0f172a";
+    ctx.textAlign = "left";
+    ctx.font = "bold 34px Poppins, sans-serif";
+    ctx.fillText("Tu ranking de vibra STAYC", panelX + 60, panelY + 70);
+
+    ctx.fillStyle = "#6b7280";
+    ctx.font = "22px Poppins, sans-serif";
+    ctx.fillText("Incluye tu photocard y la era que te representa", panelX + 60, panelY + 110);
+
+    const rowBaseY = panelY + 170;
+    const rowHeight = 118;
+    const badgeColors = ["#ffd166", "#9cc0ff", "#b5e3d8"];
+    const rows = [
+      {
+        title: `${memberLabel} (${variant} ver.)`,
+        subtitle: "Tu photocard destacada",
+      },
+      {
+        title: albumLabel,
+        subtitle: "Era seleccionada por tu estilo",
+      },
+      {
+        title: "Mood SWITH: brillante & cool",
+        subtitle: "Generado con tus respuestas del quiz",
+      },
+    ];
+
+    rows.forEach((row, index) => {
+      const y = rowBaseY + index * (rowHeight + 16);
+      drawRoundedRect(panelX + 50, y, panelWidth * 0.5, rowHeight, 18);
+      ctx.fillStyle = "#f8fafc";
+      ctx.fill();
+
+      ctx.fillStyle = badgeColors[index % badgeColors.length];
+      drawRoundedRect(panelX + 62, y + 22, 48, 48, 12);
+      ctx.fill();
+
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "bold 26px Poppins, sans-serif";
+      ctx.fillText(index + 1, panelX + 78, y + 55);
+
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "bold 26px Poppins, sans-serif";
+      ctx.fillText(row.title, panelX + 126, y + 55);
+
+      ctx.fillStyle = "#6b7280";
+      ctx.font = "20px Poppins, sans-serif";
+      ctx.fillText(row.subtitle, panelX + 126, y + 88);
+    });
+
+    const photoAreaX = panelX + panelWidth * 0.55;
+    const photoAreaY = panelY + 150;
+    const photoAreaWidth = panelWidth * 0.35;
+    const photoAreaHeight = panelHeight - 280;
+
+    ctx.fillStyle = "#f8fafc";
+    drawRoundedRect(photoAreaX, photoAreaY, photoAreaWidth, photoAreaHeight, 24);
+    ctx.fill();
+
+    ctx.fillStyle = "#ff76b8";
+    ctx.font = "bold 22px Poppins, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("Photocard", photoAreaX + photoAreaWidth / 2, photoAreaY + 38);
+
+    ctx.fillStyle = "#0f172a";
+    ctx.font = "20px Poppins, sans-serif";
+    ctx.fillText(`${memberLabel} · ${albumLabel}`, photoAreaX + photoAreaWidth / 2, photoAreaY + 76);
+
+    const photo = await loadPhotocardImage(photocardUrl);
+    const availableWidth = photoAreaWidth - 70;
+    const availableHeight = photoAreaHeight - 140;
+    const ratio = Math.min(availableWidth / photo.width, availableHeight / photo.height);
+    const drawWidth = photo.width * ratio;
+    const drawHeight = photo.height * ratio;
+    const imageX = photoAreaX + (photoAreaWidth - drawWidth) / 2;
+    const imageY = photoAreaY + 110;
+
+    ctx.shadowColor = "rgba(0, 0, 0, 0.2)";
+    ctx.shadowBlur = 20;
+    ctx.shadowOffsetY = 14;
+    ctx.drawImage(photo, imageX, imageY, drawWidth, drawHeight);
+    ctx.shadowColor = "transparent";
+
+    ctx.fillStyle = "#ff9f7f";
+    ctx.font = "bold 20px Poppins, sans-serif";
+    ctx.fillText(`Versión ${variant}`, photoAreaX + photoAreaWidth / 2, imageY + drawHeight + 42);
+
+    ctx.fillStyle = "#6b7280";
+    ctx.font = "18px Poppins, sans-serif";
+    ctx.fillText("Generado con amor por STAYC & SWITH", photoAreaX + photoAreaWidth / 2, imageY + drawHeight + 78);
+
+    ctx.fillStyle = "#0f172a";
+    ctx.font = "20px Poppins, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("Comparte tu ranking en redes y etiquétanos ✨", width / 2, height - 80);
+
+    return shareCanvas.toDataURL("image/png");
   };
 
   const renderStartOptions = () => {
@@ -397,7 +1180,6 @@ const ChatQuiz = (() => {
   const askCurrentStep = () => {
     const step = chatFlow[stepIndex];
     if (!step) {
-      renderCompletion();
       return;
     }
 
@@ -412,6 +1194,9 @@ const ChatQuiz = (() => {
     clearOptions();
     const avatarReactions = avatarMatchReplies[currentAvatar] || {};
     const reactionReply = avatarReactions[choice];
+
+    addMemberScore(choice);
+    addPreferredAlbums(choice);
 
     if (reactionReply) {
       schedule(() => {
@@ -428,7 +1213,7 @@ const ChatQuiz = (() => {
       }, delayBeforeNext);
     } else {
       schedule(() => {
-        renderCompletion();
+        showPhotocardResult();
       }, delayBeforeNext);
     }
   };
@@ -455,6 +1240,9 @@ const ChatQuiz = (() => {
   const startConversation = () => {
     clearScheduledResponses();
     removeTypingIndicators();
+    resetMemberScores();
+    preferredAlbums.clear();
+    lastPhotocardResult = null;
     pickAvatar();
     messages.innerHTML = "";
     clearOptions();

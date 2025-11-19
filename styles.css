@@ -934,6 +934,51 @@ footer a:hover {
   line-height: 1.45;
 }
 
+.photocard-bubble {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.photocard-preview {
+  width: 180px;
+  border-radius: 14px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+  border: 1px solid #e5e7eb;
+}
+
+.share-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.share-preview-image {
+  width: 220px;
+  border-radius: 14px;
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.15);
+  border: 1px solid #e5e7eb;
+}
+
+.share-download {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 14px;
+  background: #0f172a;
+  color: #ffffff;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 600;
+  width: fit-content;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.share-download:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.2);
+}
+
 .chat-message.bot .message-bubble {
   border-bottom-left-radius: 6px;
 }
@@ -959,10 +1004,11 @@ footer a:hover {
 .chat-options {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  max-height: 220px;
+  gap: 12px;
+  max-height: 340px;
   overflow-y: auto;
   padding-right: 4px;
+  flex-shrink: 0;
 }
 
 .chat-options::-webkit-scrollbar,
@@ -986,9 +1032,10 @@ footer a:hover {
   text-align: left;
   border: 1px solid #e5e7eb;
   background: #ffffff;
-  padding: 12px 14px;
+  padding: 14px 16px;
   border-radius: 12px;
   font-weight: 600;
+  font-size: 1rem;
   color: var(--text-dark);
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
