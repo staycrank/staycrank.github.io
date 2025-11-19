@@ -846,6 +846,15 @@ const ChatQuiz = (() => {
     scrollToBottom();
   };
 
+  const autoDownloadImage = (dataUrl, filename = "stayc-photocard-ranking.png") => {
+    const link = document.createElement("a");
+    link.href = dataUrl;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  };
+
   const renderCompletion = () => {
     markQuizCompleted();
     clearOptions();
@@ -853,7 +862,7 @@ const ChatQuiz = (() => {
     const share = document.createElement("button");
     share.type = "button";
     share.className = "chat-option";
-    share.textContent = "Compartir";
+    share.textContent = "Generar Imagen";
     share.addEventListener("click", async () => {
       share.disabled = true;
       const previousLabel = share.textContent;
@@ -862,13 +871,14 @@ const ChatQuiz = (() => {
       try {
         const imageUrl = await generatePhotocardShareImage();
         if (imageUrl) {
+          autoDownloadImage(imageUrl, "stayc-photocard-ranking.png");
           schedule(() => {
-            addBotMessage("¡Imagen lista para compartir! Descárgala y súbela a tus redes. 💖", true, () => {
+            addBotMessage("¡Imagen generada! Se descargó automáticamente, guárdala y compártela en tus redes. 💖", true, () => {
               addSharePreview(imageUrl);
             });
           }, 200);
         } else {
-          addBotMessage("Todavía no hay una photocard para compartir. Completa el quiz primero. ✨");
+          addBotMessage("Todavía no hay una photocard para generar. Completa el quiz primero. ✨");
         }
       } catch (error) {
         console.error("Error generating photocard share image", error);
@@ -913,7 +923,7 @@ const ChatQuiz = (() => {
       }
 
       schedule(() => {
-        addBotMessage("¿Quieres compartir tu photocard?", true, () => {
+        addBotMessage("¿Quieres generar la imagen de tu resultado?", true, () => {
           renderCompletion();
         });
       }, 900);
@@ -931,7 +941,7 @@ const ChatQuiz = (() => {
     bubble.className = "message-bubble share-preview";
 
     const content = document.createElement("p");
-    content.textContent = "Descarga y comparte tu photocard";
+    content.textContent = "Tu imagen de resultado está lista";
 
     const image = document.createElement("img");
     image.src = imageUrl;
@@ -940,7 +950,7 @@ const ChatQuiz = (() => {
 
     const download = document.createElement("a");
     download.href = imageUrl;
-    download.download = "stayc-photocard.png";
+    download.download = "stayc-photocard-ranking.png";
     download.className = "share-download";
     download.textContent = "Descargar imagen";
 
@@ -960,78 +970,155 @@ const ChatQuiz = (() => {
     }
 
     const { memberLabel, albumLabel, photocardUrl, variant } = lastPhotocardResult;
-
     const width = 1080;
     const height = 1920;
     shareCanvas.width = width;
     shareCanvas.height = height;
     const ctx = shareCanvas.getContext("2d");
 
-    const gradient = ctx.createLinearGradient(0, 0, 0, height);
-    gradient.addColorStop(0, "#ff7eb3");
-    gradient.addColorStop(1, "#6c63ff");
-    ctx.fillStyle = gradient;
+    const drawRoundedRect = (x, y, w, h, r) => {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      ctx.lineTo(x + r, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+    };
+
+    ctx.fillStyle = "#f8fafc";
     ctx.fillRect(0, 0, width, height);
 
-    ctx.fillStyle = "rgba(255, 255, 255, 0.12)";
-    ctx.beginPath();
-    ctx.ellipse(width * 0.75, height * 0.08, 220, 120, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.ellipse(width * 0.25, height * 0.85, 260, 140, 0, 0, Math.PI * 2);
+    const headerHeight = 320;
+    const headerGradient = ctx.createLinearGradient(0, 0, width, 0);
+    headerGradient.addColorStop(0, "#ff76b8");
+    headerGradient.addColorStop(1, "#ff9f7f");
+    ctx.fillStyle = headerGradient;
+    drawRoundedRect(60, 60, width - 120, headerHeight, 32);
     ctx.fill();
 
     ctx.fillStyle = "#ffffff";
-    ctx.font = "bold 42px Poppins, sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText("STAYC Photocard Quiz", width / 2, 110);
-
+    ctx.font = "bold 54px Poppins, sans-serif";
+    ctx.fillText("Mi ranking STAYC", width / 2, 180);
     ctx.font = "28px Poppins, sans-serif";
-    ctx.fillText(`Tu vibra: ${memberLabel}`, width / 2, 170);
-    ctx.font = "24px Poppins, sans-serif";
-    ctx.fillText(albumLabel, width / 2, 215);
+    ctx.fillText("Resultado del Photocard Quiz", width / 2, 230);
 
-    const cardX = 160;
-    const cardY = 260;
-    const cardWidth = width - 320;
-    const cardHeight = 1200;
-    ctx.fillStyle = "#ffffff";
+    ctx.fillStyle = "rgba(255, 255, 255, 0.22)";
+    ctx.font = "20px Poppins, sans-serif";
+    ctx.fillText(`${memberLabel} · ${albumLabel}`, width / 2, 270);
+
+    const panelX = 70;
+    const panelY = headerHeight + 100;
+    const panelWidth = width - panelX * 2;
+    const panelHeight = 1180;
     ctx.shadowColor = "rgba(0, 0, 0, 0.18)";
-    ctx.shadowBlur = 28;
+    ctx.shadowBlur = 26;
     ctx.shadowOffsetY = 18;
-    ctx.fillRect(cardX, cardY, cardWidth, cardHeight);
+    ctx.fillStyle = "#ffffff";
+    drawRoundedRect(panelX, panelY, panelWidth, panelHeight, 28);
+    ctx.fill();
     ctx.shadowColor = "transparent";
 
-    const framePadding = 60;
-    const imageMaxWidth = cardWidth - framePadding * 2;
-    const imageMaxHeight = cardHeight - framePadding * 2 - 120;
-    const photo = await loadPhotocardImage(photocardUrl);
-    const ratio = Math.min(imageMaxWidth / photo.width, imageMaxHeight / photo.height);
-    const drawWidth = photo.width * ratio;
-    const drawHeight = photo.height * ratio;
-    const imageX = cardX + (cardWidth - drawWidth) / 2;
-    const imageY = cardY + 90;
-
-    ctx.drawImage(photo, imageX, imageY, drawWidth, drawHeight);
-
     ctx.fillStyle = "#0f172a";
-    ctx.font = "bold 30px Poppins, sans-serif";
     ctx.textAlign = "left";
-    ctx.fillText(memberLabel, cardX + framePadding, cardY + 58);
+    ctx.font = "bold 34px Poppins, sans-serif";
+    ctx.fillText("Tu ranking de vibra STAYC", panelX + 60, panelY + 70);
 
-    ctx.fillStyle = "#6c63ff";
-    ctx.font = "24px Poppins, sans-serif";
-    ctx.fillText(albumLabel, cardX + framePadding, cardY + 98);
+    ctx.fillStyle = "#6b7280";
+    ctx.font = "22px Poppins, sans-serif";
+    ctx.fillText("Incluye tu photocard y la era que te representa", panelX + 60, panelY + 110);
 
-    ctx.fillStyle = "#ff5fa2";
+    const rowBaseY = panelY + 170;
+    const rowHeight = 118;
+    const badgeColors = ["#ffd166", "#9cc0ff", "#b5e3d8"];
+    const rows = [
+      {
+        title: `${memberLabel} (${variant} ver.)`,
+        subtitle: "Tu photocard destacada",
+      },
+      {
+        title: albumLabel,
+        subtitle: "Era seleccionada por tu estilo",
+      },
+      {
+        title: "Mood SWITH: brillante & cool",
+        subtitle: "Generado con tus respuestas del quiz",
+      },
+    ];
+
+    rows.forEach((row, index) => {
+      const y = rowBaseY + index * (rowHeight + 16);
+      drawRoundedRect(panelX + 50, y, panelWidth * 0.5, rowHeight, 18);
+      ctx.fillStyle = "#f8fafc";
+      ctx.fill();
+
+      ctx.fillStyle = badgeColors[index % badgeColors.length];
+      drawRoundedRect(panelX + 62, y + 22, 48, 48, 12);
+      ctx.fill();
+
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "bold 26px Poppins, sans-serif";
+      ctx.fillText(index + 1, panelX + 78, y + 55);
+
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "bold 26px Poppins, sans-serif";
+      ctx.fillText(row.title, panelX + 126, y + 55);
+
+      ctx.fillStyle = "#6b7280";
+      ctx.font = "20px Poppins, sans-serif";
+      ctx.fillText(row.subtitle, panelX + 126, y + 88);
+    });
+
+    const photoAreaX = panelX + panelWidth * 0.55;
+    const photoAreaY = panelY + 150;
+    const photoAreaWidth = panelWidth * 0.35;
+    const photoAreaHeight = panelHeight - 280;
+
+    ctx.fillStyle = "#f8fafc";
+    drawRoundedRect(photoAreaX, photoAreaY, photoAreaWidth, photoAreaHeight, 24);
+    ctx.fill();
+
+    ctx.fillStyle = "#ff76b8";
     ctx.font = "bold 22px Poppins, sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText(`Versión ${variant}`, width / 2, cardY + cardHeight - 30);
+    ctx.fillText("Photocard", photoAreaX + photoAreaWidth / 2, photoAreaY + 38);
 
-    ctx.fillStyle = "#ffffff";
+    ctx.fillStyle = "#0f172a";
+    ctx.font = "20px Poppins, sans-serif";
+    ctx.fillText(`${memberLabel} · ${albumLabel}`, photoAreaX + photoAreaWidth / 2, photoAreaY + 76);
+
+    const photo = await loadPhotocardImage(photocardUrl);
+    const availableWidth = photoAreaWidth - 70;
+    const availableHeight = photoAreaHeight - 140;
+    const ratio = Math.min(availableWidth / photo.width, availableHeight / photo.height);
+    const drawWidth = photo.width * ratio;
+    const drawHeight = photo.height * ratio;
+    const imageX = photoAreaX + (photoAreaWidth - drawWidth) / 2;
+    const imageY = photoAreaY + 110;
+
+    ctx.shadowColor = "rgba(0, 0, 0, 0.2)";
+    ctx.shadowBlur = 20;
+    ctx.shadowOffsetY = 14;
+    ctx.drawImage(photo, imageX, imageY, drawWidth, drawHeight);
+    ctx.shadowColor = "transparent";
+
+    ctx.fillStyle = "#ff9f7f";
+    ctx.font = "bold 20px Poppins, sans-serif";
+    ctx.fillText(`Versión ${variant}`, photoAreaX + photoAreaWidth / 2, imageY + drawHeight + 42);
+
+    ctx.fillStyle = "#6b7280";
+    ctx.font = "18px Poppins, sans-serif";
+    ctx.fillText("Generado con amor por STAYC & SWITH", photoAreaX + photoAreaWidth / 2, imageY + drawHeight + 78);
+
+    ctx.fillStyle = "#0f172a";
     ctx.font = "20px Poppins, sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText("Comparte tu vibra STAYC ✨", width / 2, height - 80);
+    ctx.fillText("Comparte tu ranking en redes y etiquétanos ✨", width / 2, height - 80);
 
     return shareCanvas.toDataURL("image/png");
   };
