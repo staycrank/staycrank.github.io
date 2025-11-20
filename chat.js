@@ -529,7 +529,7 @@ const ChatQuiz = (() => {
 
     // 5% de probabilidad especial
     if (roll <= 0.05) {
-      return { url: special, variant: "S" };
+      return { url: special, variant: "s" };
     }
 
     // Selección normal
