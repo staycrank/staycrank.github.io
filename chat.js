@@ -753,7 +753,7 @@ const ChatQuiz = (() => {
     ctx.fillStyle = "#f8fafc";
     ctx.fillRect(0, 0, width, height);
 
-    const headerHeight = 320;
+    const headerHeight = 240;
     const headerGradient = ctx.createLinearGradient(0, 0, width, 0);
     headerGradient.addColorStop(0, "#ff76b8");
     headerGradient.addColorStop(1, "#ff9f7f");
@@ -763,122 +763,78 @@ const ChatQuiz = (() => {
 
     ctx.fillStyle = "#ffffff";
     ctx.textAlign = "center";
-    ctx.font = "bold 54px Poppins, sans-serif";
-    ctx.fillText("Mi ranking STAYC", width / 2, 180);
-    ctx.font = "28px Poppins, sans-serif";
-    ctx.fillText("Resultado del Photocard Quiz", width / 2, 230);
+    ctx.font = "bold 56px Poppins, sans-serif";
+    ctx.fillText("Tu photocard STAYC", width / 2, 165);
+    ctx.font = "26px Poppins, sans-serif";
+    ctx.fillText("Resultado del Photocard Quiz", width / 2, 210);
 
     ctx.fillStyle = "rgba(255, 255, 255, 0.22)";
     ctx.font = "20px Poppins, sans-serif";
-    ctx.fillText(`${memberLabel} · ${albumLabel}`, width / 2, 270);
+    ctx.fillText(`${memberLabel} · ${albumLabel}`, width / 2, 240);
 
-    const panelX = 70;
-    const panelY = headerHeight + 100;
+    const panelX = 90;
+    const panelY = headerHeight + 120;
     const panelWidth = width - panelX * 2;
-    const panelHeight = 1180;
-    ctx.shadowColor = "rgba(0, 0, 0, 0.18)";
-    ctx.shadowBlur = 26;
-    ctx.shadowOffsetY = 18;
+    const panelHeight = 1150;
+    ctx.shadowColor = "rgba(0, 0, 0, 0.14)";
+    ctx.shadowBlur = 24;
+    ctx.shadowOffsetY = 16;
     ctx.fillStyle = "#ffffff";
-    drawRoundedRect(panelX, panelY, panelWidth, panelHeight, 28);
+    drawRoundedRect(panelX, panelY, panelWidth, panelHeight, 32);
     ctx.fill();
     ctx.shadowColor = "transparent";
 
     ctx.fillStyle = "#0f172a";
-    ctx.textAlign = "left";
-    ctx.font = "bold 34px Poppins, sans-serif";
-    ctx.fillText("Tu ranking de vibra STAYC", panelX + 60, panelY + 70);
+    ctx.textAlign = "center";
+    ctx.font = "bold 36px Poppins, sans-serif";
+    ctx.fillText("La photocard que te representa", width / 2, panelY + 90);
 
     ctx.fillStyle = "#6b7280";
     ctx.font = "22px Poppins, sans-serif";
-    ctx.fillText("Incluye tu photocard y la era que te representa", panelX + 60, panelY + 110);
+    ctx.fillText("Comparte tu resultado con SWITH ✨", width / 2, panelY + 132);
 
-    const rowBaseY = panelY + 170;
-    const rowHeight = 118;
-    const badgeColors = ["#ffd166", "#9cc0ff", "#b5e3d8"];
-    const rows = [
-      {
-        title: `${memberLabel} (${variant} ver.)`,
-        subtitle: "Tu photocard destacada",
-      },
-      {
-        title: albumLabel,
-        subtitle: "Era seleccionada por tu estilo",
-      },
-      {
-        title: "Mood SWITH: brillante & cool",
-        subtitle: "Generado con tus respuestas del quiz",
-      },
-    ];
-
-    rows.forEach((row, index) => {
-      const y = rowBaseY + index * (rowHeight + 16);
-      drawRoundedRect(panelX + 50, y, panelWidth * 0.5, rowHeight, 18);
-      ctx.fillStyle = "#f8fafc";
-      ctx.fill();
-
-      ctx.fillStyle = badgeColors[index % badgeColors.length];
-      drawRoundedRect(panelX + 62, y + 22, 48, 48, 12);
-      ctx.fill();
-
-      ctx.fillStyle = "#0f172a";
-      ctx.font = "bold 26px Poppins, sans-serif";
-      ctx.fillText(index + 1, panelX + 78, y + 55);
-
-      ctx.fillStyle = "#0f172a";
-      ctx.font = "bold 26px Poppins, sans-serif";
-      ctx.fillText(row.title, panelX + 126, y + 55);
-
-      ctx.fillStyle = "#6b7280";
-      ctx.font = "20px Poppins, sans-serif";
-      ctx.fillText(row.subtitle, panelX + 126, y + 88);
-    });
-
-    const photoAreaX = panelX + panelWidth * 0.55;
-    const photoAreaY = panelY + 150;
-    const photoAreaWidth = panelWidth * 0.35;
-    const photoAreaHeight = panelHeight - 280;
+    const photoAreaX = panelX + 120;
+    const photoAreaY = panelY + 190;
+    const photoAreaWidth = panelWidth - 240;
+    const photoAreaHeight = panelHeight - 340;
 
     ctx.fillStyle = "#f8fafc";
-    drawRoundedRect(photoAreaX, photoAreaY, photoAreaWidth, photoAreaHeight, 24);
+    drawRoundedRect(photoAreaX, photoAreaY, photoAreaWidth, photoAreaHeight, 28);
     ctx.fill();
 
-    ctx.fillStyle = "#ff76b8";
-    ctx.font = "bold 22px Poppins, sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText("Photocard", photoAreaX + photoAreaWidth / 2, photoAreaY + 38);
-
-    ctx.fillStyle = "#0f172a";
-    ctx.font = "20px Poppins, sans-serif";
-    ctx.fillText(`${memberLabel} · ${albumLabel}`, photoAreaX + photoAreaWidth / 2, photoAreaY + 76);
-
     const photo = await loadPhotocardImage(photocardUrl);
-    const availableWidth = photoAreaWidth - 70;
-    const availableHeight = photoAreaHeight - 140;
+    const availableWidth = photoAreaWidth - 180;
+    const availableHeight = photoAreaHeight - 260;
     const ratio = Math.min(availableWidth / photo.width, availableHeight / photo.height);
     const drawWidth = photo.width * ratio;
     const drawHeight = photo.height * ratio;
     const imageX = photoAreaX + (photoAreaWidth - drawWidth) / 2;
-    const imageY = photoAreaY + 110;
+    const imageY = photoAreaY + (photoAreaHeight - drawHeight) / 2;
 
     ctx.shadowColor = "rgba(0, 0, 0, 0.2)";
-    ctx.shadowBlur = 20;
-    ctx.shadowOffsetY = 14;
+    ctx.shadowBlur = 22;
+    ctx.shadowOffsetY = 16;
     ctx.drawImage(photo, imageX, imageY, drawWidth, drawHeight);
     ctx.shadowColor = "transparent";
 
-    ctx.fillStyle = "#ff9f7f";
-    ctx.font = "bold 20px Poppins, sans-serif";
-    ctx.fillText(`Versión ${variant}`, photoAreaX + photoAreaWidth / 2, imageY + drawHeight + 42);
+    ctx.fillStyle = "#ff76b8";
+    ctx.font = "bold 24px Poppins, sans-serif";
+    ctx.fillText(`${memberLabel} · ${albumLabel}`, width / 2, photoAreaY + photoAreaHeight + 70);
+
+    if (variant === "s") {
+      ctx.fillStyle = "#facc15";
+      drawRoundedRect(width / 2 - 120, photoAreaY - 40, 240, 54, 16);
+      ctx.fill();
+
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "bold 22px Poppins, sans-serif";
+      ctx.fillText("Photocard rara [S]", width / 2, photoAreaY - 10);
+    }
 
     ctx.fillStyle = "#6b7280";
     ctx.font = "18px Poppins, sans-serif";
-    ctx.fillText("Generado con amor por STAYC & SWITH", photoAreaX + photoAreaWidth / 2, imageY + drawHeight + 78);
-
-    ctx.fillStyle = "#0f172a";
-    ctx.font = "20px Poppins, sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText("Comparte tu ranking en redes y etiquétanos ✨", width / 2, height - 80);
+    ctx.fillText("Generado con amor por STAYC & SWITH", width / 2, height - 80);
 
     return shareCanvas.toDataURL("image/png");
   };
