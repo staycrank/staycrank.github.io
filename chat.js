@@ -1,3 +1,6 @@
+// Get base URL for absolute paths
+const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf("/") + 1)
+
 const ChatQuiz = (() => {
   const chatFlow = [
     {
@@ -159,7 +162,7 @@ const ChatQuiz = (() => {
 
   const buildPath = (album, member, variant) => {
     const ext = variant === "s" ? "png" : "jpg";
-    return `assets/photocards/${album}/${member}${variant}.${ext}`;
+    return getFullImagePath(`assets/photocards/${album}/${member}${variant}.${ext}`);
   };
 
   const getMemberPool = (album, member) => {
@@ -445,33 +448,40 @@ const ChatQuiz = (() => {
     }
   };
 
+  const getFullImagePath = (relativePath) => {
+    return baseUrl + relativePath;
+  };
+
   // Carga real de imagen: sin fetch, sin blob, sin dataURL
   // Directo a <img>, compatible con Safari iOS para canvas
   const loadPhotocardImage = (url) =>
     new Promise((resolve, reject) => {
       if (!url) return reject("Invalid URL");
 
-      const resolved = resolveAssetUrl(url);
+      // Ya NO usamos resolveAssetUrl() porque url YA es absoluta
+      const absoluteUrl = url;
 
-      // Cache local de <img>
-      if (photocardImageCache.has(resolved)) {
-        return resolve(photocardImageCache.get(resolved));
+      // Cache local
+      if (photocardImageCache.has(absoluteUrl)) {
+        return resolve(photocardImageCache.get(absoluteUrl));
       }
 
       const img = new Image();
-      img.crossOrigin = "anonymous"; // No rompe aunque GitHub Pages no tenga CORS
+      img.crossOrigin = "anonymous"; // seguro incluso sin CORS explícito
+
       img.onload = () => {
-        photocardImageCache.set(resolved, img);
+        photocardImageCache.set(absoluteUrl, img);
         resolve(img);
       };
+
       img.onerror = (err) => {
-        console.error("Failed to load photocard image:", resolved, err);
+        console.error("Failed to load photocard image:", absoluteUrl, err);
         reject(err);
       };
 
-      img.src = resolved;
+      img.src = absoluteUrl; // Safari necesita absolute URL aquí
     });
-
+  
 
   const pickPhotocard = (member, album) => {
     const pool = getMemberPool(album, member);
