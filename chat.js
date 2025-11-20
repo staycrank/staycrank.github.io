@@ -666,7 +666,6 @@ const ChatQuiz = (() => {
     download.className = "share-download";
     download.textContent = "Download image";
 
-    bubble.appendChild(content);
     bubble.appendChild(image);
     bubble.appendChild(download);
 
