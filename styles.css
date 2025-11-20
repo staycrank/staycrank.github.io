@@ -1181,7 +1181,11 @@ footer a:hover {
 
   .chat-hint {
     right: 16px;
-    bottom: 150px;
+    bottom: 94px;
+  }
+
+  .chat-hint::after {
+    right: 40px;
   }
 
   .chatbox-body {
@@ -1292,8 +1296,12 @@ footer a:hover {
 
   .chat-hint {
     right: 12px;
-    bottom: 140px;
-    max-width: calc(100% - 32px);
+    bottom: 82px;
+    max-width: calc(100% - 36px);
+  }
+
+  .chat-hint::after {
+    right: 28px;
   }
 
   .chat-toggle {
