@@ -683,9 +683,23 @@ const ChatQuiz = (() => {
     const { memberLabel, albumLabel, photocardUrl, variant } = lastPhotocardResult;
     const width = 1080;
     const height = 1920;
-    shareCanvas.width = width;
-    shareCanvas.height = height;
+
+    const dpr = typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1;
+    shareCanvas.width = width * dpr;
+    shareCanvas.height = height * dpr;
+    shareCanvas.style.width = `${width}px`;
+    shareCanvas.style.height = `${height}px`;
     const ctx = shareCanvas.getContext("2d");
+    ctx.scale(dpr, dpr);
+    ctx.clearRect(0, 0, width, height);
+
+    if (document.fonts?.ready) {
+      try {
+        await document.fonts.ready;
+      } catch (fontError) {
+        console.warn("Could not confirm fonts loaded before drawing photocard image", fontError);
+      }
+    }
 
     const drawRoundedRect = (x, y, w, h, r) => {
       ctx.beginPath();
