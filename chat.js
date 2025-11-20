@@ -631,7 +631,7 @@ const ChatQuiz = (() => {
     addBotMessage(introText, true, () => {
       if (photocard) {
         schedule(() => {
-          addPhotocardBubble(`Photocard ${memberLabel} from (${albumLabel})`, photocard.url);
+          addPhotocardBubble(`${memberLabel} from ${albumLabel}`, photocard.url);
         }, 320);
       }
 
