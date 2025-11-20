@@ -64,10 +64,7 @@ const ChatQuiz = (() => {
 },
   ];
 
-  const VISITOR_COOKIE = "stayc_chat_visitor";
-  const COMPLETED_COOKIE = "stayc_chat_completed";
   const FIRST_TIME_MESSAGE = "¡Bienvenida! ¿Quieres empezar a jugar y descubrir tu vibra STAYC? 💖";
-  const RETURNING_MESSAGE = "¡Hola de nuevo! Ya hiciste el test, ¿quieres volver a jugar?";
   let stepIndex = 0;
   const memberScores = {
     isa: 0,
@@ -231,38 +228,26 @@ const ChatQuiz = (() => {
     "assets/avatars/isa.webp": {
       firstTime:
         "SWITH! 🐱 I'm so glad to see you here~ Do you want to find out which STAYC photocard represents you? It'll be fun getting to know you better.",
-      returning:
-        "¡Holiii, volvió Isa! Ya hicimos el test antes, ¿lo repetimos para ver si cambió tu vibra?",
     },
     "assets/avatars/j.webp": {
       firstTime:
         "SWITH! 🐶 Hi hi! I'm so happy to see you here~ Want to find out which STAYC photocard you are? I'm sure you're gonna love the result!",
-      returning:
-        "¡Siii, regresaste! Soy J otra vez. Ya lo jugamos, pero podemos repetirlo y seguir riendo juntas.",
     },
     "assets/avatars/seeun.webp": {
       firstTime:
         "SWITH! 🦊 Hi hi~ I'm so happy to see you here. Would you like to find out which STAYC photocard represents you? It's going to be fun, I promise.",
-      returning:
-        "SWITH linda, soy Seeun de nuevo~ Si quieres podemos rehacer el test y charlar otro ratito.",
     },
     "assets/avatars/sumin.webp": {
       firstTime:
         "SWITH! 🐰 Hello hello~ I'm really happy you're here. Want to discover which STAYC photocard represents you? It's going to be special, I think you'll like it",
-      returning:
-        "Hola otra vez, habla Sumin. Ya completamos el quiz, pero podemos intentarlo de nuevo si quieres ♡",
     },
     "assets/avatars/sieun.webp": {
       firstTime:
         "SWITH! 🐩 I'm glad to see you~ Want to find out which STAYC photocard represents you? It's going to be interesting getting to know you better",
-      returning:
-        "¡Reunión de nuevo! Soy Sieun. Ya tienes resultados, pero podemos compararlos si repetimos el test.",
     },
     "assets/avatars/yoon.webp": {
       firstTime:
         "SWITH! 🐯 Hi hiii! I'm so happy to see you here~ Want to find out which STAYC photocard represents you? It's gonna be super fun, I promise!",
-      returning:
-        "¡Yoon está de vuelta! Si quieres seguimos jugando el quiz hasta que encontremos tu mood perfecto~",
     },
   };
 
@@ -292,35 +277,6 @@ const ChatQuiz = (() => {
   if (!chatToggle || !chatbox || !chatClose || !messages || !optionsContainer) {
     return {};
   }
-
-  const getCookie = (name) => {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) {
-      return parts.pop().split(";").shift();
-    }
-    return undefined;
-  };
-
-  const setCookie = (name, value, days = 365) => {
-    const expires = new Date();
-    expires.setDate(expires.getDate() + days);
-    document.cookie = `${name}=${value}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
-  };
-
-  const ensureVisitorId = () => {
-    if (!getCookie(VISITOR_COOKIE)) {
-      const id = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2);
-      setCookie(VISITOR_COOKIE, id);
-    }
-  };
-
-  const hasCompletedQuiz = () => getCookie(COMPLETED_COOKIE) === "true";
-
-  const markQuizCompleted = () => {
-    ensureVisitorId();
-    setCookie(COMPLETED_COOKIE, "true");
-  };
 
   const scrollToBottom = () => {
     if (!messages) {
@@ -616,7 +572,6 @@ const ChatQuiz = (() => {
   };
 
   const renderCompletion = () => {
-    markQuizCompleted();
     clearOptions();
 
     const share = document.createElement("button");
@@ -955,14 +910,11 @@ const ChatQuiz = (() => {
 
   const getIntroMessage = () => {
     const avatarIntro = avatarIntroMessages[currentAvatar];
-    const fallback = hasCompletedQuiz() ? RETURNING_MESSAGE : FIRST_TIME_MESSAGE;
     if (!avatarIntro) {
-      return fallback;
+      return FIRST_TIME_MESSAGE;
     }
 
-    return hasCompletedQuiz()
-      ? avatarIntro.returning || RETURNING_MESSAGE
-      : avatarIntro.firstTime || FIRST_TIME_MESSAGE;
+    return avatarIntro.firstTime || FIRST_TIME_MESSAGE;
   };
 
   const startConversation = () => {
@@ -976,7 +928,6 @@ const ChatQuiz = (() => {
     clearOptions();
     stepIndex = 0;
     shouldStartNewSession = false;
-    ensureVisitorId();
     addBotMessage(getIntroMessage(), true, () => {
       renderStartOptions();
     });
