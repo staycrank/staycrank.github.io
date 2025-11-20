@@ -265,6 +265,9 @@ const ChatQuiz = (() => {
   const activeTimeouts = new Set();
   let shouldStartNewSession = true;
   let currentAvatar = null;
+  let userNickname = "";
+
+  const getNicknameForDisplay = () => userNickname || "you";
 
   const resetMemberScores = () => {
     Object.keys(memberScores).forEach((key) => {
@@ -625,7 +628,7 @@ const ChatQuiz = (() => {
     const albumLabel = albumLabels[album] || album;
     const photocard = pickPhotocard(member, album);
 
-    const introText = `Finding the photocard that feels like you… ☁️`;
+    const introText = `Finding the photocard that feels like ${getNicknameForDisplay()}… ☁️`;
     console.log(photocard)
 
     lastPhotocardResult = photocard
@@ -745,7 +748,7 @@ const ChatQuiz = (() => {
 
     ctx.fillStyle = "#6b7280";
     ctx.font = "26px Poppins, sans-serif";
-    ctx.fillText("Here’s the photocard that feels like you", width / 2, 278);
+    ctx.fillText(`Here’s the photocard that feels like ${getNicknameForDisplay()}`, width / 2, 278);
 
     const cardX = 120;
     const cardY = 360;
@@ -846,7 +849,7 @@ const ChatQuiz = (() => {
       addUserMessage("Yes");
       clearOptions();
       schedule(() => {
-        askCurrentStep();
+        renderNicknamePrompt();
       }, 320);
     });
 
@@ -864,6 +867,52 @@ const ChatQuiz = (() => {
 
     optionsContainer.appendChild(yesOption);
     optionsContainer.appendChild(noOption);
+  };
+
+  const renderNicknamePrompt = () => {
+    clearOptions();
+
+    addBotMessage("Before we start, how should I call you during the quiz? ✨", true, () => {
+      const container = document.createElement("div");
+      container.className = "chat-nickname";
+
+      const input = document.createElement("input");
+      input.type = "text";
+      input.className = "chat-option-input";
+      input.placeholder = "Enter your nickname";
+      input.maxLength = 40;
+
+      const confirm = document.createElement("button");
+      confirm.type = "button";
+      confirm.className = "chat-option";
+      confirm.textContent = "Start quiz!";
+
+      const saveNickname = () => {
+        const nickname = input.value.trim() || "SWITH";
+        userNickname = nickname;
+        addUserMessage(nickname);
+        clearOptions();
+
+        schedule(() => {
+          addBotMessage(`Nice to meet you, ${nickname}! Let's begin. ☁️`, true, () => {
+            askCurrentStep();
+          });
+        }, 200);
+      };
+
+      confirm.addEventListener("click", saveNickname);
+      input.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          saveNickname();
+        }
+      });
+
+      container.appendChild(input);
+      container.appendChild(confirm);
+      optionsContainer.appendChild(container);
+      input.focus();
+      scrollToBottom();
+    });
   };
 
   const renderEarlyExit = () => {
@@ -952,6 +1001,7 @@ const ChatQuiz = (() => {
     resetMemberScores();
     preferredAlbums.clear();
     lastPhotocardResult = null;
+    userNickname = "";
     pickAvatar();
     messages.innerHTML = "";
     clearOptions();
