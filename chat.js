@@ -430,90 +430,48 @@ const ChatQuiz = (() => {
     return chooseRandom(albumList);
   };
 
+  // -----------------------------------------------------------
+  // SAFE IMAGE LOADING FOR CANVAS (iOS SAFE, NO FETCH, NO BLOB)
+  // -----------------------------------------------------------
+
+  // Mucho más simple: solo resuelve rutas sin tocar blobs ni dataURLs
   const resolveAssetUrl = (url) => {
     if (!url) return url;
     try {
       return new URL(url, window.location.href).toString();
-    } catch (error) {
-      console.warn("No se pudo resolver la ruta de la photocard", url, error);
+    } catch (e) {
+      console.warn("Could not resolve asset URL:", url);
       return url;
     }
   };
 
-  const readBlobAsDataUrl = (blob) => new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = reject;
-    reader.readAsDataURL(blob);
-  });
+  // Carga real de imagen: sin fetch, sin blob, sin dataURL
+  // Directo a <img>, compatible con Safari iOS para canvas
+  const loadPhotocardImage = (url) =>
+    new Promise((resolve, reject) => {
+      if (!url) return reject("Invalid URL");
 
-  const decodeImage = (src) => new Promise((resolve, reject) => {
-    const img = new Image();
-    let settled = false;
-    img.crossOrigin = "anonymous";
+      const resolved = resolveAssetUrl(url);
 
-    const finish = () => {
-      if (!settled) {
-        settled = true;
+      // Cache local de <img>
+      if (photocardImageCache.has(resolved)) {
+        return resolve(photocardImageCache.get(resolved));
+      }
+
+      const img = new Image();
+      img.crossOrigin = "anonymous"; // No rompe aunque GitHub Pages no tenga CORS
+      img.onload = () => {
+        photocardImageCache.set(resolved, img);
         resolve(img);
-      }
-    };
+      };
+      img.onerror = (err) => {
+        console.error("Failed to load photocard image:", resolved, err);
+        reject(err);
+      };
 
-    img.onload = finish;
-    img.onerror = reject;
-    img.src = src;
+      img.src = resolved;
+    });
 
-    if (img.decode) {
-      img.decode().then(finish).catch(reject);
-    }
-  });
-
-  const convertImageToDataUrl = async (img) => {
-    const canvas = document.createElement("canvas");
-    canvas.width = img.naturalWidth || img.width;
-    canvas.height = img.naturalHeight || img.height;
-    const ctx = canvas.getContext("2d");
-    ctx.drawImage(img, 0, 0);
-    try {
-      return canvas.toDataURL("image/png");
-    } catch (error) {
-      throw new Error("No se pudo preparar la photocard para compartir");
-    }
-  };
-
-  const loadPhotocardImage = async (url) => {
-    const resolvedUrl = resolveAssetUrl(url);
-    if (photocardImageCache.has(resolvedUrl)) {
-      return photocardImageCache.get(resolvedUrl);
-    }
-
-    const tryFetchDecode = async () => {
-      const response = await fetch(resolvedUrl, { cache: "force-cache" });
-      if (!response.ok) {
-        throw new Error(`No se pudo cargar la photocard (${response.status})`);
-      }
-      const blob = await response.blob();
-      const dataUrl = await readBlobAsDataUrl(blob);
-      return decodeImage(dataUrl);
-    };
-
-    const tryImageFallback = async () => {
-      const rawImage = await decodeImage(resolvedUrl);
-      const safeDataUrl = await convertImageToDataUrl(rawImage);
-      return decodeImage(safeDataUrl);
-    };
-
-    let image;
-    try {
-      image = await tryFetchDecode();
-    } catch (fetchError) {
-      console.warn("Fallo al cargar la photocard con fetch, usando alternativa", fetchError);
-      image = await tryImageFallback();
-    }
-
-    photocardImageCache.set(resolvedUrl, image);
-    return image;
-  };
 
   const pickPhotocard = (member, album) => {
     const pool = getMemberPool(album, member);
