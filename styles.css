@@ -1296,8 +1296,8 @@ footer a:hover {
 
   .chat-hint {
     right: 12px;
-    bottom: 82px;
-    max-width: calc(100% - 36px);
+    bottom: calc(12px + 56px + 8px);
+    max-width: min(240px, calc(100% - 36px));
   }
 
   .chat-hint::after {
