@@ -64,10 +64,7 @@ const ChatQuiz = (() => {
 },
   ];
 
-  const VISITOR_COOKIE = "stayc_chat_visitor";
-  const COMPLETED_COOKIE = "stayc_chat_completed";
   const FIRST_TIME_MESSAGE = "¡Bienvenida! ¿Quieres empezar a jugar y descubrir tu vibra STAYC? 💖";
-  const RETURNING_MESSAGE = "¡Hola de nuevo! Ya hiciste el test, ¿quieres volver a jugar?";
   let stepIndex = 0;
   const memberScores = {
     isa: 0,
@@ -231,38 +228,26 @@ const ChatQuiz = (() => {
     "assets/avatars/isa.webp": {
       firstTime:
         "SWITH! 🐱 I'm so glad to see you here~ Do you want to find out which STAYC photocard represents you? It'll be fun getting to know you better.",
-      returning:
-        "¡Holiii, volvió Isa! Ya hicimos el test antes, ¿lo repetimos para ver si cambió tu vibra?",
     },
     "assets/avatars/j.webp": {
       firstTime:
         "SWITH! 🐶 Hi hi! I'm so happy to see you here~ Want to find out which STAYC photocard you are? I'm sure you're gonna love the result!",
-      returning:
-        "¡Siii, regresaste! Soy J otra vez. Ya lo jugamos, pero podemos repetirlo y seguir riendo juntas.",
     },
     "assets/avatars/seeun.webp": {
       firstTime:
         "SWITH! 🦊 Hi hi~ I'm so happy to see you here. Would you like to find out which STAYC photocard represents you? It's going to be fun, I promise.",
-      returning:
-        "SWITH linda, soy Seeun de nuevo~ Si quieres podemos rehacer el test y charlar otro ratito.",
     },
     "assets/avatars/sumin.webp": {
       firstTime:
         "SWITH! 🐰 Hello hello~ I'm really happy you're here. Want to discover which STAYC photocard represents you? It's going to be special, I think you'll like it",
-      returning:
-        "Hola otra vez, habla Sumin. Ya completamos el quiz, pero podemos intentarlo de nuevo si quieres ♡",
     },
     "assets/avatars/sieun.webp": {
       firstTime:
         "SWITH! 🐩 I'm glad to see you~ Want to find out which STAYC photocard represents you? It's going to be interesting getting to know you better",
-      returning:
-        "¡Reunión de nuevo! Soy Sieun. Ya tienes resultados, pero podemos compararlos si repetimos el test.",
     },
     "assets/avatars/yoon.webp": {
       firstTime:
         "SWITH! 🐯 Hi hiii! I'm so happy to see you here~ Want to find out which STAYC photocard represents you? It's gonna be super fun, I promise!",
-      returning:
-        "¡Yoon está de vuelta! Si quieres seguimos jugando el quiz hasta que encontremos tu mood perfecto~",
     },
   };
 
@@ -292,35 +277,6 @@ const ChatQuiz = (() => {
   if (!chatToggle || !chatbox || !chatClose || !messages || !optionsContainer) {
     return {};
   }
-
-  const getCookie = (name) => {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) {
-      return parts.pop().split(";").shift();
-    }
-    return undefined;
-  };
-
-  const setCookie = (name, value, days = 365) => {
-    const expires = new Date();
-    expires.setDate(expires.getDate() + days);
-    document.cookie = `${name}=${value}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
-  };
-
-  const ensureVisitorId = () => {
-    if (!getCookie(VISITOR_COOKIE)) {
-      const id = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2);
-      setCookie(VISITOR_COOKIE, id);
-    }
-  };
-
-  const hasCompletedQuiz = () => getCookie(COMPLETED_COOKIE) === "true";
-
-  const markQuizCompleted = () => {
-    ensureVisitorId();
-    setCookie(COMPLETED_COOKIE, "true");
-  };
 
   const scrollToBottom = () => {
     if (!messages) {
@@ -615,17 +571,7 @@ const ChatQuiz = (() => {
     scrollToBottom();
   };
 
-  const autoDownloadImage = (dataUrl, filename = "stayc-photocard-ranking.png") => {
-    const link = document.createElement("a");
-    link.href = dataUrl;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-  };
-
   const renderCompletion = () => {
-    markQuizCompleted();
     clearOptions();
 
     const share = document.createElement("button");
@@ -640,11 +586,8 @@ const ChatQuiz = (() => {
       try {
         const imageUrl = await generatePhotocardShareImage();
         if (imageUrl) {
-          autoDownloadImage(imageUrl, "stayc-photocard-ranking.png");
           schedule(() => {
-            addBotMessage("¡Imagen generada! Se descargó automáticamente, guárdala y compártela en tus redes. 💖", true, () => {
-              addSharePreview(imageUrl);
-            });
+            addSharePreview(imageUrl);
           }, 200);
         } else {
           addBotMessage("Todavía no hay una photocard para generar. Completa el quiz primero. ✨");
@@ -701,6 +644,8 @@ const ChatQuiz = (() => {
   };
 
   const addSharePreview = (imageUrl) => {
+    clearOptions();
+
     const wrapper = document.createElement("div");
     wrapper.className = "chat-message bot";
 
@@ -763,132 +708,100 @@ const ChatQuiz = (() => {
     ctx.fillStyle = "#f8fafc";
     ctx.fillRect(0, 0, width, height);
 
-    const headerHeight = 320;
-    const headerGradient = ctx.createLinearGradient(0, 0, width, 0);
-    headerGradient.addColorStop(0, "#ff76b8");
-    headerGradient.addColorStop(1, "#ff9f7f");
-    ctx.fillStyle = headerGradient;
-    drawRoundedRect(60, 60, width - 120, headerHeight, 32);
+    const backgroundGradient = ctx.createLinearGradient(0, 0, 0, height);
+    backgroundGradient.addColorStop(0, "#f8f1f6");
+    backgroundGradient.addColorStop(1, "#f3f6fb");
+    ctx.fillStyle = backgroundGradient;
+    ctx.fillRect(0, 0, width, height);
+
+    const headerBadgeWidth = 320;
+    const headerBadgeHeight = 62;
+    ctx.fillStyle = "#fce7f3";
+    drawRoundedRect((width - headerBadgeWidth) / 2, 96, headerBadgeWidth, headerBadgeHeight, 18);
     ctx.fill();
 
-    ctx.fillStyle = "#ffffff";
+    ctx.fillStyle = "#be185d";
     ctx.textAlign = "center";
-    ctx.font = "bold 54px Poppins, sans-serif";
-    ctx.fillText("Mi ranking STAYC", width / 2, 180);
-    ctx.font = "28px Poppins, sans-serif";
-    ctx.fillText("Resultado del Photocard Quiz", width / 2, 230);
+    ctx.font = "bold 24px Poppins, sans-serif";
+    ctx.fillText("RESULTADO DEL QUIZ", width / 2, 136);
 
-    ctx.fillStyle = "rgba(255, 255, 255, 0.22)";
-    ctx.font = "20px Poppins, sans-serif";
-    ctx.fillText(`${memberLabel} · ${albumLabel}`, width / 2, 270);
+    ctx.fillStyle = "#d9468d";
+    ctx.font = "bold 64px Poppins, sans-serif";
+    ctx.fillText("Tu Photocard", width / 2, 230);
 
-    const panelX = 70;
-    const panelY = headerHeight + 100;
-    const panelWidth = width - panelX * 2;
-    const panelHeight = 1180;
-    ctx.shadowColor = "rgba(0, 0, 0, 0.18)";
-    ctx.shadowBlur = 26;
-    ctx.shadowOffsetY = 18;
+    ctx.fillStyle = "#6b7280";
+    ctx.font = "26px Poppins, sans-serif";
+    ctx.fillText("Descubre tu colección única de STAYC", width / 2, 278);
+
+    const cardX = 120;
+    const cardY = 360;
+    const cardWidth = width - cardX * 2;
+    const cardHeight = 1240;
+    ctx.shadowColor = "rgba(0, 0, 0, 0.12)";
+    ctx.shadowBlur = 30;
+    ctx.shadowOffsetY = 24;
     ctx.fillStyle = "#ffffff";
-    drawRoundedRect(panelX, panelY, panelWidth, panelHeight, 28);
+    drawRoundedRect(cardX, cardY, cardWidth, cardHeight, 32);
     ctx.fill();
     ctx.shadowColor = "transparent";
 
-    ctx.fillStyle = "#0f172a";
-    ctx.textAlign = "left";
-    ctx.font = "bold 34px Poppins, sans-serif";
-    ctx.fillText("Tu ranking de vibra STAYC", panelX + 60, panelY + 70);
-
-    ctx.fillStyle = "#6b7280";
-    ctx.font = "22px Poppins, sans-serif";
-    ctx.fillText("Incluye tu photocard y la era que te representa", panelX + 60, panelY + 110);
-
-    const rowBaseY = panelY + 170;
-    const rowHeight = 118;
-    const badgeColors = ["#ffd166", "#9cc0ff", "#b5e3d8"];
-    const rows = [
-      {
-        title: `${memberLabel} (${variant} ver.)`,
-        subtitle: "Tu photocard destacada",
-      },
-      {
-        title: albumLabel,
-        subtitle: "Era seleccionada por tu estilo",
-      },
-      {
-        title: "Mood SWITH: brillante & cool",
-        subtitle: "Generado con tus respuestas del quiz",
-      },
-    ];
-
-    rows.forEach((row, index) => {
-      const y = rowBaseY + index * (rowHeight + 16);
-      drawRoundedRect(panelX + 50, y, panelWidth * 0.5, rowHeight, 18);
-      ctx.fillStyle = "#f8fafc";
-      ctx.fill();
-
-      ctx.fillStyle = badgeColors[index % badgeColors.length];
-      drawRoundedRect(panelX + 62, y + 22, 48, 48, 12);
-      ctx.fill();
-
-      ctx.fillStyle = "#0f172a";
-      ctx.font = "bold 26px Poppins, sans-serif";
-      ctx.fillText(index + 1, panelX + 78, y + 55);
-
-      ctx.fillStyle = "#0f172a";
-      ctx.font = "bold 26px Poppins, sans-serif";
-      ctx.fillText(row.title, panelX + 126, y + 55);
-
-      ctx.fillStyle = "#6b7280";
-      ctx.font = "20px Poppins, sans-serif";
-      ctx.fillText(row.subtitle, panelX + 126, y + 88);
-    });
-
-    const photoAreaX = panelX + panelWidth * 0.55;
-    const photoAreaY = panelY + 150;
-    const photoAreaWidth = panelWidth * 0.35;
-    const photoAreaHeight = panelHeight - 280;
-
-    ctx.fillStyle = "#f8fafc";
-    drawRoundedRect(photoAreaX, photoAreaY, photoAreaWidth, photoAreaHeight, 24);
+    const photoFrameX = cardX + 140;
+    const photoFrameY = cardY + 160;
+    const photoFrameWidth = cardWidth - 280;
+    const photoFrameHeight = 820;
+    const photoFrameGradient = ctx.createLinearGradient(photoFrameX, photoFrameY, photoFrameX, photoFrameY + photoFrameHeight);
+    photoFrameGradient.addColorStop(0, "#fdf2f8");
+    photoFrameGradient.addColorStop(1, "#f4f5fb");
+    ctx.fillStyle = photoFrameGradient;
+    drawRoundedRect(photoFrameX, photoFrameY, photoFrameWidth, photoFrameHeight, 28);
     ctx.fill();
 
-    ctx.fillStyle = "#ff76b8";
-    ctx.font = "bold 22px Poppins, sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText("Photocard", photoAreaX + photoAreaWidth / 2, photoAreaY + 38);
+    if (variant === "s") {
+      const badgeWidth = 400;
+      const badgeHeight = 64;
+      const badgeX = width / 2 - badgeWidth / 2;
+      const badgeY = photoFrameY - 46;
+      ctx.fillStyle = "#fde68a";
+      drawRoundedRect(badgeX, badgeY, badgeWidth, badgeHeight, 20);
+      ctx.fill();
 
-    ctx.fillStyle = "#0f172a";
-    ctx.font = "20px Poppins, sans-serif";
-    ctx.fillText(`${memberLabel} · ${albumLabel}`, photoAreaX + photoAreaWidth / 2, photoAreaY + 76);
+      ctx.fillStyle = "#92400e";
+      ctx.font = "bold 24px Poppins, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("Special POB Version", width / 2, badgeY + 42);
+    }
 
     const photo = await loadPhotocardImage(photocardUrl);
-    const availableWidth = photoAreaWidth - 70;
-    const availableHeight = photoAreaHeight - 140;
+    const availableWidth = photoFrameWidth - 200;
+    const availableHeight = photoFrameHeight - 200;
     const ratio = Math.min(availableWidth / photo.width, availableHeight / photo.height);
     const drawWidth = photo.width * ratio;
     const drawHeight = photo.height * ratio;
-    const imageX = photoAreaX + (photoAreaWidth - drawWidth) / 2;
-    const imageY = photoAreaY + 110;
+    const imageX = photoFrameX + (photoFrameWidth - drawWidth) / 2;
+    const imageY = photoFrameY + (photoFrameHeight - drawHeight) / 2;
 
-    ctx.shadowColor = "rgba(0, 0, 0, 0.2)";
-    ctx.shadowBlur = 20;
-    ctx.shadowOffsetY = 14;
-    ctx.drawImage(photo, imageX, imageY, drawWidth, drawHeight);
+    ctx.shadowColor = "rgba(0, 0, 0, 0.18)";
+    ctx.shadowBlur = 26;
+    ctx.shadowOffsetY = 18;
+    drawRoundedRect(imageX - 6, imageY - 6, drawWidth + 12, drawHeight + 12, 24);
+    ctx.fillStyle = "#ffffff";
+    ctx.fill();
     ctx.shadowColor = "transparent";
 
-    ctx.fillStyle = "#ff9f7f";
-    ctx.font = "bold 20px Poppins, sans-serif";
-    ctx.fillText(`Versión ${variant}`, photoAreaX + photoAreaWidth / 2, imageY + drawHeight + 42);
-
-    ctx.fillStyle = "#6b7280";
-    ctx.font = "18px Poppins, sans-serif";
-    ctx.fillText("Generado con amor por STAYC & SWITH", photoAreaX + photoAreaWidth / 2, imageY + drawHeight + 78);
+    ctx.drawImage(photo, imageX, imageY, drawWidth, drawHeight);
 
     ctx.fillStyle = "#0f172a";
-    ctx.font = "20px Poppins, sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText("Comparte tu ranking en redes y etiquétanos ✨", width / 2, height - 80);
+    ctx.font = "bold 40px Poppins, sans-serif";
+    ctx.fillText(memberLabel, width / 2, photoFrameY + photoFrameHeight + 90);
+
+    ctx.fillStyle = "#6b7280";
+    ctx.font = "22px Poppins, sans-serif";
+    ctx.fillText(albumLabel, width / 2, photoFrameY + photoFrameHeight + 134);
+
+    ctx.fillStyle = "#9ca3af";
+    ctx.font = "20px Poppins, sans-serif";
+    ctx.fillText("Generado con amor por STAYC & SWITH", width / 2, height - 120);
 
     return shareCanvas.toDataURL("image/png");
   };
@@ -997,14 +910,11 @@ const ChatQuiz = (() => {
 
   const getIntroMessage = () => {
     const avatarIntro = avatarIntroMessages[currentAvatar];
-    const fallback = hasCompletedQuiz() ? RETURNING_MESSAGE : FIRST_TIME_MESSAGE;
     if (!avatarIntro) {
-      return fallback;
+      return FIRST_TIME_MESSAGE;
     }
 
-    return hasCompletedQuiz()
-      ? avatarIntro.returning || RETURNING_MESSAGE
-      : avatarIntro.firstTime || FIRST_TIME_MESSAGE;
+    return avatarIntro.firstTime || FIRST_TIME_MESSAGE;
   };
 
   const startConversation = () => {
@@ -1018,7 +928,6 @@ const ChatQuiz = (() => {
     clearOptions();
     stepIndex = 0;
     shouldStartNewSession = false;
-    ensureVisitorId();
     addBotMessage(getIntroMessage(), true, () => {
       renderStartOptions();
     });
