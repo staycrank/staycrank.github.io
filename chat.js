@@ -621,7 +621,7 @@ const ChatQuiz = (() => {
     const albumLabel = albumLabels[album] || album;
     const photocard = pickPhotocard(member, album);
 
-    const introText = `Processing the photocard that identifies you...`;
+    const introText = `Finding the photocard that feels like you… ☁️`;
     console.log(photocard)
 
     lastPhotocardResult = photocard
@@ -636,7 +636,7 @@ const ChatQuiz = (() => {
       }
 
       schedule(() => {
-        addBotMessage("Share your result with everyone!", true, () => {
+        addBotMessage("Share your result with other SWITHs! Your photocard deserves the spotlight! 💞", true, () => {
           renderCompletion();
         });
       }, 900);
@@ -655,19 +655,16 @@ const ChatQuiz = (() => {
     const bubble = document.createElement("div");
     bubble.className = "message-bubble share-preview";
 
-    const content = document.createElement("p");
-    content.textContent = "Tu imagen de resultado está lista";
-
     const image = document.createElement("img");
     image.src = imageUrl;
-    image.alt = "Imagen para compartir";
+    image.alt = "Shareable Photocard Result";
     image.className = "share-preview-image";
 
     const download = document.createElement("a");
     download.href = imageUrl;
     download.download = "stayc-photocard-ranking.png";
     download.className = "share-download";
-    download.textContent = "Descargar imagen";
+    download.textContent = "Download image";
 
     bubble.appendChild(content);
     bubble.appendChild(image);
@@ -723,15 +720,15 @@ const ChatQuiz = (() => {
     ctx.fillStyle = "#be185d";
     ctx.textAlign = "center";
     ctx.font = "bold 24px Poppins, sans-serif";
-    ctx.fillText("RESULTADO DEL QUIZ", width / 2, 136);
+    ctx.fillText("QUIZ RESULT ☁️", width / 2, 136);
 
     ctx.fillStyle = "#d9468d";
     ctx.font = "bold 64px Poppins, sans-serif";
-    ctx.fillText("Tu Photocard", width / 2, 230);
+    ctx.fillText("Your Photocard Reveal", width / 2, 230);
 
     ctx.fillStyle = "#6b7280";
     ctx.font = "26px Poppins, sans-serif";
-    ctx.fillText("Descubre tu colección única de STAYC", width / 2, 278);
+    ctx.fillText("Here’s the photocard that feels like you", width / 2, 278);
 
     const cardX = 120;
     const cardY = 360;
@@ -801,7 +798,22 @@ const ChatQuiz = (() => {
 
     ctx.fillStyle = "#9ca3af";
     ctx.font = "20px Poppins, sans-serif";
-    ctx.fillText("Generado con amor por STAYC & SWITH", width / 2, height - 120);
+    ctx.fillText("Generated with 🧡 for STAYC and SWITH", width / 2, height - 120);
+
+    // Badge semitransparente bajo el texto
+    const linkW = 340;
+    const linkH = 44;
+    const linkX = width / 2 - linkW / 2;
+    const linkY = height - 104; // ligeramente más abajo que el texto anterior
+
+    ctx.fillStyle = "rgba(255,255,255,0.45)";
+    drawRoundedRect(linkX, linkY, linkW, linkH, 14);
+    ctx.fill();
+
+    ctx.fillStyle = "#475569";
+    ctx.font = "bold 20px Poppins, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("staycrank.github.io", width / 2, linkY + 30);
 
     return shareCanvas.toDataURL("image/png");
   };
