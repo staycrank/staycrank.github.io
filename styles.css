@@ -800,6 +800,66 @@ footer a:hover {
   z-index: 1500;
 }
 
+.chat-hint {
+  position: fixed;
+  right: 24px;
+  bottom: 110px;
+  max-width: 260px;
+  background: #0f172a;
+  color: #ffffff;
+  padding: 14px 16px;
+  border-radius: 14px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  opacity: 0;
+  transform: translateY(6px);
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  z-index: 1600;
+}
+
+.chat-hint::after {
+  content: "";
+  position: absolute;
+  right: 42px;
+  bottom: -10px;
+  border-width: 10px 10px 0 10px;
+  border-style: solid;
+  border-color: #0f172a transparent transparent transparent;
+}
+
+.chat-hint span {
+  line-height: 1.5;
+  font-weight: 600;
+}
+
+.chat-hint.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.chat-hint-close {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+  border-radius: 8px;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  padding: 0;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.chat-hint-close:hover {
+  background: rgba(255, 255, 255, 0.16);
+  transform: scale(1.03);
+}
+
 .chat-toggle:hover {
   transform: translateY(-2px);
   box-shadow: 0 16px 36px rgba(0, 0, 0, 0.3);
@@ -1119,6 +1179,11 @@ footer a:hover {
     max-height: calc(100vh - 120px);
   }
 
+  .chat-hint {
+    right: 16px;
+    bottom: 150px;
+  }
+
   .chatbox-body {
     padding: 14px;
   }
@@ -1223,6 +1288,12 @@ footer a:hover {
     bottom: 90px;
     border-radius: 14px;
     max-height: calc(100vh - 110px);
+  }
+
+  .chat-hint {
+    right: 12px;
+    bottom: 140px;
+    max-width: calc(100% - 32px);
   }
 
   .chat-toggle {

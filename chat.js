@@ -259,6 +259,9 @@ const ChatQuiz = (() => {
   const chatClose = document.getElementById("chat-close");
   const messages = document.getElementById("chat-messages");
   const optionsContainer = document.getElementById("chat-options");
+  const chatHint = document.getElementById("chat-hint");
+  const chatHintClose = document.getElementById("chat-hint-close");
+  const CHAT_HINT_KEY = "staycChatHintDismissed";
   const activeTimeouts = new Set();
   let shouldStartNewSession = true;
   let currentAvatar = null;
@@ -309,6 +312,39 @@ const ChatQuiz = (() => {
   const clearScheduledResponses = () => {
     activeTimeouts.forEach((id) => clearTimeout(id));
     activeTimeouts.clear();
+  };
+
+  const hideChatHint = () => {
+    if (chatHint) {
+      chatHint.classList.remove("visible");
+    }
+  };
+
+  const dismissChatHint = () => {
+    hideChatHint();
+    try {
+      sessionStorage.setItem(CHAT_HINT_KEY, "true");
+    } catch (err) {
+      // Storage might be unavailable; ignore errors
+    }
+  };
+
+  const showChatHint = () => {
+    if (!chatHint) {
+      return;
+    }
+
+    try {
+      if (sessionStorage.getItem(CHAT_HINT_KEY) === "true") {
+        return;
+      }
+    } catch (err) {
+      // Continue without storage gating if unavailable
+    }
+
+    requestAnimationFrame(() => {
+      chatHint.classList.add("visible");
+    });
   };
 
   const removeTypingIndicators = () => {
@@ -929,6 +965,7 @@ const ChatQuiz = (() => {
   const openChat = () => {
     chatbox.classList.add("open");
     chatToggle.setAttribute("aria-expanded", "true");
+    dismissChatHint();
     if (shouldStartNewSession) {
       startConversation();
     }
@@ -953,6 +990,12 @@ const ChatQuiz = (() => {
   });
 
   chatClose.addEventListener("click", closeChat);
+
+  if (chatHintClose) {
+    chatHintClose.addEventListener("click", dismissChatHint);
+  }
+
+  showChatHint();
 
   return {
     open: openChat,
