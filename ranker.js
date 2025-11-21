@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const songSelectionContainer = document.getElementById("song-selection-container")
   const matchContainer = document.getElementById("match-container")
   const resultsContainer = document.getElementById("results-container")
+  const supportSection = document.getElementById("support-section")
   const progressBar = document.getElementById("progress-bar")
   const progressText = document.getElementById("progress-text")
   const currentRound = document.getElementById("current-round")
@@ -186,6 +187,11 @@ document.addEventListener("DOMContentLoaded", () => {
     TEENFRESH: "#ffde59",
   }
 
+  function toggleSupportSection(isVisible) {
+    if (!supportSection) return
+    supportSection.style.display = isVisible ? "block" : "none"
+  }
+
   // Initialize the app
   function init() {
     // Set up event listeners
@@ -210,6 +216,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Initialize song grid
     initializeSongGrid()
+
+    toggleSupportSection(true)
   }
 
   // Handle start button click
@@ -226,12 +234,14 @@ document.addEventListener("DOMContentLoaded", () => {
     settingsContainer.style.display = "none"
     songSelectionContainer.style.display = "block"
     updateSelectedCount()
+    toggleSupportSection(false)
   }
 
   // Back to settings from song selection
   function backToSettings() {
     songSelectionContainer.style.display = "none"
     settingsContainer.style.display = "block"
+    toggleSupportSection(true)
   }
 
   // Initialize song grid
@@ -387,6 +397,7 @@ document.addEventListener("DOMContentLoaded", () => {
     matchContainer.style.display = "flex"
     startButton.style.display = "none"
     restartButton.style.display = "inline-flex"
+    toggleSupportSection(false)
 
     // Show first match
     showMatch(0)
@@ -458,6 +469,7 @@ document.addEventListener("DOMContentLoaded", () => {
     matchContainer.style.display = "flex"
     startButton.style.display = "none"
     restartButton.style.display = "inline-flex"
+    toggleSupportSection(false)
 
     // Show first match
     showMatch(0)
@@ -591,6 +603,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Update UI
     matchContainer.style.display = "none"
     resultsContainer.style.display = "block"
+    toggleSupportSection(true)
 
     // Generate share URL
     generateShareUrl(currentRankings)
@@ -948,6 +961,7 @@ document.addEventListener("DOMContentLoaded", () => {
     songSelectionContainer.style.display = "none"
     matchContainer.style.display = "none"
     resultsContainer.style.display = "none"
+    toggleSupportSection(true)
   }
 
   // Go back to the main menu
@@ -959,6 +973,7 @@ document.addEventListener("DOMContentLoaded", () => {
     resultsContainer.style.display = "none"
     startButton.style.display = "inline-flex"
     restartButton.style.display = "none"
+    toggleSupportSection(true)
 
     // Reset state
     currentMatchIndex = 0
@@ -995,6 +1010,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         settingsContainer.style.display = "none"
         resultsContainer.style.display = "block"
+        toggleSupportSection(true)
         return true
       }
     }
