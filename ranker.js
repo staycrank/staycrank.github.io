@@ -74,6 +74,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const overuAlbum =  assets + "overu.jpg"
   const tstarsAlbum = assets + "tstars.jpeg"
   const iwiAlbum = assets + "iwi.jpeg"
+  const loverKillerAlbum = assets + "lover-killer.jpg"
+  const stayAliveAlbum = assets + "stay-alive.jpg"
+  const twoLoveAlbum = assets + "2-love.jpg"
 
   // Sample song data
   const staycSongs = [
@@ -172,6 +175,17 @@ document.addEventListener("DOMContentLoaded", () => {
     { id: 63, title: "I WANT IT", album: "STAYC Special Single [I WANT IT]", albumCover: iwiAlbum, isTitle: true },
     { id: 64, title: "BOY", album: "STAYC Special Single [I WANT IT]", albumCover: iwiAlbum, isTitle: false },
     { id: 65, title: "반칙 (Honestly)", album: "STAYC Special Single [I WANT IT]", albumCover: iwiAlbum, isTitle: false },
+    { id: 66, title: "Lover, Killer", album: "Lover, Killer / BEBE -Japanese Ver.", albumCover: loverKillerAlbum, isTitle: true },
+    { id: 67, title: "BEBE - Japanese Ver.", album: "Lover, Killer / BEBE -Japanese Ver.", albumCover: loverKillerAlbum, isTitle: false },
+    { id: 68, title: "Mwuah", album: "Stay Alive", albumCover: stayAliveAlbum, isTitle: true },
+    { id: 69, title: "I Want It (Japanese Ver.)", album: "Stay Alive", albumCover: stayAliveAlbum, isTitle: false },
+    { id: 70, title: "Satellite", album: "Stay Alive", albumCover: stayAliveAlbum, isTitle: false },
+    { id: 71, title: "Say My Name", album: "Stay Alive", albumCover: stayAliveAlbum, isTitle: false },
+    { id: 72, title: "Stay With Me (Japanese Ver.)", album: "Stay Alive", albumCover: stayAliveAlbum, isTitle: false },
+    { id: 73, title: "2 L0VE", album: "2:LOVE", albumCover: twoLoveAlbum, isTitle: true },
+    { id: 74, title: "Where You At?", album: "2:LOVE", albumCover: twoLoveAlbum, isTitle: false },
+    { id: 75, title: "Sorry", album: "2:LOVE", albumCover: twoLoveAlbum, isTitle: false },
+    { id: 76, title: "Beat My Love", album: "2:LOVE", albumCover: twoLoveAlbum, isTitle: false },
   ]
 
   // Album colors for fallback
@@ -693,7 +707,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const isVertical = verticalLayoutRadio.checked
 
     // Ensure all album covers are loaded before generating
-    ensureAlbumCoversLoaded(currentRankings).then(() => {
+    // Canvas only draws fonts that have finished loading
+    const fonts = ['800 30px Poppins', '700 16px Poppins', '16px Poppins', '900 32px "Londrina Solid"'].map((f) =>
+      document.fonts.load(f).catch(() => {}),
+    )
+    Promise.all([ensureAlbumCoversLoaded(currentRankings), ...fonts]).then(() => {
       if (isVertical) {
         generateVerticalImage()
       } else {
@@ -742,198 +760,163 @@ document.addEventListener("DOMContentLoaded", () => {
     return Promise.all(promises)
   }
 
-  // Generate vertical image
-  function generateVerticalImage() {
-    // Set canvas dimensions
-    const width = 800
-    const height = 150 + currentRankings.length * 70 + 30
-    rankingCanvas.width = width
-    rankingCanvas.height = height
-
-    const ctx = rankingCanvas.getContext("2d")
-
-    // Draw background
-    ctx.fillStyle = "#ffffff"
-    ctx.fillRect(0, 0, width, height)
-
-    // Draw header background
-    const gradient = ctx.createLinearGradient(0, 0, width, 0)
-    gradient.addColorStop(0, "#ff7eb3")
-    gradient.addColorStop(1, "#ff5fa2")
-    ctx.fillStyle = gradient
-    ctx.fillRect(0, 0, width, 100)
-
-    // Draw header text
-    ctx.fillStyle = "#ffffff"
-    ctx.font = "bold 36px Poppins, sans-serif"
-    ctx.textAlign = "center"
-    ctx.fillText("My STAYC Song Ranking", width / 2, 60)
-
-    // Draw rankings
-    let y = 120
-    currentRankings.forEach((song, index) => {
-      // Draw ranking background
-      ctx.fillStyle = index % 2 === 0 ? "#f8f9fa" : "#ffffff"
-      ctx.fillRect(0, y, width, 70)
-
-      // Draw position
-      ctx.fillStyle = "#ff5fa2"
-      ctx.font = "bold 28px Poppins, sans-serif"
-      ctx.textAlign = "center"
-      ctx.fillText(`${index + 1}`, 40, y + 40)
-
-      // Draw album cover
-      if (albumCoversCache[song.id]) {
-        ctx.drawImage(albumCoversCache[song.id], 70, y + 10, 50, 50)
-      } else {
-        // Fallback colored square if image not available
-        const colors = ["#ffb5d3", "#a59dff", "#ffde59", "#6c63ff", "#ff5fa2"]
-        const colorIndex = index % colors.length
-        ctx.fillStyle = colors[colorIndex]
-        ctx.fillRect(70, y + 10, 50, 50)
-      }
-
-      // Draw song title
-      ctx.fillStyle = "#333333"
-      ctx.font = "bold 20px Poppins, sans-serif"
-      ctx.textAlign = "left"
-      ctx.fillText(song.title, 140, y + 30)
-
-      // Draw album name
-      ctx.fillStyle = "#888888"
-      ctx.font = "16px Poppins, sans-serif"
-      ctx.fillText(song.album, 140, y + 55)
-
-      y += 70
-    })
-
-    // Draw footer
-    ctx.fillStyle = "#f8f9fa"
-    ctx.fillRect(0, height - 60, width, 60)
-
-    ctx.fillStyle = "#888888"
-    ctx.font = "14px Poppins, sans-serif"
-    ctx.textAlign = "center"
-    ctx.fillText("Generated with STAYC Song Ranker", width / 2, height - 35)
-
-    // Draw second line of footer text
-    ctx.fillStyle = "#ff5fa2"
-    ctx.font = "16px Poppins, sans-serif"
-    ctx.textAlign = "center"
-    ctx.fillText("STAYC girls is going down!", width / 2, height - 15)
-
-    // Convert canvas to image
-    const imageUrl = rankingCanvas.toDataURL("image/png")
-
-    // Display image preview
-    imagePreview.innerHTML = `<img src="${imageUrl}" alt="STAYC Song Ranking">`
-    imagePreviewContainer.style.display = "block"
-
-    // Update download link
-    downloadImageLink.href = imageUrl
-    downloadImageLink.style.display = "inline-flex"
-    downloadImageLink.download = "stayc-ranking-vertical.png"
+  // Share images mirror the results page (see "Results" in styles.css)
+  const IMG = {
+    scale: 2, // retina-sharp output
+    pad: 30,
+    top: 92, // y where content starts, just under the navy rule
+    footer: 70,
+    sheet: "#fbfaf6",
+    navy: "#264a86",
+    pink: "#e6468f",
+    muted: "#5d6b84",
+    line: "#b9cfe6",
+    poppins: "Poppins, sans-serif",
+    londrina: '"Londrina Solid", Poppins, sans-serif',
   }
 
-  // Generate horizontal image
-  function generateHorizontalImage() {
-    // Calculate dimensions based on number of songs
-    const itemWidth = 180
-    const width = Math.max(800, currentRankings.length * itemWidth)
-    const height = 430
-    rankingCanvas.width = width
-    rankingCanvas.height = height
-
+  // Size the canvas and draw what both layouts share: sheet, title, rule, footer
+  function startImage(width, height) {
+    rankingCanvas.width = width * IMG.scale
+    rankingCanvas.height = height * IMG.scale
     const ctx = rankingCanvas.getContext("2d")
+    ctx.scale(IMG.scale, IMG.scale)
+    ctx.textBaseline = "middle"
 
-    // Draw background
-    ctx.fillStyle = "#ffffff"
+    ctx.fillStyle = IMG.sheet
     ctx.fillRect(0, 0, width, height)
 
-    // Draw header background
-    const gradient = ctx.createLinearGradient(0, 0, width, 0)
-    gradient.addColorStop(0, "#ff7eb3")
-    gradient.addColorStop(1, "#ff5fa2")
-    ctx.fillStyle = gradient
-    ctx.fillRect(0, 0, width, 100)
-
-    // Draw header text
-    ctx.fillStyle = "#ffffff"
-    ctx.font = "bold 36px Poppins, sans-serif"
+    ctx.fillStyle = IMG.navy
+    ctx.font = `800 30px ${IMG.poppins}`
     ctx.textAlign = "center"
-    ctx.fillText("My STAYC Song Ranking", width / 2, 60)
+    ctx.fillText("My STAYC Song Ranking", width / 2, IMG.pad + 19)
+    ctx.fillRect(IMG.pad, IMG.top - 2, width - IMG.pad * 2, 2)
 
-    // Draw rankings
-    currentRankings.forEach((song, index) => {
-      const x = index * itemWidth
+    ctx.fillStyle = IMG.muted
+    ctx.font = `12px ${IMG.poppins}`
+    ctx.fillText("Generated with STAYC Song Ranker", width / 2, height - 40)
+    ctx.fillStyle = IMG.pink
+    ctx.font = `14px ${IMG.poppins}`
+    ctx.fillText("STAYC girls is going down!", width / 2, height - 20)
 
-      // Draw card background
-      ctx.fillStyle = "#f8f9fa"
-      ctx.fillRect(x + 10, 120, itemWidth - 20, 220)
+    return ctx
+  }
 
-      // Draw position badge
-      ctx.fillStyle = "#ff5fa2"
-      ctx.beginPath()
-      ctx.arc(x + itemWidth / 2, 140, 20, 0, 2 * Math.PI)
-      ctx.fill()
+  // Album cover with rounded corners, center-cropped like object-fit: cover
+  function drawCover(ctx, song, x, y, size) {
+    const img = albumCoversCache[song.id]
+    ctx.save()
+    ctx.beginPath()
+    if (ctx.roundRect) ctx.roundRect(x, y, size, size, 5)
+    else ctx.rect(x, y, size, size)
+    ctx.clip()
+    if (img && img.complete && img.naturalWidth) {
+      const s = Math.min(img.naturalWidth, img.naturalHeight)
+      ctx.drawImage(img, (img.naturalWidth - s) / 2, (img.naturalHeight - s) / 2, s, s, x, y, size, size)
+    } else {
+      ctx.fillStyle = "#f0eee6"
+      ctx.fillRect(x, y, size, size)
+    }
+    ctx.restore()
+  }
 
-      // Draw position number
-      ctx.fillStyle = "#ffffff"
-      ctx.font = "bold 20px Poppins, sans-serif"
-      ctx.textAlign = "center"
-      ctx.fillText(`${index + 1}`, x + itemWidth / 2, 147)
-
-      // Draw album cover
-      if (albumCoversCache[song.id]) {
-        ctx.drawImage(albumCoversCache[song.id], x + (itemWidth - 120) / 2, 170, 120, 120)
-      } else {
-        // Fallback colored square if image not available
-        const colors = ["#ffb5d3", "#a59dff", "#ffde59", "#6c63ff", "#ff5fa2"]
-        const colorIndex = index % colors.length
-        ctx.fillStyle = colors[colorIndex]
-        ctx.fillRect(x + (itemWidth - 120) / 2, 170, 120, 120)
-      }
-
-      // Draw song title (truncate if too long)
-      ctx.fillStyle = "#333333"
-      ctx.font = "bold 16px Poppins, sans-serif"
-      ctx.textAlign = "center"
-      const title = truncateText(song.title, 15)
-      ctx.fillText(title, x + itemWidth / 2, 310)
-
-      // Draw album name (truncate if too long)
-      ctx.fillStyle = "#888888"
-      ctx.font = "14px Poppins, sans-serif"
-      const album = truncateText(song.album, 18)
-      ctx.fillText(album, x + itemWidth / 2, 330)
-    })
-
-    // Draw footer
-    ctx.fillStyle = "#f8f9fa"
-    ctx.fillRect(0, height - 60, width, 60)
-
-    ctx.fillStyle = "#888888"
-    ctx.font = "14px Poppins, sans-serif"
-    ctx.textAlign = "center"
-    ctx.fillText("Generated with STAYC Song Ranker", width / 2, height - 35)
-
-    // Draw second line of footer text
-    ctx.fillStyle = "#ff5fa2"
-    ctx.font = "16px Poppins, sans-serif"
-    ctx.textAlign = "center"
-    ctx.fillText("STAYC girls is going down!", width / 2, height - 15)
-
-    // Convert canvas to image
+  // Show the finished canvas as preview + download
+  function finishImage(filename) {
     const imageUrl = rankingCanvas.toDataURL("image/png")
-
-    // Display image preview
     imagePreview.innerHTML = `<img src="${imageUrl}" alt="STAYC Song Ranking">`
     imagePreviewContainer.style.display = "block"
-
-    // Update download link
     downloadImageLink.href = imageUrl
     downloadImageLink.style.display = "inline-flex"
-    downloadImageLink.download = "stayc-ranking-horizontal.png"
+    downloadImageLink.download = filename
+  }
+
+  // Generate vertical image: the same lined list as the results page
+  function generateVerticalImage() {
+    const width = 640
+    const rowHeight = 76
+    const height = IMG.top + currentRankings.length * rowHeight + IMG.footer
+    const ctx = startImage(width, height)
+    const x = IMG.pad
+    const rowWidth = width - IMG.pad * 2
+
+    currentRankings.forEach((song, index) => {
+      const y = IMG.top + index * rowHeight
+
+      // Top 3 get the tennis-ball highlight
+      if (index < 3) {
+        const highlight = ctx.createLinearGradient(x, 0, x + rowWidth, 0)
+        highlight.addColorStop(0, "rgba(223, 230, 58, 0.5)")
+        highlight.addColorStop(0.7, "rgba(223, 230, 58, 0)")
+        ctx.fillStyle = highlight
+        ctx.fillRect(x, y, rowWidth, rowHeight)
+      }
+
+      ctx.fillStyle = IMG.line
+      ctx.fillRect(x, y + rowHeight - 1, rowWidth, 1)
+
+      ctx.fillStyle = IMG.pink
+      ctx.font = `900 32px ${IMG.londrina}`
+      ctx.textAlign = "center"
+      ctx.fillText(`${index + 1}`, x + 32, y + rowHeight / 2)
+
+      drawCover(ctx, song, x + 68, y + 10, 56)
+
+      const textX = x + 138
+      const textWidth = width - IMG.pad - 6 - textX
+      ctx.textAlign = "left"
+      ctx.fillStyle = IMG.navy
+      ctx.font = `700 16px ${IMG.poppins}`
+      ctx.fillText(song.title, textX, y + 29, textWidth)
+      ctx.fillStyle = IMG.muted
+      ctx.font = `13.6px ${IMG.poppins}`
+      ctx.fillText(song.album, textX, y + 49, textWidth)
+    })
+
+    finishImage("stayc-ranking-vertical.png")
+  }
+
+  // Generate horizontal image: same design, one column per song
+  function generateHorizontalImage() {
+    const itemWidth = 180
+    const cardHeight = 226
+    const width = Math.max(800, currentRankings.length * itemWidth + IMG.pad * 2)
+    const height = IMG.top + 16 + cardHeight + IMG.footer
+    const ctx = startImage(width, height)
+    const startX = (width - currentRankings.length * itemWidth) / 2
+    const cardY = IMG.top + 16
+
+    currentRankings.forEach((song, index) => {
+      const x = startX + index * itemWidth
+      const center = x + itemWidth / 2
+
+      // Top 3 get the tennis-ball highlight
+      if (index < 3) {
+        const highlight = ctx.createLinearGradient(0, cardY, 0, cardY + cardHeight)
+        highlight.addColorStop(0, "rgba(223, 230, 58, 0.5)")
+        highlight.addColorStop(0.7, "rgba(223, 230, 58, 0)")
+        ctx.fillStyle = highlight
+        ctx.fillRect(x + 10, cardY, itemWidth - 20, cardHeight)
+      }
+
+      ctx.fillStyle = IMG.line
+      ctx.fillRect(x + 10, cardY + cardHeight - 1, itemWidth - 20, 1)
+
+      ctx.fillStyle = IMG.pink
+      ctx.font = `900 32px ${IMG.londrina}`
+      ctx.textAlign = "center"
+      ctx.fillText(`${index + 1}`, center, cardY + 26)
+
+      drawCover(ctx, song, center - 60, cardY + 50, 120)
+
+      ctx.fillStyle = IMG.navy
+      ctx.font = `700 15px ${IMG.poppins}`
+      ctx.fillText(truncateText(song.title, 15), center, cardY + 188, itemWidth - 28)
+      ctx.fillStyle = IMG.muted
+      ctx.font = `13px ${IMG.poppins}`
+      ctx.fillText(truncateText(song.album, 18), center, cardY + 208, itemWidth - 28)
+    })
+
+    finishImage("stayc-ranking-horizontal.png")
   }
 
   // Helper function to truncate text
