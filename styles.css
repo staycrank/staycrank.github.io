@@ -855,6 +855,17 @@ footer a {
   text-decoration: none;
 }
 
+.footer-powered {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 /* Photocard quiz */
 .chat-toggle {
   position: fixed;
